@@ -10,6 +10,7 @@ import { MdLogout, MdRestartAlt } from "react-icons/md";
 import { BiMessageSquareDetail } from "react-icons/bi";
 import { ImExit } from "react-icons/im";
 import { BsDot } from "react-icons/bs";
+import {isValidMove} from '../../utils/validate'
 
 const Play = () => {
   const [selectedPiece, setSelectedPiece] = useState(null);
@@ -49,19 +50,25 @@ const Play = () => {
 
   const handlePieceClick = (row, col) => {
     const piece = chessIcons[row * 8 + col];
-    console.log(row,col);
-    console.log(chessIcons);
+   
     if (selectedPiece) {
       if (selectedPiece.row === row && selectedPiece.col === col) {
         return;
       }
-
-      const newChessIcons = [...chessIcons];
-      newChessIcons[row * 8 + col] = selectedPiece.piece;
-      newChessIcons[selectedPiece.row * 8 + selectedPiece.col] = "";
-      setChessIcons(newChessIcons);
-      setSelectedPiece(null);
-      switchPlayers();
+      console.log(isValidMove(selectedPiece.piece, selectedPiece.row, selectedPiece.col, row,col));
+      
+      if(isValidMove(selectedPiece.piece, selectedPiece.row, selectedPiece.col, row,col)){
+           const newChessIcons = [...chessIcons];
+          newChessIcons[row * 8 + col] = selectedPiece.piece;
+          newChessIcons[selectedPiece.row * 8 + selectedPiece.col] = "";
+          setChessIcons(newChessIcons);
+          setSelectedPiece(null);
+          switchPlayers();
+      } else {
+        return;
+      }
+      
+      
     } else if (piece) {
       setSelectedPiece({ piece, row, col });
     }

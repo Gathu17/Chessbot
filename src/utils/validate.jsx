@@ -1,6 +1,6 @@
 export function isValidMove(piece, startX, startY, endX, endY) {
     // Implement movement validation logic for each piece type
-   
+   console.log(piece);
     switch (piece) {
       case "♜": // Rook
         return startX === endX || startY === endY;
