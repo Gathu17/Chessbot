@@ -49,7 +49,8 @@ const Play = () => {
 
   const handlePieceClick = (row, col) => {
     const piece = chessIcons[row * 8 + col];
-
+    console.log(row,col);
+    console.log(chessIcons);
     if (selectedPiece) {
       if (selectedPiece.row === row && selectedPiece.col === col) {
         return;
