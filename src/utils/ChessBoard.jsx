@@ -38,6 +38,7 @@ const startBoard = game => {
             clickedSquare.classList.add('clicked-square');
 
             allowedMoves.forEach( allowedMove => {
+                
                 if (document.contains(document.getElementById(allowedMove))) {
                     document.getElementById(allowedMove).classList.add('allowed');
                 }
@@ -67,6 +68,7 @@ const startBoard = game => {
             const pieceImg = document.getElementById(existedPiece.position);
             console.log(pieceImg);
             clearSquares();
+            console.log(setAllowedSquares(pieceImg));
             return setAllowedSquares(pieceImg);
         }
         console.log(clickedPieceName);
