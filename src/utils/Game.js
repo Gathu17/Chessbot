@@ -1,4 +1,5 @@
 import Queen from './Pieces/Queen'
+import { getAllowedMoves } from './Pieces/Pawn';
 
 export default class Game {
 	constructor(pieces) {
