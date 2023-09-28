@@ -59,14 +59,17 @@ const startBoard = game => {
 
     function movePiece(square) {
         const position = square.getAttribute('id');
+       
         const existedPiece = game.getPieceByPos(position);
-
+       console.log(existedPiece);
         if (existedPiece && existedPiece.color === game.turn) {
-            const pieceImg = document.getElementById(existedPiece.name);
+            console.log('imekubali');
+            const pieceImg = document.getElementById(existedPiece.position);
+            console.log(pieceImg);
             clearSquares();
             return setAllowedSquares(pieceImg);
         }
-
+        console.log(clickedPieceName);
         game.movePiece(clickedPieceName, position);
     }
 
@@ -136,39 +139,39 @@ const startBoard = game => {
 }
 
 export const pieces = [
-    new Rook(11, 'whiteRook1',"♖"),
-    new Knight(12, 'whiteKnight1', "♘"),
-    new Bishop(13, 'whiteBishop1', "♗"),
-    new Queen(14, 'whiteQueen', "♕"),
-    new King(15, 'whiteKing', "♔"),
-    new Bishop(16, 'whiteBishop2', "♗"),
-    new Knight(17, 'whiteKnight2', "♘"),
-    new Rook(18, 'whiteRook2', "♖"),
-    new Pawn(21, 'whitePawn1', "♙"),
-    new Pawn(22, 'whitePawn2', "♙"),
-    new Pawn(23, 'whitePawn3', "♙"),
-    new Pawn(24, 'whitePawn4', "♙"),
-    new Pawn(25, 'whitePawn5', "♙"),
-    new Pawn(26, 'whitePawn6', "♙"),
-    new Pawn(27, 'whitePawn7', "♙"),
-    new Pawn(28, 'whitePawn8', "♙"),
+    new Rook('1a', 'whiteRook1',"♖"),
+    new Knight('1b', 'whiteKnight1', "♘"),
+    new Bishop('1c', 'whiteBishop1', "♗"),
+    new Queen('1d', 'whiteQueen', "♕"),
+    new King('1e', 'whiteKing', "♔"),
+    new Bishop('1f', 'whiteBishop2', "♗"),
+    new Knight('1g', 'whiteKnight2', "♘"),
+    new Rook('1h', 'whiteRook2', "♖"),
+    new Pawn('2a', 'whitePawn1', "♙"),
+    new Pawn('2b', 'whitePawn2', "♙"),
+    new Pawn('2c', 'whitePawn3', "♙"),
+    new Pawn('2d', 'whitePawn4', "♙"),
+    new Pawn('2e', 'whitePawn5', "♙"),
+    new Pawn('2f', 'whitePawn6', "♙"),
+    new Pawn('2g', 'whitePawn7', "♙"),
+    new Pawn('2h', 'whitePawn8', "♙"),
 
-    new Pawn(71, 'blackPawn1', "♟"),
-    new Pawn(72, 'blackPawn2', "♟"),
-    new Pawn(73, 'blackPawn3', "♟"),
-    new Pawn(74, 'blackPawn4', "♟"),
-    new Pawn(75, 'blackPawn5', "♟"),
-    new Pawn(76, 'blackPawn6', "♟"),
-    new Pawn(77, 'blackPawn7', "♟"),
-    new Pawn(78, 'blackPawn8', "♟"),
-    new Rook(81, 'blackRook1', "♜"),
-    new Knight(82, 'blackKnight1', "♞"),
-    new Bishop(83, 'blackBishop1', "♝"),
-    new Queen(84, 'blackQueen', "♛"),
-    new King(85, 'blackKing', "♚"),
-    new Bishop(86, 'blackBishop2', "♝"),
-    new Knight(87, 'blackKnight2', "♞"),
-    new Rook(88, 'blackRook2', "♜")
+    new Pawn('7a', 'blackPawn1', "♟"),
+    new Pawn('7b', 'blackPawn2', "♟"),
+    new Pawn('7c', 'blackPawn3', "♟"),
+    new Pawn('7d', 'blackPawn4', "♟"),
+    new Pawn('7e', 'blackPawn5', "♟"),
+    new Pawn('7f', 'blackPawn6', "♟"),
+    new Pawn('7g', 'blackPawn7', "♟"),
+    new Pawn('7h', 'blackPawn8', "♟"),
+    new Rook('8a', 'blackRook1', "♜"),
+    new Knight('8b', 'blackKnight1', "♞"),
+    new Bishop('8c', 'blackBishop1', "♝"),
+    new Queen('8d', 'blackQueen', "♛"),
+    new King('8e', 'blackKing', "♚"),
+    new Bishop('8f', 'blackBishop2', "♝"),
+    new Knight('8g', 'blackKnight2', "♞"),
+    new Rook('8h', 'blackRook2', "♜")
 ];
 
 export default startBoard;

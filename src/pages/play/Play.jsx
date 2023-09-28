@@ -55,7 +55,7 @@ const Play = () => {
 
   useEffect(()=>{
     startBoard(game);
-  },[])
+  }, [])
 
   const handlePieceClick = (row, col) => {
     const piece = chessIcons[row * 8 + col];
@@ -196,18 +196,18 @@ const Play = () => {
             <span className="text-xl font-bold">{countdownTime} sec</span>
           </div>
         </div>
-        <div id="board">
-		<div id="final" className="odd">
-			<div id="81" className="square" data-square="8-a"></div>
-			<div id="82" className="square" data-square="8-b"></div>
-			<div id="83" className="square" data-square="8-c"></div>
-			<div id="84" className="square" data-square="8-d"></div>
-			<div id="85" className="square" data-square="8-e"></div>
-			<div id="86" className="square" data-square="8-f"></div>
-			<div id="87" className="square" data-square="8-g"></div>
-			<div id="88" className="square" data-square="8-h"></div>
+        {/* <div id="board" className="flex flex-wrap w-[400px] h-[400px]">
+		<div id="final" className="odd bg-green-500">
+			<div id="81" className="square w-1/8 h-1/8 " data-square="8-a"></div>
+			<div id="82" className="square w-1/8 h-1/8 " data-square="8-b"></div>
+			<div id="83" className="square w-1/8 h-1/8" data-square="8-c"></div>
+			<div id="84" className="square w-1/8 h-1/8" data-square="8-d"></div>
+			<div id="85" className="square w-1/8 h-1/8" data-square="8-e"></div>
+			<div id="86" className="square w-1/8 h-1/8" data-square="8-f"></div>
+			<div id="87" className="square w-1/8 h-1/8" data-square="8-g"></div>
+			<div id="88" className="square w-1/8 h-1/8" data-square="8-h"></div>
 		</div>
-		<div className="even">
+		<div className="even bg-slate-200">
 			<div id="71" className="square" data-square="7-a"></div>
 			<div id="72" className="square" data-square="7-b"></div>
 			<div id="73" className="square" data-square="7-c"></div>
@@ -217,7 +217,7 @@ const Play = () => {
 			<div id="77" className="square" data-square="7-g"></div>
 			<div id="78" className="square" data-square="7-h"></div>
 		</div>
-		<div className="odd">
+		<div className="odd bg-green-500">
 			<div id="61" className="square" data-square="6-a"></div>
 			<div id="62" className="square" data-square="6-b"></div>
 			<div id="63" className="square" data-square="6-c"></div>
@@ -227,7 +227,7 @@ const Play = () => {
 			<div id="67" className="square" data-square="6-g"></div>
 			<div id="68" className="square" data-square="6-h"></div>
 		</div>
-		<div className="even">
+		<div className="even  bg-slate-200">
 			<div id="51" className="square" data-square="5-a"></div>
 			<div id="52" className="square" data-square="5-b"></div>
 			<div id="53" className="square" data-square="5-c"></div>
@@ -247,7 +247,7 @@ const Play = () => {
 			<div id="47" className="square" data-square="4-g"></div>
 			<div id="48" className="square" data-square="4-h"></div>
 		</div>
-		<div className="even">
+		<div className="even  bg-slate-200">
 			<div id="31" className="square" data-square="3-a"></div>
 			<div id="32" className="square" data-square="3-b"></div>
 			<div id="33" className="square" data-square="3-c"></div>
@@ -277,7 +277,29 @@ const Play = () => {
 			<div id="17" className="square white" data-square="1-g"></div>
 			<div id="18" className="square white" data-square="1-h"></div>
 		</div>
-	</div>
+	</div> */}
+  <table id="board" className="w-[400px] ">
+  {[...Array(8).keys()].map((_,row) =>
+    <tr key={row}>
+    {[...Array(8).keys()].map((_,col) => {
+      const squareId = `${8 - row}${String.fromCharCode(97 + col)}`;
+      const isEvenSquare = (row + col) % 2 === 0;
+      return (
+        <td
+          key={squareId}
+          id={squareId}
+          className={`square w-10 h-14 ${isEvenSquare ? "bg-[#E9EDCC]" : "bg-[#779954]"} text-center`}
+          data-square={`${8 - row}-${String.fromCharCode(97 + col)}`}
+        >
+          {/* <span className="flex items-center justify-center text-3xl hover:scale-[1.1] text-[black] text-center">
+             <span ></span>
+          </span> */}
+        </td>
+      );
+    })}
+    </tr>
+  )}
+</table>
         <div className="flex lg:items-start justify-between px-4 py-2 mb-4 text-white rounded-lg lg:space-x-[3rem] lg:w-full w-full sm:w-3/4 gap-6 items-center mt-5">
           <div className="flex flex-col items-center lg:flex-row ">
             <div className="flex items-center justify-center w-6 h-6 rounded-full lg:w-12 lg:h-12">

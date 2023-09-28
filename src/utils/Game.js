@@ -38,7 +38,7 @@ export default class Game {
 
 	getPlayerPositions(color){
 		const pieces = this.getPiecesByColor(color);
-		return pieces.map( a => parseInt(a.position));
+		return pieces.map( a => a.position);
 	}
 
 	filterPositions(positions) {
@@ -50,7 +50,7 @@ export default class Game {
 
 	unblockedPositions(piece, allowedPositions, checking=true) {
 		const unblockedPositions = [];
-
+        
 		if (piece.color === 'white') {
 			var myBlockedPositions    = this.getPlayerPositions('white');
 			var otherBlockedPositions = this.getPlayerPositions('black');
@@ -59,11 +59,12 @@ export default class Game {
 			myBlockedPositions    = this.getPlayerPositions('black');
 			otherBlockedPositions = this.getPlayerPositions('white');
 		}
-
+        console.log(allowedPositions[0]);
 		if (piece.hasRank('pawn')) {
 			for (const move of allowedPositions[0]) { //attacking moves
 				if (checking && this.myKingChecked(move)) continue;
-				if (otherBlockedPositions.indexOf(move) !== -1) unblockedPositions.push(move);
+				if (otherBlockedPositions.indexOf(move) !== -1); 
+                //unblockedPositions.push(move);
 			}
 			const blockedPositions = [...myBlockedPositions, ...otherBlockedPositions];
 			for (const move of allowedPositions[1]) { //moving moves
@@ -75,40 +76,43 @@ export default class Game {
 			}
 		}
 		else{
-			allowedPositions.forEach( (allowedPositionsGroup) => {
-				for (const move of allowedPositionsGroup) {
-					if (myBlockedPositions.indexOf(move) !== -1) {
-						break;
-					}
-					else if ( checking && this.myKingChecked(move) ) {
-						if (otherBlockedPositions.indexOf(move) !== -1) {
-							break;
-						}
-						continue;
-					}
-					unblockedPositions.push(move);
+		// 	allowedPositions.forEach( (allowedPositionsGroup) => {
+		// 		for (const move of allowedPositionsGroup) {
+		// 			if (myBlockedPositions.indexOf(move) !== -1) {
+		// 				break;
+		// 			}
+		// 			else if ( checking && this.myKingChecked(move) ) {
+		// 				if (otherBlockedPositions.indexOf(move) !== -1) {
+		// 					break;
+		// 				}
+		// 				continue;
+		// 			}
+		// 			unblockedPositions.push(move);
 
-					if (otherBlockedPositions.indexOf(move) !== -1) {
-						break;
-					}
-				}
-			});
-		}
+		// 			if (otherBlockedPositions.indexOf(move) !== -1) {
+		// 				break;
+		// 			}
+		// 		}
+		// 	});
+		 }
 
 		return this.filterPositions(unblockedPositions);
 	}
 
 	getPieceAllowedMoves(pieceName){
-		const piece = this.getPieceByName(pieceName);
+        
+		const piece = this.getPieceByPos(pieceName);
+        console.log(this.turn === piece.color);
 		if(this.turn === piece.color){
 			this.setClickedPiece(piece);
 
 			let pieceAllowedMoves = piece.getAllowedMoves();
+            console.log(pieceAllowedMoves);
 			if (piece.rank === 'king') {
 				pieceAllowedMoves = this.getCastlingSquares(piece, pieceAllowedMoves);
 			}
 
-			return this.unblockedPositions(piece, pieceAllowedMoves, true);
+			 return this.unblockedPositions(piece, pieceAllowedMoves, true);
 		}
 		else{
 			return [];
