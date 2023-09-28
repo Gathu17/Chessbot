@@ -115,12 +115,14 @@ export default class Game {
 			if (piece.rank === 'king') {
 				pieceAllowedMoves = this.getCastlingSquares(piece, pieceAllowedMoves);
 			}
+
 			return this.unblockedPositions(piece, pieceAllowedMoves, true);
 		}
 		else{
 			return [];
 		}
 	}
+
 
 	getCastlingSquares(king, allowedMoves) {
 		if ( !king.ableToCastle || this.king_checked(this.turn) ) return allowedMoves;
@@ -175,6 +177,7 @@ export default class Game {
 		const piece = this.getPieceByPos(pieceName);
 
 		const prevPosition = piece.position;
+		//position = parseInt(position);
 
 		if (piece && this.getPieceAllowedMoves(piece.position).indexOf(position) !== -1) {
 			const existedPiece = this.getPieceByPos(position)
@@ -193,6 +196,7 @@ export default class Game {
 				piece.changePosition(position, true);
 			}
 			else {
+                console.log(position);
 				piece.changePosition(position);
 			}
 

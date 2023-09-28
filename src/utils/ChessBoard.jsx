@@ -38,7 +38,7 @@ const startBoard = game => {
             clickedSquare.classList.add('clicked-square');
 
             allowedMoves.forEach( allowedMove => {
-                
+
                 if (document.contains(document.getElementById(allowedMove))) {
                     document.getElementById(allowedMove).classList.add('allowed');
                 }
@@ -64,12 +64,9 @@ const startBoard = game => {
         const existedPiece = game.getPieceByPos(position);
 
         if (existedPiece && existedPiece.color === game.turn) {
-
             const pieceImg = document.getElementById(existedPiece.position);
-
             clearSquares();
-
-            return setAllowedSquares(pieceImg);
+           return setAllowedSquares(pieceImg);
         }
 
         game.movePiece(clickedPieceName, position);
