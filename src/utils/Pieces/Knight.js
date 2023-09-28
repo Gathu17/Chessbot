@@ -8,15 +8,25 @@ export default class Knight extends Piece {
 
 	getAllowedMoves() {
 		const position = this.position;
-		return [
-			[parseInt(position) + 21],
-			[parseInt(position) - 21],
-			[parseInt(position) + 19],
-			[parseInt(position) - 19],
-			[parseInt(position) + 12],
-			[parseInt(position) - 12],
-			[parseInt(position) + 8],
-			[parseInt(position) - 8]
-		];
+
+        const validMoves = [];
+        const row = parseInt(position[0])
+        const col = position.toLowerCase().charCodeAt(1)
+
+        validMoves.push(`${row + 2}${String.fromCharCode(col + 1)}`)
+        validMoves.push(`${row + 2}${String.fromCharCode(col - 1)}`)
+        validMoves.push(`${row + 1}${String.fromCharCode(col + 2)}`)
+        validMoves.push(`${row + 1}${String.fromCharCode(col - 2)}`)
+        validMoves.push(`${row - 2}${String.fromCharCode(col + 1)}`)
+        validMoves.push(`${row - 2}${String.fromCharCode(col - 1)}`)
+        validMoves.push(`${row - 1}${String.fromCharCode(col + 2)}`)
+        validMoves.push(`${row - 1}${String.fromCharCode(col - 2)}`)
+    
+        return validMoves.filter(item => {
+            return parseInt(item[0]) >= 1 &&
+                parseInt(item[0]) <= 8 &&
+                item[1] >= 'a' &&
+                item[1] <= 'h'
+        })
 	}
 }

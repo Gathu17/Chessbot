@@ -1,5 +1,4 @@
 import Queen from './Pieces/Queen'
-import { getAllowedMoves } from './Pieces/Pawn';
 
 export default class Game {
 	constructor(pieces) {
@@ -52,10 +51,12 @@ export default class Game {
 
 	unblockedPositions(piece, allowedPositions, checking=true) {
 		const unblockedPositions = [];
+        let myBlockedPositions;
+        let otherBlockedPositions;
         
 		if (piece.color === 'white') {
-			var myBlockedPositions    = this.getPlayerPositions('white');
-			var otherBlockedPositions = this.getPlayerPositions('black');
+			myBlockedPositions    = this.getPlayerPositions('white');
+			otherBlockedPositions = this.getPlayerPositions('black');
 		}
 		else{
 			myBlockedPositions    = this.getPlayerPositions('black');
@@ -105,7 +106,7 @@ export default class Game {
 	getPieceAllowedMoves(pieceName){
         
 		const piece = this.getPieceByPos(pieceName);
-        console.log(this.turn === piece.color);
+
 		if(this.turn === piece.color){
 			this.setClickedPiece(piece);
 
@@ -170,55 +171,55 @@ export default class Game {
 	}
 
 	movePiece(pieceName, position) {
-        console.log(pieceName,position);
-		// const piece = this.getPieceByName(pieceName);
-		// const prevPosition = piece.position;
-		// position = parseInt(position);
-        // console.log(this.getPieceAllowedMoves(piece.name));
-		// if (piece && this.getPieceAllowedMoves(piece.name).indexOf(position) !== -1) {
-		// 	const existedPiece = this.getPieceByPos(position)
 
-		// 	if (existedPiece) {
-		// 		this.kill(existedPiece);
-		// 	}
+		const piece = this.getPieceByPos(pieceName);
 
-		// 	if (!existedPiece && piece.hasRank('king') && piece.ableToCastle === true) {
-		// 		if (position - prevPosition === 2) {
-		// 			this.castleRook(piece.color + 'Rook2');
-		// 		}
-		// 		else if (position - prevPosition === -2) {
-		// 			this.castleRook(piece.color + 'Rook1');
-		// 		}
-		// 		piece.changePosition(position, true);
-		// 	}
-		// 	else {
-		// 		piece.changePosition(position);
-		// 	}
+		const prevPosition = piece.position;
 
-		// 	this.triggerEvent('pieceMove', piece);
+		if (piece && this.getPieceAllowedMoves(piece.position).indexOf(position) !== -1) {
+			const existedPiece = this.getPieceByPos(position)
 
-		// 	if (piece.rank === 'pawn' && (position > 80 || position < 20)) {
-		// 		this.promote(piece);
-		// 	}
+			if (existedPiece) {
+				this.kill(existedPiece);
+			}
 
-		// 	this.changeTurn();
+			if (!existedPiece && piece.hasRank('king') && piece.ableToCastle === true) {
+				if (position - prevPosition === 2) {
+					this.castleRook(piece.color + 'Rook2');
+				}
+				else if (position - prevPosition === -2) {
+					this.castleRook(piece.color + 'Rook1');
+				}
+				piece.changePosition(position, true);
+			}
+			else {
+				piece.changePosition(position);
+			}
 
-		// 	if (this.king_checked(this.turn)) {
-		// 		this.triggerEvent('check', this.turn);
+			this.triggerEvent('pieceMove', piece);
 
-		// 		if (this.king_dead(this.turn)) {
-		// 			this.checkmate(piece.color);
-		// 		}
-		// 		else{
-		// 			// alert('check');
-		// 		}
-		// 	}
+			if (piece.rank === 'pawn' && (position > 80 || position < 20)) {
+				this.promote(piece);
+			}
 
-		// 	return true;
-		// }
-		// else{
-		// 	return false;
-		// }
+			this.changeTurn();
+
+			if (this.king_checked(this.turn)) {
+				this.triggerEvent('check', this.turn);
+
+				if (this.king_dead(this.turn)) {
+					this.checkmate(piece.color);
+				}
+				else{
+					// alert('check');
+				}
+			}
+
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 
 	kill(piece) {

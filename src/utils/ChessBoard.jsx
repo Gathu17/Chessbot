@@ -9,7 +9,7 @@ import King from './Pieces/King'
 
 const startBoard = game => {
     const board   = document.getElementById('board');
-    console.log(board);
+
     const squares = board.querySelectorAll('.square');
     const whiteSematary = document.getElementById('whiteSematary');
     const blackSematary = document.getElementById('blackSematary');
@@ -23,7 +23,7 @@ const startBoard = game => {
 
         for (const piece of game.pieces) {
             const square = document.getElementById(piece.position);
-            console.log(piece);
+
             square.innerHTML = piece.icon
         }
     }
@@ -62,16 +62,16 @@ const startBoard = game => {
         const position = square.getAttribute('id');
        
         const existedPiece = game.getPieceByPos(position);
-       console.log(existedPiece);
+
         if (existedPiece && existedPiece.color === game.turn) {
-            console.log('imekubali');
+
             const pieceImg = document.getElementById(existedPiece.position);
-            console.log(pieceImg);
+
             clearSquares();
-            console.log(setAllowedSquares(pieceImg));
+
             return setAllowedSquares(pieceImg);
         }
-        console.log(clickedPieceName);
+
         game.movePiece(clickedPieceName, position);
     }
 

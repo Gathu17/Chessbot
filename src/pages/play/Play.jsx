@@ -279,26 +279,28 @@ const Play = () => {
 		</div>
 	</div> */}
   <table id="board" className="w-[400px] ">
-  {[...Array(8).keys()].map((_,row) =>
-    <tr key={row}>
-    {[...Array(8).keys()].map((_,col) => {
-      const squareId = `${8 - row}${String.fromCharCode(97 + col)}`;
-      const isEvenSquare = (row + col) % 2 === 0;
-      return (
-        <td
-          key={squareId}
-          id={squareId}
-          className={`square w-10 h-14 ${isEvenSquare ? "bg-[#E9EDCC]" : "bg-[#779954]"} text-center`}
-          data-square={`${8 - row}-${String.fromCharCode(97 + col)}`}
-        >
-          {/* <span className="flex items-center justify-center text-3xl hover:scale-[1.1] text-[black] text-center">
-             <span ></span>
-          </span> */}
-        </td>
-      );
-    })}
-    </tr>
-  )}
+    <tbody>
+    {[...Array(8).keys()].map((_,row) =>
+      <tr key={row}>
+      {[...Array(8).keys()].map((_,col) => {
+        const squareId = `${8 - row}${String.fromCharCode(97 + col)}`;
+        const isEvenSquare = (row + col) % 2 === 0;
+        return (
+          <td
+            key={squareId}
+            id={squareId}
+            className={`square w-10 h-14 ${isEvenSquare ? "bg-[#E9EDCC]" : "bg-[#779954]"} text-center`}
+            data-square={`${8 - row}-${String.fromCharCode(97 + col)}`}
+          >
+            {/* <span className="flex items-center justify-center text-3xl hover:scale-[1.1] text-[black] text-center">
+               <span ></span>
+            </span> */}
+          </td>
+        );
+      })}
+      </tr>
+    )}
+  </tbody>
 </table>
         <div className="flex lg:items-start justify-between px-4 py-2 mb-4 text-white rounded-lg lg:space-x-[3rem] lg:w-full w-full sm:w-3/4 gap-6 items-center mt-5">
           <div className="flex flex-col items-center lg:flex-row ">
