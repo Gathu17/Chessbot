@@ -12,7 +12,7 @@ export default class Piece {
 	}
 
 	changePosition(position) {
-		this.position = parseInt(position);
+		this.position = position;
 	}
 
 	getAllowedMoves() {

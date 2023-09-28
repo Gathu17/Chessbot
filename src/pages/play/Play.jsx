@@ -16,6 +16,7 @@ import {pieces} from '../../utils/ChessBoard'
 import startBoard from '../../utils/ChessBoard'
 
 const Play = () => {
+  
   const [selectedPiece, setSelectedPiece] = useState(null);
   const [playerScores, setPlayerScores] = useState([0, 0]);
   const [countdownTime, setCountdownTime] = useState(60);
@@ -186,6 +187,7 @@ const Play = () => {
               />
             </div>
             <span className="ml-3 text-lg font-semibold">Opponent</span>
+            <span id="turn"></span>
           </div>
           <div className="flex flex-col items-center lg:items-start">
             <span className="text-sm">Score:</span>

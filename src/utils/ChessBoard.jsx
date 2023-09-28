@@ -23,7 +23,7 @@ const startBoard = game => {
 
         for (const piece of game.pieces) {
             const square = document.getElementById(piece.position);
-            console.log(piece);
+
             square.innerHTML = piece.icon
         }
     }
@@ -38,7 +38,7 @@ const startBoard = game => {
             clickedSquare.classList.add('clicked-square');
 
             allowedMoves.forEach( allowedMove => {
-                
+
                 if (document.contains(document.getElementById(allowedMove))) {
                     document.getElementById(allowedMove).classList.add('allowed');
                 }
@@ -62,16 +62,13 @@ const startBoard = game => {
         const position = square.getAttribute('id');
        
         const existedPiece = game.getPieceByPos(position);
-       console.log(existedPiece);
+
         if (existedPiece && existedPiece.color === game.turn) {
-            console.log('imekubali');
             const pieceImg = document.getElementById(existedPiece.position);
-            console.log(pieceImg);
             clearSquares();
-            console.log(setAllowedSquares(pieceImg));
-            return setAllowedSquares(pieceImg);
+           return setAllowedSquares(pieceImg);
         }
-        console.log(clickedPieceName);
+
         game.movePiece(clickedPieceName, position);
     }
 
