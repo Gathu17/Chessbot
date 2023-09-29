@@ -81,24 +81,11 @@ export default class Game {
 			}
 		}
 		else{
-		// 	allowedPositions.forEach( (allowedPositionsGroup) => {
-		// 		for (const move of allowedPositionsGroup) {
-		// 			if (myBlockedPositions.indexOf(move) !== -1) {
-		// 				break;
-		// 			}
-		// 			else if ( checking && this.myKingChecked(move) ) {
-		// 				if (otherBlockedPositions.indexOf(move) !== -1) {
-		// 					break;
-		// 				}
-		// 				continue;
-		// 			}
-		// 			unblockedPositions.push(move);
-
-		// 			if (otherBlockedPositions.indexOf(move) !== -1) {
-		// 				break;
-		// 			}
-		// 		}
-		// 	});
+            for (let i = 0; i < allowedPositions?.length; i++) {
+                if (!myBlockedPositions.includes(allowedPositions[i])) {
+                    unblockedPositions.push(allowedPositions[i])
+                }
+            }
 		}
 		return unblockedPositions && unblockedPositions.length ? this.filterPositions(unblockedPositions) : unblockedPositions;
 	}
