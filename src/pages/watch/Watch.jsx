@@ -56,7 +56,8 @@ const Watch = () => {
 
   const fetchVideoData = async () => {
     try {
-      const apiKey = "AIzaSyCYQUGT5OSQmb69HJeWOlXjp6nRQSlAIu4";
+      // eslint-disable-next-line no-undef
+      const apiKey = process.env.API_KEY;
       const response = await fetch(
         `https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&id=${videoIds.join(
           ","
@@ -68,9 +69,8 @@ const Watch = () => {
       data.items.forEach((items) => {
         const videoId = items.id;
         const thumbnailUrl = items.snippet.thumbnails.default.url;
-        const title = items.snippet.title; // Extract the title
+        const title = items.snippet.title; 
         videoData[videoId] = { thumbnailUrl, title };
-        // console.log(title)
       });
       setVideoThumbnails(videoData);
     } catch (error) {
@@ -84,7 +84,7 @@ const Watch = () => {
 
   return (
     <div>
-      <div className="absolute inset-0 bg-black -z-[1] opacity-[.7]"></div>
+      <div className="absolute inset-0 bg-[#222] -z-[1] opacity-[.7]"></div>
       <div className="flex items-center justify-center">
         <img
           src="https://cdn3.iconfinder.com/data/icons/3d-science-and-education-illustration-sets/512/Knowledge.png"
@@ -116,7 +116,7 @@ const Watch = () => {
                 ></iframe>
               </div>
             ) : (
-              <div className="relative flex flex-wrap bg-black video-thumbnail">
+              <div className="relative flex flex-wrap bg-[#222] video-thumbnail">
                 <button
                   onClick={() => playVideo(videoId)}
                   className="absolute flex rounded-sm  w-[100%] h-[100%] items-center justify-center"

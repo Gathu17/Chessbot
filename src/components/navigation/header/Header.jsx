@@ -51,7 +51,7 @@ const Header = () => {
                             <React.Fragment key={subIndex}>
                               <Link to={submenuItem.path}>
                                 <p
-                                  className="p-1 px-2 my-1 border rounded-sm"
+                                  className="p-1 px-2 my-1 rounded-sm bg-[#333] flex justify-center "
                                   onClick={() => setShowSubMenu(!showSubmenu)}
                                 >
                                   {submenuItem.menu}
@@ -79,7 +79,7 @@ const Header = () => {
                           <React.Fragment key={subIndex}>
                             <Link to={submenuItem.path}>
                               <p
-                                className="p-1 my-1 border rounded-sm"
+                                className="p-1 my-2 rounded-sm bg-[#444] flex justify-center px-2 hover:scale-[1.05]"
                                 onClick={() => setShowSubMenu(!showSubmenu)}
                               >
                                 {submenuItem.menu}

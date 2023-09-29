@@ -193,7 +193,7 @@ const Play = () => {
                       }`}
                       onClick={() => handlePieceClick(row, col)}
                     >
-                      <span className="flex items-center justify-center text-3xl hover:scale-[1.1] text-[black]">
+                      <span className="flex items-center justify-center text-3xl hover:scale-[1.1] text-[[#222]]">
                         {piece}
                       </span>
                     </td>
@@ -248,7 +248,7 @@ const Play = () => {
         </div>
         {activeLink === "newGame" && (
           <div className="relative p-4">
-            <div className="bg-[black] absolute inset-0 -z-[1] opacity-[.6]"></div>
+            <div className="bg-[[#222]] absolute inset-0 -z-[1] opacity-[.6]"></div>
             <div className="mb-4">
               <label className="block mb-1 font-medium text-white text-md">
                 Select Chess Game Type:
