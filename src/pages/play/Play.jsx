@@ -56,7 +56,7 @@ const Play = () => {
 
   useEffect(()=>{
     startBoard(game);
-  }, [])
+  }, [game])
 
   const handlePieceClick = (row, col) => {
     const piece = chessIcons[row * 8 + col];

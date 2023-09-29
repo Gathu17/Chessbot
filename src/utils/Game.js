@@ -42,10 +42,10 @@ export default class Game {
 	}
 
 	filterPositions(positions) {
-		return positions.filter(pos => {
+		return positions?.filter(pos => {
             const position = pos.match(/(\d+)([a-h])/i); // Extract row and column
             // Check if row and column are valid
-            return parseInt(position[1]) >= 1 && parseInt(position[1]) <= 8 && position[2].toLowerCase() >= 'a' && position[2].toLowerCase() <= 'h';
+            return position[1] >= 1 && position[1] <= 8 && position[2].toLowerCase() >= 'a' && position[2].toLowerCase() <= 'h';
           });
 	}
 
@@ -100,7 +100,7 @@ export default class Game {
 		// 		}
 		// 	});
 		}
-		return this.filterPositions(unblockedPositions);
+		return unblockedPositions && unblockedPositions.length ? this.filterPositions(unblockedPositions) : unblockedPositions;
 	}
 
 	getPieceAllowedMoves(pieceName){
@@ -176,7 +176,7 @@ export default class Game {
 
 		const piece = this.getPieceByPos(pieceName);
 
-		const prevPosition = piece.position;
+		const prevPosition = piece?.position;
 		//position = parseInt(position);
 
 		if (piece && this.getPieceAllowedMoves(piece.position).indexOf(position) !== -1) {
