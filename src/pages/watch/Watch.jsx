@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReactPaginate from "react-paginate";
-import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
+import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 
 const Watch = () => {
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -33,9 +34,8 @@ const Watch = () => {
     "rKXGXFhxT3Q",
     "gtdcWYWn1Go",
     "fzGKPxJ5NYI",
-    "xnltKpdtetc"
+    "xnltKpdtetc",
   ];
-  
 
   const itemsPerPage = 6;
   const startIndex = currentPage * itemsPerPage;
@@ -63,7 +63,7 @@ const Watch = () => {
         )}&part=snippet`
       );
       const data = await response.json();
-  
+
       const videoData = {};
       data.items.forEach((items) => {
         const videoId = items.id;
@@ -77,7 +77,7 @@ const Watch = () => {
       console.error("Error fetching video data: ", error);
     }
   };
-  console.log(videoThumbnails[videoIds])
+  console.log(videoThumbnails[videoIds]);
   useEffect(() => {
     fetchVideoData();
   }, []);
@@ -86,7 +86,11 @@ const Watch = () => {
     <div>
       <div className="absolute inset-0 bg-black -z-[1] opacity-[.7]"></div>
       <div className="flex items-center justify-center">
-        <img src="https://cdn3.iconfinder.com/data/icons/3d-science-and-education-illustration-sets/512/Knowledge.png" alt="" className="w-[5rem]"/>
+        <img
+          src="https://cdn3.iconfinder.com/data/icons/3d-science-and-education-illustration-sets/512/Knowledge.png"
+          alt=""
+          className="w-[5rem]"
+        />
         <p className="text-[2rem] font-[900]">Learn from the Experts</p>
       </div>
       <div className="flex !items-start mx-auto flex-wrap gap-5 justify-center py-5">
@@ -97,9 +101,9 @@ const Watch = () => {
                 <div className="flex justify-end">
                   <button
                     onClick={closeVideo}
-                    className="flex px-2 py-1 my-2 rounded-sm bg-[#333] shadow-md shadow-[#aeadad] animate-pulse"
+                    className="flex px-2 py-1 my-2 rounded-sm bg-[#333]"
                   >
-                    Close
+                    <CloseOutlinedIcon fontSize="large" />
                   </button>
                 </div>
                 <iframe
@@ -115,15 +119,24 @@ const Watch = () => {
               <div className="relative flex flex-wrap bg-black video-thumbnail">
                 <button
                   onClick={() => playVideo(videoId)}
-                  className="absolute flex rounded-sm flex-end w-[100%] h-[100%]"
-                ></button>
+                  className="absolute flex rounded-sm  w-[100%] h-[100%] items-center justify-center"
+                >
+                <span className="bg-[red] py-2 px-4 rounded-xl">
+                    <PlayArrowOutlinedIcon fontSize="large" />
+                  </span>
+                </button>
                 <div className="flex flex-col items-center shadow-xl  shadow-[#222] rounded-md">
                   <img
-                    src={videoThumbnails[videoId]?.thumbnailUrl || "placeholder_url_here"}
+                    src={
+                      videoThumbnails[videoId]?.thumbnailUrl ||
+                      "placeholder_url_here"
+                    }
                     alt={`Thumbnail for YouTube video ${index + 1}`}
                     className="w-[80%] h-[20rem]"
                   />
-                  <p className="max-w-lg px-2 text-center">{videoThumbnails[videoId]?.title}</p>
+                  <p className="max-w-lg px-2 text-center">
+                    {videoThumbnails[videoId]?.title}
+                  </p>
                 </div>
               </div>
             )}
