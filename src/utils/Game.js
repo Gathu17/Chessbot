@@ -85,11 +85,38 @@ export default class Game {
 			}
 		}
 		else{
-            for (let i = 0; i < allowedPositions?.length; i++) {
-                if (!myBlockedPositions.includes(allowedPositions[i])) {
-                    unblockedPositions.push(allowedPositions[i])
-                }
-            }
+             console.log(allowedPositions);
+             for (let i = 0; i < allowedPositions?.length; i++) {
+                console.log(myBlockedPositions.indexOf(allowedPositions[i]) !== -1);
+                if (myBlockedPositions.indexOf(allowedPositions[i]) !== -1) {
+						break;
+				}                   
+                // else if ( checking && this.myKingChecked(allowedPositions[i]) ) {
+                //     if (otherBlockedPositions.indexOf(allowedPositions[i]) !== -1) {
+                //         break;
+                //     }
+                //     continue;
+                // }
+                    unblockedPositions.push(allowedPositions[i]);
+             }   
+			// allowedPositions.forEach( (move) => {
+                
+            //         console.log(move);
+					// if (myBlockedPositions.indexOf(move) == -1) {
+					// 	unblockedPositions.push(move);
+					// }
+					// else if ( checking && this.myKingChecked(move) ) {
+					// 	if (otherBlockedPositions.indexOf(move) !== -1) {
+					// 		break;
+					// 	}
+					// 	continue;
+					// }
+					
+
+					// if (otherBlockedPositions.indexOf(move) !== -1) {
+					// 	break;
+					// }
+			//});
 		}
 		return unblockedPositions && unblockedPositions.length ? this.filterPositions(unblockedPositions) : unblockedPositions;
 	}
