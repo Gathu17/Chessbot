@@ -42,10 +42,14 @@ export default class Game {
 	}
 
 	filterPositions(positions) {
+        
 		return positions?.filter(pos => {
-            const position = pos.match(/(\d+)([a-h])/i); // Extract row and column
-            // Check if row and column are valid
-            return position[1] >= 1 && position[1] <= 8 && position[2].toLowerCase() >= 'a' && position[2].toLowerCase() <= 'h';
+            if (typeof pos === 'string') {
+                // const position = pos.match(/(\d+)([a-h])/i); // Extract row and column
+                // console.log(position)
+                // Check if row and column are valid
+                return pos[0] >= 1 && pos[0] <= 8 && pos[1].toLowerCase() >= 'a' && pos[1].toLowerCase() <= 'h';
+            }
           });
 	}
 
@@ -94,7 +98,7 @@ export default class Game {
         
 		const piece = this.getPieceByPos(pieceName);
 
-		if(this.turn === piece.color){
+		if(this.turn === piece?.color){
 			this.setClickedPiece(piece);
 
 			let pieceAllowedMoves = piece.getAllowedMoves();
@@ -152,6 +156,7 @@ export default class Game {
 	}
 
 	triggerEvent(eventName, params) {
+    console.log(this._events[eventName], params)
 		if (this._events[eventName]) {
 			for (const cb of this._events[eventName]) {
 				cb(params);
@@ -163,11 +168,11 @@ export default class Game {
 
 		const piece = this.getPieceByPos(pieceName);
 
-		const prevPosition = piece?.position;
 		//position = parseInt(position);
 
 		if (piece && this.getPieceAllowedMoves(piece.position).indexOf(position) !== -1) {
-			const existedPiece = this.getPieceByPos(position)
+			const prevPosition = piece.position;
+      const existedPiece = this.getPieceByPos(position)
 
 			if (existedPiece) {
 				this.kill(existedPiece);
@@ -183,7 +188,7 @@ export default class Game {
 				piece.changePosition(position, true);
 			}
 			else {
-                console.log(position);
+
 				piece.changePosition(position);
 			}
 

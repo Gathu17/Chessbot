@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { FaInfo, FaPlus } from "react-icons/fa";
 import { GiEmptyChessboard, GiTabletopPlayers } from "react-icons/gi";
@@ -13,9 +13,190 @@ import { BsDot } from "react-icons/bs";
 import {isValidMove} from '../../utils/validate'
 import Game from '../../utils/Game'
 import {pieces} from '../../utils/ChessBoard'
-import startBoard from '../../utils/ChessBoard'
+import Square from "../../components/play/Square";
+// import startBoard from '../../utils/ChessBoard'
 
 const Play = () => {
+  const board = useRef(null)
+  const squares = Array(64).fill(null).map(() => useRef(null))
+  // let clickedPieceName
+  const [clickedPieceName, setClickedPieceName] = useState()
+
+  function handleSquareClick(e) {
+    movePiece(e.target)
+  }
+
+  function handlePieceClick(row, col) {
+    const piece = chessIcons[row * 8 + col];
+   
+    if (selectedPiece) {
+      if (selectedPiece.row === row && selectedPiece.col === col) {
+        return;
+      }
+    //  console.log(isValidMove(selectedPiece.piece, selectedPiece.row, selectedPiece.col, row,col));
+      
+      if(isValidMove(selectedPiece.piece, selectedPiece.row, selectedPiece.col, row, col)){
+          const newChessIcons = [...chessIcons];
+          newChessIcons[row * 8 + col] = selectedPiece.piece;
+          newChessIcons[selectedPiece.row * 8 + selectedPiece.col] = "";
+          setChessIcons(newChessIcons);
+          setSelectedPiece(null);
+          switchPlayers();
+      } else {
+        return;
+      }
+      
+      
+    } else if (piece) {
+      setSelectedPiece({ piece, row, col });
+    }
+  }
+
+  // squares.forEach( square => {
+  //     square.addEventListener("click", function () {
+  //         movePiece(this);
+  //     });
+  //     square.addEventListener("dragover", function(event){
+  //         event.preventDefault();
+  //     });
+  //     square.addEventListener("drop", function () {
+  //         movePiece(this);
+  //     });
+  // });
+
+  function setAllowedSquares(pieceImg) {
+    setClickedPieceName(pieceImg.id);
+    const allowedMoves = game.getPieceAllowedMoves(clickedPieceName || pieceImg.id);
+
+    if (allowedMoves) {
+      const clickedSquare = pieceImg.parentNode;
+      clickedSquare.classList.add('clicked-square');
+
+        // allowedMoves.forEach( allowedMove => {
+
+      squares.forEach(element => {
+        if (allowedMoves.includes(element.current.id)) {
+          element.current.classList.add('allowed')
+        }
+      });
+
+            // if (document.contains(document.getElementById(allowedMove))) {
+            //     document.getElementById(allowedMove).classList.add('allowed');
+            // }
+        // });
+    }
+    else{
+        clearSquares();
+    }
+  }
+
+  function movePiece(square) {
+    const position = square.getAttribute('id');
+   
+    const existedPiece = game?.getPieceByPos(position);
+    
+    if (existedPiece) {
+      if (existedPiece.color === game.turn) {
+        const pieceImg = squares.find((item) => item.current.id === existedPiece.position).current;
+        clearSquares();
+        setAllowedSquares(pieceImg);
+        return
+      }
+    }
+
+    game.movePiece(clickedPieceName, position);
+  }
+
+  const clearSquares = () => {
+    // const allowedSquares = board.current.querySelectorAll('.allowed');
+    const allowedSquares = squares.filter((item) => item.current.classList.value.includes('allowed'))
+    allowedSquares.forEach( allowedSquare => allowedSquare.current.classList.remove('allowed') );
+    // const cllickedSquare = document.getElementsByClassName('clicked-square')[0];
+    const cllickedSquare = squares.find(item => item.current.classList.value.includes('clicked-square'));
+    if (cllickedSquare) {
+        cllickedSquare.current.classList.remove('clicked-square');
+    }
+  }
+
+
+  const startBoard = game => {
+    // const board   = document.getElementById('board');
+
+    // const squares = board.current.querySelectorAll('.square');
+
+    const whiteSematary = document.getElementById('whiteSematary');
+    const blackSematary = document.getElementById('blackSematary');
+    const turnSign = document.getElementById('turn');
+    // let clickedPieceName;
+    console.log('turnSign')
+
+    const resetBoard = () => {
+        for (const square of squares) {
+            square.current.innerHTML = '';
+        }
+
+        for (const piece of game.pieces) {
+            // const square = document.getElementById(piece.position);
+            const square = squares.find(item => item.current.id === piece.position);
+
+            square.current.innerHTML = piece.icon
+        }
+    }
+
+    resetBoard();
+
+    // pieces.forEach( piece => {
+    //     const pieceImg = document.getElementById(piece.name);
+    //     pieceImg.addEventListener("drop", function () {
+    //         const square = document.getElementById(piece.position);
+    //         movePiece(square);
+    //     });
+    // });
+
+    document.querySelectorAll('img.piece').forEach( pieceImg => {
+        pieceImg.addEventListener("dragstart", function(event) {
+            event.stopPropagation();
+            event.dataTransfer.setData("text", event.target.id);
+            clearSquares();
+            setAllowedSquares(event.target)
+        });
+        pieceImg.addEventListener("drop", function(event) {
+            event.stopPropagation();
+            clearSquares();
+            setAllowedSquares(event.target)
+        });
+    });
+
+    game.on('pieceMove', piece => {
+        const square = document.getElementById(piece.position)
+        square.append( document.getElementById(piece.name) );
+        clearSquares();
+    });
+
+    game.on('turnChange', turn => {
+        turnSign.innerHTML = turn === 'white' ? "White's Turn" : "Black's Turn";
+    });
+
+    game.on('promotion', queen => {
+        const square = document.getElementById(queen.position);
+        square.innerHTML = `<img class="piece queen" id="${queen.name}" src="img/${queen.color}Queen.png">`;
+    })
+
+    game.on('kill', piece => {
+        const pieceImg = document.getElementById(piece.name);
+        pieceImg.parentNode.removeChild(pieceImg);
+        pieceImg.className = '';
+
+        const sematary = piece.color === 'white' ? whiteSematary : blackSematary;
+        sematary.querySelector('.'+piece.rank).append(pieceImg);
+    });
+
+    game.on('checkMate', color => {
+        const endScene = document.getElementById('endscene');
+        endScene.getElementsByClassName('winning-sign')[0].innerHTML = color + ' Wins';
+        endScene.classList.add('show');
+    })
+  }
   
   const [selectedPiece, setSelectedPiece] = useState(null);
   const [playerScores, setPlayerScores] = useState([0, 0]);
@@ -57,32 +238,6 @@ const Play = () => {
   useEffect(()=>{
     startBoard(game);
   }, [game])
-
-  const handlePieceClick = (row, col) => {
-    const piece = chessIcons[row * 8 + col];
-   
-    if (selectedPiece) {
-      if (selectedPiece.row === row && selectedPiece.col === col) {
-        return;
-      }
-    //  console.log(isValidMove(selectedPiece.piece, selectedPiece.row, selectedPiece.col, row,col));
-      
-      if(isValidMove(selectedPiece.piece, selectedPiece.row, selectedPiece.col, row, col)){
-          const newChessIcons = [...chessIcons];
-          newChessIcons[row * 8 + col] = selectedPiece.piece;
-          newChessIcons[selectedPiece.row * 8 + selectedPiece.col] = "";
-          setChessIcons(newChessIcons);
-          setSelectedPiece(null);
-          switchPlayers();
-      } else {
-        return;
-      }
-      
-      
-    } else if (piece) {
-      setSelectedPiece({ piece, row, col });
-    }
-  };
 
   const handleGameChange = (event) => {
     setSelectedGame(event.target.value);
@@ -280,7 +435,7 @@ const Play = () => {
 			<div id="18" className="square white" data-square="1-h"></div>
 		</div>
 	</div> */}
-  <table id="board" className="w-[400px] ">
+  <table id="board" ref={board} className="w-[400px] ">
     <tbody>
     {[...Array(8).keys()].map((_,row) =>
       <tr key={row}>
@@ -288,16 +443,15 @@ const Play = () => {
         const squareId = `${8 - row}${String.fromCharCode(97 + col)}`;
         const isEvenSquare = (row + col) % 2 === 0;
         return (
-          <td
+          <Square
+            squareId={squareId}
+            isEvenSquare={isEvenSquare}
+            row={row}
+            col={col}
+            squareRef={squares[row * 8 + col]}
             key={squareId}
-            id={squareId}
-            className={`square w-10 h-14 ${isEvenSquare ? "bg-[#E9EDCC]" : "bg-[#779954]"} text-center`}
-            data-square={`${8 - row}-${String.fromCharCode(97 + col)}`}
-          >
-            {/* <span className="flex items-center justify-center text-3xl hover:scale-[1.1] text-[black] text-center">
-               <span ></span>
-            </span> */}
-          </td>
+            handleClick={handleSquareClick}
+          />
         );
       })}
       </tr>
