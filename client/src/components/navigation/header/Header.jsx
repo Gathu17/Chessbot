@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { header, subMenu } from "../Data";
 import { Link } from "react-router-dom";
 import { CgMenuRight } from "react-icons/cg";
@@ -7,6 +7,25 @@ const Header = () => {
   const [showSubmenu, setShowSubMenu] = useState(false);
   const [hoveredMenuItemIndex, setHoveredMenuItemIndex] = useState(null);
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+
+  useEffect(() => {
+    // Check if a JWT token is available in localStorage or another appropriate location
+    const token = localStorage.getItem("jwtToken"); // Adjust the key as per your application
+    
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  console.log(isLoggedIn);
+  // Function to handle logout
+  const handleLogout = () => {
+    // Remove the JWT token from localStorage or another appropriate location
+    localStorage.removeItem("jwtToken"); // Adjust the key as per your application
+    setIsLoggedIn(false);
+  };
 
   return (
     <>
