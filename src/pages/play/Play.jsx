@@ -14,6 +14,7 @@ import {isValidMove} from '../../utils/validate'
 import Game from '../../utils/Game'
 import {pieces} from '../../utils/ChessBoard'
 import startBoard from '../../utils/ChessBoard'
+import ChessBoard from '../../utils/ChessBoard'
 
 const Play = () => {
   
@@ -37,7 +38,7 @@ const Play = () => {
   ];
   const game = new Game(pieces);
   
-
+  
   const flattenedChessIcons = initialChessboard.flat();
   const [chessIcons, setChessIcons] = useState(flattenedChessIcons);
   const switchPlayers = () => {
@@ -55,8 +56,8 @@ const Play = () => {
   }, []);
 
   useEffect(()=>{
-    startBoard(game);
-  }, [game])
+    console.log(pieces)
+  },[])
 
   const handlePieceClick = (row, col) => {
     const piece = chessIcons[row * 8 + col];
@@ -280,7 +281,7 @@ const Play = () => {
 			<div id="18" className="square white" data-square="1-h"></div>
 		</div>
 	</div> */}
-  <table id="board" className="w-[400px] ">
+  {/* <table id="board" className="w-[400px] ">
     <tbody>
     {[...Array(8).keys()].map((_,row) =>
       <tr key={row}>
@@ -293,17 +294,18 @@ const Play = () => {
             id={squareId}
             className={`square w-10 h-14 ${isEvenSquare ? "bg-[#E9EDCC]" : "bg-[#779954]"} text-center`}
             data-square={`${8 - row}-${String.fromCharCode(97 + col)}`}
-          >
+          > */}
             {/* <span className="flex items-center justify-center text-3xl hover:scale-[1.1] text-[black] text-center">
                <span ></span>
             </span> */}
-          </td>
+          {/* </td>
         );
       })}
       </tr>
     )}
   </tbody>
-</table>
+</table> */}
+      <ChessBoard game={game} />
         <div className="flex lg:items-start justify-between px-4 py-2 mb-4 text-white rounded-lg lg:space-x-[3rem] lg:w-full w-full sm:w-3/4 gap-6 items-center mt-5">
           <div className="flex flex-col items-center lg:flex-row ">
             <div className="flex items-center justify-center w-6 h-6 rounded-full lg:w-12 lg:h-12">

@@ -1,25 +1,33 @@
+import * as React from 'react';
 import Bishop from './Pieces/Bishop'
 import Pawn from './Pieces/Pawn'
 import Queen from './Pieces/Queen'
 import Rook from './Pieces/Rook'
 import Knight from './Pieces/Knight'
 import King from './Pieces/King'
-// import Game from './Game'
+ import Game from './Game'
 
 
-const startBoard = game => {
-    const board   = document.getElementById('board');
-
-    const squares = board.querySelectorAll('.square');
+const ChessBoard = () => {
+    const board = React.useRef(null)
+    const squares = Array(64).fill(null).map(() => React.useRef(null))
+    const [clickedPieceName, setClickedPieceName] = React.useState()
+    const game = new Game(pieces);
+    
     const whiteSematary = document.getElementById('whiteSematary');
     const blackSematary = document.getElementById('blackSematary');
     const turnSign = document.getElementById('turn');
-    let clickedPieceName;
+  //  let clickedPieceName;
+
+    function handleSquareClick(e) {
+        movePiece(e.target)
+      }
 
     const resetBoard = () => {
         for (const square of squares) {
-            square.innerHTML = '';
+            square.current.innerHTML = '';
         }
+       // const game = new Game(pieces);
 
         for (const piece of game.pieces) {
             const square = document.getElementById(piece.position);
@@ -27,14 +35,18 @@ const startBoard = game => {
             square.innerHTML = piece.icon
         }
     }
-
-    resetBoard();
-
+    React.useEffect(()=>{
+        resetBoard();
+    })
+    
     const setAllowedSquares = (pieceImg) => {
-        clickedPieceName = pieceImg.id;
-        const allowedMoves = game.getPieceAllowedMoves(clickedPieceName);
+       console.log(pieceImg.id)
+       setClickedPieceName(pieceImg.id);
+        const allowedMoves = game.getPieceAllowedMoves(clickedPieceName || pieceImg.id);
+
         if (allowedMoves) {
             const clickedSquare = pieceImg.parentNode;
+            
             clickedSquare.classList.add('clicked-square');
 
             allowedMoves.forEach( allowedMove => {
@@ -50,20 +62,23 @@ const startBoard = game => {
     }
 
     const clearSquares = () => {
-        const allowedSquares = board.querySelectorAll('.allowed');
-        allowedSquares.forEach( allowedSquare => allowedSquare.classList.remove('allowed') );
-        const cllickedSquare = document.getElementsByClassName('clicked-square')[0];
+        const allowedSquares = squares.filter((item) => item.current.classList.value.includes('allowed'))
+        allowedSquares.forEach( allowedSquare => allowedSquare.current.classList.remove('allowed') );
+
+        const cllickedSquare = squares.find(item => item.current.classList.value.includes('clicked-square'));
         if (cllickedSquare) {
-            cllickedSquare.classList.remove('clicked-square');
+            cllickedSquare.current.classList.remove('clicked-square');
         }
-    }
+      }
 
     function movePiece(square) {
+        console.log(square)
         const position = square.getAttribute('id');
-       
+        console.log(position)
         const existedPiece = game.getPieceByPos(position);
-
+        console.log(existedPiece,game)
         if (existedPiece && existedPiece.color === game.turn) {
+
             const pieceImg = document.getElementById(existedPiece.position);
             clearSquares();
            return setAllowedSquares(pieceImg);
@@ -72,17 +87,17 @@ const startBoard = game => {
         game.movePiece(clickedPieceName, position);
     }
 
-    squares.forEach( square => {
-        square.addEventListener("click", function () {
-            movePiece(this);
-        });
-        square.addEventListener("dragover", function(event){
-            event.preventDefault();
-        });
-        square.addEventListener("drop", function () {
-            movePiece(this);
-        });
-    });
+    // squares.forEach( square => {
+    //     square.addEventListener("click", function () {
+    //         movePiece(this);
+    //     });
+    //     square.addEventListener("dragover", function(event){
+    //         event.preventDefault();
+    //     });
+    //     square.addEventListener("drop", function () {
+    //         movePiece(this);
+    //     });
+    // });
 
     // pieces.forEach( piece => {
     //     const pieceImg = document.getElementById(piece.name);
@@ -135,6 +150,36 @@ const startBoard = game => {
         endScene.getElementsByClassName('winning-sign')[0].innerHTML = color + ' Wins';
         endScene.classList.add('show');
     })
+    return(
+        <>
+          <table ref={board} id="board" className="w-[400px] ">
+    <tbody>
+    {[...Array(8).keys()].map((_,row) =>
+      <tr key={row}>
+      {[...Array(8).keys()].map((_,col) => {
+        const squareId = `${8 - row}${String.fromCharCode(97 + col)}`;
+        const isEvenSquare = (row + col) % 2 === 0;
+        return (
+          <td
+            key={squareId}
+            id={squareId}
+            ref={squares[row * 8 + col]}
+            onClick={handleSquareClick}
+            className={`square w-10 h-14 ${isEvenSquare ? "bg-[#E9EDCC]" : "bg-[#779954]"} text-center`}
+            data-square={`${8 - row}-${String.fromCharCode(97 + col)}`}
+          >
+            {/* <span className="flex items-center justify-center text-3xl hover:scale-[1.1] text-[black] text-center">
+               <span ></span>
+            </span> */}
+          </td>
+        );
+      })}
+      </tr>
+    )}
+  </tbody>
+</table>
+        </>
+    )
 }
 
 export const pieces = [
@@ -173,4 +218,4 @@ export const pieces = [
     new Rook('8h', 'blackRook2', "♜")
 ];
 
-export default startBoard;
+export default  ChessBoard;

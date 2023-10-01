@@ -26,7 +26,9 @@ export default class Game {
 	}
 
 	changeTurn() {
+		console.log('hapa')
 		this.turn = this.turn === 'white' ? 'black' : 'white';
+		console.log(this.turn)
 		this.triggerEvent('turnChange', this.turn);
 	}
 
@@ -42,10 +44,12 @@ export default class Game {
 	}
 
 	filterPositions(positions) {
+		console.log(positions)
 		return positions?.filter(pos => {
-            const position = pos.match(/(\d+)([a-h])/i); // Extract row and column
+			console.log(pos)
+           // const position = pos.match(/(\d+)([a-h])/i); // Extract row and column
             // Check if row and column are valid
-            return position[1] >= 1 && position[1] <= 8 && position[2].toLowerCase() >= 'a' && position[2].toLowerCase() <= 'h';
+            return pos[0] >= 1 && pos[0] <= 8 && pos[1].toLowerCase() >= 'a' && pos[1].toLowerCase() <= 'h';
           });
 	}
 
@@ -118,12 +122,12 @@ export default class Game {
 	}
 
 	getPieceAllowedMoves(pieceName){
-        
+        console.log(this.pieces)
 		const piece = this.getPieceByPos(pieceName);
-
-		if(this.turn === piece.color){
+           console.log(piece,pieceName,this.turn);
+		if(this.turn === piece?.color){
 			this.setClickedPiece(piece);
-
+               console.log(piece)
 			let pieceAllowedMoves = piece.getAllowedMoves();
 
 			if (piece.rank === 'king') {
@@ -167,7 +171,12 @@ export default class Game {
 	}
 
 	getPieceByPos(piecePosition) {
-		return this.pieces.filter(obj =>  obj.position == piecePosition )[0];
+		console.log(this.pieces?.filter(obj =>  {
+			console.log(
+				obj.position
+			)
+			return obj.position == piecePosition} ))
+		return this.pieces.filter(obj =>  {return obj.position == piecePosition} )[0];
 	}
 
 	positionHasExistingPiece(position) {
@@ -179,21 +188,24 @@ export default class Game {
 	}
 
 	triggerEvent(eventName, params) {
+		
 		if (this._events[eventName]) {
+
 			for (const cb of this._events[eventName]) {
+				console.log(cb)
 				cb(params);
 			}
 		}
 	}
 
 	movePiece(pieceName, position) {
-
+       console.log(pieceName, position);
 		const piece = this.getPieceByPos(pieceName);
-
+        console.log(piece)
 		const prevPosition = piece?.position;
 		//position = parseInt(position);
-
-		if (piece && this.getPieceAllowedMoves(piece.position).indexOf(position) !== -1) {
+       console.log(this.getPieceAllowedMoves(piece?.position))
+		if (piece && this.getPieceAllowedMoves(piece?.position).indexOf(position) !== -1) {
 			const existedPiece = this.getPieceByPos(position)
 
 			if (existedPiece) {
@@ -213,7 +225,7 @@ export default class Game {
                 console.log(position);
 				piece.changePosition(position);
 			}
-
+                  
 			this.triggerEvent('pieceMove', piece);
 
 			if (piece.rank === 'pawn' && (position > 80 || position < 20)) {
