@@ -193,9 +193,6 @@ const Play = () => {
             <span className="text-xl font-bold">{countdownTime} sec</span>
           </div>
         </div>
-<<<<<<< HEAD
-         <ChessBoard game={game} />
-=======
         <table className="border-gray-300 rounded-md">
           <tbody>
             {[...Array(8)].map((_, row) => (
@@ -220,7 +217,6 @@ const Play = () => {
             ))}
           </tbody>
         </table>
->>>>>>> 5eed306e41444a5128b9d12fd6a40e5ca2856a2b
         <div className="flex lg:items-start justify-between px-4 py-2 mb-4 text-white rounded-lg lg:space-x-[3rem] lg:w-full w-full sm:w-3/4 gap-6 items-center mt-5">
           <div className="flex flex-col items-center lg:flex-row ">
             <div className="flex items-center justify-center w-6 h-6 rounded-full lg:w-12 lg:h-12">
