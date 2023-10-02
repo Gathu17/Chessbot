@@ -13,6 +13,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 const SignUp = () => {
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("")
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
@@ -60,6 +61,7 @@ const SignUp = () => {
         },
         body: JSON.stringify({
           name,
+          username,
           email,
           phoneNumber,
           password,
@@ -150,6 +152,24 @@ const SignUp = () => {
                 onChange={(e) => setName(e.target.value)}
                 required
                 placeholder="Full Name"
+                className="w-full px-3 py-3 leading-tight text-[#000] border rounded appearance-none focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <div className="space-y-4">
+              <label
+                className="block text-sm font-bold text-[#ddd]"
+                htmlFor="name"
+              >
+                Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                placeholder="Username"
                 className="w-full px-3 py-3 leading-tight text-[#000] border rounded appearance-none focus:outline-none focus:shadow-outline"
               />
             </div>

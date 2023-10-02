@@ -3,13 +3,15 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate  } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import Redux from "../../redux/redux";
 
 
 const SignIn = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [token, setToken] = useState(null);
   const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
@@ -18,7 +20,7 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await fetch("http://localhost:3001/api/login", {
         method: "POST",
@@ -26,16 +28,19 @@ const SignIn = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email,
+          username,
           password,
         }),
       });
-
+  
       if (response.ok) {
-        toast.success("Login Successful")
-       setTimeout(()=>{
-        navigate("/");
-       },2000)
+        const data = await response.json();
+        const token = data.token;
+        toast.success("Login Successful");
+       setToken(token); 
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
       } else {
         const data = await response.json();
         toast.error(data.message);
@@ -45,10 +50,13 @@ const SignIn = () => {
       console.error("Error during login:", error);
     }
   };
-
+  
 
   return (
       <>
+      <div className="hidden">
+        <Redux token={token} />
+      </div>
        <Toaster
         toastOptions={{
           className: "",
@@ -81,23 +89,23 @@ const SignIn = () => {
          
           <form
             onSubmit={handleSubmit}
-            className="w-[70%] px-8 pt-6 pb-8 my-4 space-y-6 bg-[#333] rounded shadow-md mx-auto lg:mx-0"
+            className="lg:w-[70%] px-8 pt-6 pb-8 my-4 space-y-6 bg-[#333] rounded shadow-md mx-auto lg:mx-0"
 
           >
             <div className="mb-4">
               <label
                 className="block mb-2 text-sm font-bold text-[#ddd]"
-                htmlFor="email"
+                htmlFor="username"
               >
-                Email
+                Username
               </label>
               <input
-                type="email"
-                id="email"
-                name="email"
-                value={email}
-                placeholder="example@mail.com"
-                onChange={(e) => setEmail(e.target.value)}
+                type="username"
+                id="username"
+                name="username"
+                value={username}
+                placeholder="mike"
+                onChange={(e) => setUserName(e.target.value)}
                 required
                 className="w-full px-3 py-2 leading-tight text-[#ddd] border rounded appearance-none focus:outline-none focus:shadow-outline text-[black]"
               />
