@@ -20,9 +20,31 @@ import moment from "moment";
 const Play = () => {
   const board = useRef(null)
   const squares = Array(64).fill(null).map(() => useRef(null))
+  const turnLabel = useRef(null)
   // let clickedPieceName
   const [clickedPieceName, setClickedPieceName] = useState()
   const [duration, setDuration] = useState(moment.duration(5000).asSeconds());
+
+  const [selectedPiece, setSelectedPiece] = useState(null);
+  const [playerScores, setPlayerScores] = useState([0, 0]);
+  const [countdownTime, setCountdownTime] = useState(60);
+  const [activeLink, setActiveLink] = useState(["newGame", "games", "players"]);
+  const [selectedGame, setSelectedGame] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
+  const [peopleOnline, setPeopleOnline] = useState([]);
+
+  const initialChessboard = [
+    ["♜", "♞", "♝", "♛", "♚", "♝", "♞", "♜"],
+    ["♟", "♟", "♟", "♟", "♟", "♟", "♟", "♟"],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["♙", "♙", "♙", "♙", "♙", "♙", "♙", "♙"],
+    ["♖", "♘", "♗", "♕", "♔", "♗", "♘", "♖"],
+  ];
+  const game = new Game(pieces);
+  const [turnPlaying, setTurnPlaying] = useState(game.turn)
 
 // debugger
   function handleSquareClick(e) {
@@ -96,18 +118,17 @@ const Play = () => {
   function movePiece(square) {
     const position = square.getAttribute('id');
    
-    const existedPiece = game?.getPieceByPos(position);
-    
-    if (existedPiece) {
-      if (existedPiece.color === game.turn) {
-        const pieceImg = squares.find((item) => item.current.id === existedPiece.position).current;
-        clearSquares();
-        setAllowedSquares(pieceImg);
-        return
-      }
-    }
-
+    // const existedPiece = game.getPieceByPos(position);
+    const existedPieceElem = squares.find(square => square.current.id === position).current
+    const existedPiece = game.pieces.filter(item => item.position == position)[0]
+    if (existedPieceElem && existedPiece?.color === turnPlaying) {
+      const pieceImg = squares.find((item) => item.current.id === existedPiece.position).current;
+      clearSquares();
+      setAllowedSquares(pieceImg);
+      return
+    } 
     game.movePiece(clickedPieceName, position);
+    setTurnPlaying(turnPlaying === 'white' ? "black" : "white")
   }
 
   const clearSquares = () => {
@@ -123,15 +144,9 @@ const Play = () => {
 
 
   const startBoard = game => {
-    // const board   = document.getElementById('board');
-
-    // const squares = board.current.querySelectorAll('.square');
 
     const whiteSematary = document.getElementById('whiteSematary');
     const blackSematary = document.getElementById('blackSematary');
-    const turnSign = document.getElementById('turn');
-    // let clickedPieceName;
-    console.log('turnSign')
 
     const resetBoard = () => {
         for (const square of squares) {
@@ -171,14 +186,14 @@ const Play = () => {
     });
 
     game.on('pieceMove', piece => {
-      console.log(piece)
         const square = squares.find((elem) => elem.current.id === piece.position)
         square.current.append( piece.icon );
         clearSquares();
     });
 
-    game.on('turnChange', turn => {
-        turnSign.textContent = turn === 'white' ? "White's Turn" : "Black's Turn";
+    game.on('turnChange', () => {
+      const currentTurn = turnPlaying === 'white' ? "black" : "white"
+      turnLabel.textContent = (currentTurn === 'white' ? "White's Turn" : "Black's Turn");
     });
 
     game.on('promotion', queen => {
@@ -201,26 +216,7 @@ const Play = () => {
         endScene.classList.add('show');
     })
   }
-  
-  const [selectedPiece, setSelectedPiece] = useState(null);
-  const [playerScores, setPlayerScores] = useState([0, 0]);
-  const [countdownTime, setCountdownTime] = useState(60);
-  const [activeLink, setActiveLink] = useState(["newGame", "games", "players"]);
-  const [selectedGame, setSelectedGame] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
-  const [peopleOnline, setPeopleOnline] = useState([]);
 
-  const initialChessboard = [
-    ["♜", "♞", "♝", "♛", "♚", "♝", "♞", "♜"],
-    ["♟", "♟", "♟", "♟", "♟", "♟", "♟", "♟"],
-    ["", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", ""],
-    ["♙", "♙", "♙", "♙", "♙", "♙", "♙", "♙"],
-    ["♖", "♘", "♗", "♕", "♔", "♗", "♘", "♖"],
-  ];
-  const game = new Game(pieces);
   
 
   const flattenedChessIcons = initialChessboard.flat();
@@ -241,7 +237,7 @@ const Play = () => {
 
   useEffect(()=>{
     startBoard(game);
-  }, [game])
+  }, [game, turnPlaying])
 
   const handleGameChange = (event) => {
     setSelectedGame(event.target.value);
@@ -346,7 +342,7 @@ const Play = () => {
               />
             </div>
             <span className="ml-3 text-lg font-semibold">Opponent</span>
-            <span id="turn"></span>
+            <span id="turn" ref={turnLabel}>{turnPlaying}'s turn</span>
           </div>
           <div className="flex flex-col items-center lg:items-start">
             <span className="text-sm">Score:</span>

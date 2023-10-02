@@ -26,7 +26,8 @@ export default class Game {
 	}
 
 	changeTurn() {
-		this.turn = this.turn === 'white' ? 'black' : 'white';
+		if (this.turn === 'white') this.turn = 'black';
+    else this.turn = 'white'
 		this.triggerEvent('turnChange', this.turn);
 	}
 
@@ -85,9 +86,7 @@ export default class Game {
 			}
 		}
 		else{
-             console.log(allowedPositions);
              for (let i = 0; i < allowedPositions?.length; i++) {
-                console.log(myBlockedPositions.indexOf(allowedPositions[i]) !== -1);
                 if (myBlockedPositions.indexOf(allowedPositions[i]) !== -1) {
 						break;
 				}                   
@@ -183,7 +182,6 @@ export default class Game {
 	}
 
 	triggerEvent(eventName, params) {
-    console.log(this._events[eventName], params)
 		if (this._events[eventName]) {
 			for (const cb of this._events[eventName]) {
 				cb(params);
