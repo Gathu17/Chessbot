@@ -82,7 +82,6 @@ router.get("/users/:userId/games", async (req, res) => {
   }
 });
 
-
 // Get all scores
 router.get("/scores", async (req, res) => {
   try {
@@ -108,6 +107,54 @@ router.get("/users/:userId/scores", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error fetching user scores." });
+  }
+});
+
+//Auth
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    // Find the user by email
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(401).json({ error: "Invalid email or password." });
+    }
+    // Check if the password is correct
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // const isPasswordValid = await user.validatePassword(password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid email or password." });
+    }
+    // If the email and password are correct, you can generate a token here for authentication
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      "yoursecretkey",
+      {
+        expiresIn: "1h", // Token expiration time
+      }
+    );
+    res.status(200).json({ message: "Login successful", token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error during login." });
+  }
+});
+
+router.post("/signup", async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    // Check if the user with the given email already exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email already in use." });
+    }
+    // Create a new user
+    const newUser = await User.create({ username, email, password });
+    res.status(201).json(newUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error creating user." });
   }
 });
 
