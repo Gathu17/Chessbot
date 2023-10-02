@@ -13,6 +13,7 @@ const ChessBoard = () => {
     const board = React.useRef(null)
     const squares = Array(64).fill(null).map(() => React.useRef(null))
     const [clickedPieceName, setClickedPieceName] = React.useState('')
+    const [turnPlaying, setTurnPlaying] = React.useState('white')
     const game = new Game(pieces);
     
     const whiteSematary = document.getElementById('whiteSematary');
@@ -29,23 +30,25 @@ const ChessBoard = () => {
             square.current.innerHTML = '';
         }
        // const game = new Game(pieces);
-
+       
         for (const piece of game.pieces) {
             const square = document.getElementById(piece.position);
 
             square.innerHTML = piece.icon
         }
+
+        turnSign.innerHTML = turnPlaying === 'white' ? "White's Turn" : "Black's Turn";
     }
     React.useEffect(()=>{
         resetBoard();
-    })
+    },[turnPlaying])
     
     const setAllowedSquares = (pieceImg) => {
        console.log(pieceImg.id)
        setClickedPieceName(pieceImg.id);
-       console.log(clickedPieceName);
+      
         const allowedMoves = game.getPieceAllowedMoves(clickedPieceName || pieceImg.id);
-       
+        console.log(clickedPieceName, allowedMoves);
         if (allowedMoves) {
             const clickedSquare = pieceImg.parentNode;
             
@@ -66,7 +69,7 @@ const ChessBoard = () => {
     const clearSquares = () => {
         const allowedSquares = squares.filter((item) => item.current.classList.value.includes('allowed'))
         allowedSquares.forEach( allowedSquare => allowedSquare.current.classList.remove('allowed') );
-
+        // const cllickedSquare = document.getElementsByClassName('clicked-square')[0];
         const cllickedSquare = squares.find(item => item.current.classList.value.includes('clicked-square'));
         if (cllickedSquare) {
             cllickedSquare.current.classList.remove('clicked-square');
@@ -74,9 +77,8 @@ const ChessBoard = () => {
       }
 
     function movePiece(square) {
-        console.log(square)
         const position = square.getAttribute('id');
-        console.log(position)
+
         const existedPiece = game.getPieceByPos(position);
         console.log(existedPiece,game)
         if (existedPiece && existedPiece.color == game.turn) {
@@ -87,6 +89,7 @@ const ChessBoard = () => {
         }
         console.log(clickedPieceName);
         game.movePiece(clickedPieceName, position);
+        setTurnPlaying(turnPlaying === 'white' ? "black" : "white")
     }
 
     // squares.forEach( square => {
@@ -130,6 +133,7 @@ const ChessBoard = () => {
     });
 
     game.on('turnChange', turn => {
+        
         turnSign.innerHTML = turn === 'white' ? "White's Turn" : "Black's Turn";
     });
 
