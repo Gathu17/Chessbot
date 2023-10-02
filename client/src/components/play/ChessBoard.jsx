@@ -12,7 +12,7 @@ import Square from "./Square";
 const ChessBoard = () => {
     const board = React.useRef(null)
     const squares = Array(64).fill(null).map(() => React.useRef(null))
-    const [clickedPieceName, setClickedPieceName] = React.useState()
+    const [clickedPieceName, setClickedPieceName] = React.useState('')
     const game = new Game(pieces);
     
     const whiteSematary = document.getElementById('whiteSematary');
@@ -43,8 +43,9 @@ const ChessBoard = () => {
     const setAllowedSquares = (pieceImg) => {
        console.log(pieceImg.id)
        setClickedPieceName(pieceImg.id);
+       console.log(clickedPieceName);
         const allowedMoves = game.getPieceAllowedMoves(clickedPieceName || pieceImg.id);
-
+       
         if (allowedMoves) {
             const clickedSquare = pieceImg.parentNode;
             
@@ -78,13 +79,13 @@ const ChessBoard = () => {
         console.log(position)
         const existedPiece = game.getPieceByPos(position);
         console.log(existedPiece,game)
-        if (existedPiece && existedPiece.color === game.turn) {
+        if (existedPiece && existedPiece.color == game.turn) {
 
             const pieceImg = document.getElementById(existedPiece.position);
             clearSquares();
            return setAllowedSquares(pieceImg);
         }
-
+        console.log(clickedPieceName);
         game.movePiece(clickedPieceName, position);
     }
 

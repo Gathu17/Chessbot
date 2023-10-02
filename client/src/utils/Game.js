@@ -82,6 +82,7 @@ export default class Game {
 		}
 		else{
              for (let i = 0; i < allowedPositions?.length; i++) {
+				console.log(allowedPositions);
                 if (myBlockedPositions.indexOf(allowedPositions[i]) !== -1) {
 						break;
 				}                   
@@ -99,10 +100,11 @@ export default class Game {
 
 	getPieceAllowedMoves(pieceName){
 		const piece = this.getPieceByPos(pieceName);
-		if(this.turn === piece?.color){
+		console.log(piece, this.turn);
+		if(this.turn == piece?.color){
 			this.setClickedPiece(piece);
 			let pieceAllowedMoves = piece.getAllowedMoves();
-
+			console.log(pieceAllowedMoves);
 			if (piece.rank === 'king') {
 				pieceAllowedMoves = this.getCastlingSquares(piece, pieceAllowedMoves);
 			}
@@ -144,6 +146,7 @@ export default class Game {
 	}
 
 	getPieceByPos(piecePosition) {
+		console.log(piecePosition);
 		return this.pieces.filter(obj =>  {return obj.position == piecePosition} )[0];
 	}
 
@@ -167,11 +170,12 @@ export default class Game {
 
 	movePiece(pieceName, position) {
 		const piece = this.getPieceByPos(pieceName);
-
+        console.log(pieceName);
 		const prevPosition = piece?.position;
 		//position = parseInt(position);
-
+          console.log( this.getPieceAllowedMoves(piece?.position));
 		if (piece && this.getPieceAllowedMoves(piece?.position).indexOf(position) !== -1) {
+			
 			const existedPiece = this.getPieceByPos(position)
 
 			if (existedPiece) {
