@@ -45,10 +45,7 @@ export default class Game {
 	filterPositions(positions) {
         
 		return positions?.filter(pos => {
-            if (typeof pos === 'string') {
-                // const position = pos.match(/(\d+)([a-h])/i); // Extract row and column
-                // console.log(position)
-                // Check if row and column are valid
+			if (typeof pos === 'string') {
                 return pos[0] >= 1 && pos[0] <= 8 && pos[1].toLowerCase() >= 'a' && pos[1].toLowerCase() <= 'h';
             }
           });
@@ -98,35 +95,15 @@ export default class Game {
                 // }
                     unblockedPositions.push(allowedPositions[i]);
              }   
-			// allowedPositions.forEach( (move) => {
-                
-            //         console.log(move);
-					// if (myBlockedPositions.indexOf(move) == -1) {
-					// 	unblockedPositions.push(move);
-					// }
-					// else if ( checking && this.myKingChecked(move) ) {
-					// 	if (otherBlockedPositions.indexOf(move) !== -1) {
-					// 		break;
-					// 	}
-					// 	continue;
-					// }
-					
-
-					// if (otherBlockedPositions.indexOf(move) !== -1) {
-					// 	break;
-					// }
-			//});
 		}
 		return unblockedPositions && unblockedPositions.length ? this.filterPositions(unblockedPositions) : unblockedPositions;
 	}
 
 	getPieceAllowedMoves(pieceName){
-        
 		const piece = this.getPieceByPos(pieceName);
 
 		if(this.turn === piece?.color){
 			this.setClickedPiece(piece);
-
 			let pieceAllowedMoves = piece.getAllowedMoves();
 
 			if (piece.rank === 'king') {
@@ -170,7 +147,7 @@ export default class Game {
 	}
 
 	getPieceByPos(piecePosition) {
-		return this.pieces.filter(obj =>  obj.position == piecePosition )[0];
+		return this.pieces.filter(obj =>  {return obj.position == piecePosition} )[0];
 	}
 
 	positionHasExistingPiece(position) {
@@ -182,7 +159,9 @@ export default class Game {
 	}
 
 	triggerEvent(eventName, params) {
+		
 		if (this._events[eventName]) {
+
 			for (const cb of this._events[eventName]) {
 				cb(params);
 			}
@@ -190,7 +169,6 @@ export default class Game {
 	}
 
 	movePiece(pieceName, position) {
-
 		const piece = this.getPieceByPos(pieceName);
 
 		//position = parseInt(position);
@@ -213,10 +191,9 @@ export default class Game {
 				piece.changePosition(position, true);
 			}
 			else {
-
 				piece.changePosition(position);
 			}
-
+                  
 			this.triggerEvent('pieceMove', piece);
 
 			if (piece.rank === 'pawn' && (position > 80 || position < 20)) {
