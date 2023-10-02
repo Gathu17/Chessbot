@@ -14,6 +14,7 @@ import {isValidMove} from '../../utils/validate'
 import Game from '../../utils/Game'
 import {pieces} from '../../utils/ChessBoard'
 import Square from "../../components/play/Square";
+import moment from "moment";
 // import startBoard from '../../utils/ChessBoard'
 
 const Play = () => {
@@ -21,7 +22,9 @@ const Play = () => {
   const squares = Array(64).fill(null).map(() => useRef(null))
   // let clickedPieceName
   const [clickedPieceName, setClickedPieceName] = useState()
+  const [duration, setDuration] = useState(moment.duration(5000).asSeconds());
 
+// debugger
   function handleSquareClick(e) {
     movePiece(e.target)
   }
@@ -132,14 +135,14 @@ const Play = () => {
 
     const resetBoard = () => {
         for (const square of squares) {
-            square.current.innerHTML = '';
+            square.current.textContent = '';
         }
 
         for (const piece of game.pieces) {
             // const square = document.getElementById(piece.position);
             const square = squares.find(item => item.current.id === piece.position);
 
-            square.current.innerHTML = piece.icon
+            square.current.textContent = piece.icon
         }
     }
 
@@ -168,18 +171,19 @@ const Play = () => {
     });
 
     game.on('pieceMove', piece => {
-        const square = document.getElementById(piece.position)
-        square.append( document.getElementById(piece.name) );
+      console.log(piece)
+        const square = squares.find((elem) => elem.current.id === piece.position)
+        square.current.append( piece.icon );
         clearSquares();
     });
 
     game.on('turnChange', turn => {
-        turnSign.innerHTML = turn === 'white' ? "White's Turn" : "Black's Turn";
+        turnSign.textContent = turn === 'white' ? "White's Turn" : "Black's Turn";
     });
 
     game.on('promotion', queen => {
         const square = document.getElementById(queen.position);
-        square.innerHTML = `<img class="piece queen" id="${queen.name}" src="img/${queen.color}Queen.png">`;
+        square.textContent = `<img class="piece queen" id="${queen.name}" src="img/${queen.color}Queen.png">`;
     })
 
     game.on('kill', piece => {
@@ -193,7 +197,7 @@ const Play = () => {
 
     game.on('checkMate', color => {
         const endScene = document.getElementById('endscene');
-        endScene.getElementsByClassName('winning-sign')[0].innerHTML = color + ' Wins';
+        endScene.getElementsByClassName('winning-sign')[0].textContent = color + ' Wins';
         endScene.classList.add('show');
     })
   }
@@ -451,6 +455,8 @@ const Play = () => {
             squareRef={squares[row * 8 + col]}
             key={squareId}
             handleClick={handleSquareClick}
+            startBoard={startBoard}
+            game={game}
           />
         );
       })}
@@ -475,7 +481,7 @@ const Play = () => {
           </div>
           <div className="flex flex-col items-start">
             <span className="text-sm">Time Remaining:</span>
-            <span className="text-xl font-bold">{countdownTime} sec</span>
+            <span className="text-xl font-bold">{duration} sec</span>
           </div>
         </div>
       </div>
