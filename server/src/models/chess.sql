@@ -1,0 +1,25 @@
+CREATE TABLE Game (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  status ENUM('active', 'inactive'),
+  timestamps TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Scores (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  userId INT,
+  opponentId INT,
+  gameId INT,
+  game_outcome ENUM(0, 1, 2),
+  timestamps TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (userId) REFERENCES Users(id),
+  FOREIGN KEY (opponentId) REFERENCES Users(id),
+  FOREIGN KEY (gameId) REFERENCES Game(id)
+);
+
+CREATE TABLE Users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  name VARCHAR(255),
+  password VARCHAR(255),
+  timestamps TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
