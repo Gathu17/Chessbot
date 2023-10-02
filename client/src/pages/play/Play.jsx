@@ -12,9 +12,10 @@ import { ImExit } from "react-icons/im";
 import { BsDot } from "react-icons/bs";
 import {isValidMove} from '../../utils/validate'
 import Game from '../../utils/Game'
-import {pieces} from '../../components/play/ChessBoard'
+import {pieces} from '../../utils/ChessBoard'
+import Square from "../../components/play/Square";
 import moment from "moment";
-import ChessBoard from '../../components/play/ChessBoard'
+// import startBoard from '../../utils/ChessBoard'
 
 const Play = () => {
   const board = useRef(null)
@@ -57,6 +58,7 @@ const Play = () => {
       if (selectedPiece.row === row && selectedPiece.col === col) {
         return;
       }
+    //  console.log(isValidMove(selectedPiece.piece, selectedPiece.row, selectedPiece.col, row,col));
       
       if(isValidMove(selectedPiece.piece, selectedPiece.row, selectedPiece.col, row, col)){
           const newChessIcons = [...chessIcons];
@@ -351,7 +353,113 @@ const Play = () => {
             <span className="text-xl font-bold">{countdownTime} sec</span>
           </div>
         </div>
-         <ChessBoard game={game} />
+        {/* <div id="board" className="flex flex-wrap w-[400px] h-[400px]">
+		<div id="final" className="odd bg-green-500">
+			<div id="81" className="square w-1/8 h-1/8 " data-square="8-a"></div>
+			<div id="82" className="square w-1/8 h-1/8 " data-square="8-b"></div>
+			<div id="83" className="square w-1/8 h-1/8" data-square="8-c"></div>
+			<div id="84" className="square w-1/8 h-1/8" data-square="8-d"></div>
+			<div id="85" className="square w-1/8 h-1/8" data-square="8-e"></div>
+			<div id="86" className="square w-1/8 h-1/8" data-square="8-f"></div>
+			<div id="87" className="square w-1/8 h-1/8" data-square="8-g"></div>
+			<div id="88" className="square w-1/8 h-1/8" data-square="8-h"></div>
+		</div>
+		<div className="even bg-slate-200">
+			<div id="71" className="square" data-square="7-a"></div>
+			<div id="72" className="square" data-square="7-b"></div>
+			<div id="73" className="square" data-square="7-c"></div>
+			<div id="74" className="square" data-square="7-d"></div>
+			<div id="75" className="square" data-square="7-e"></div>
+			<div id="76" className="square" data-square="7-f"></div>
+			<div id="77" className="square" data-square="7-g"></div>
+			<div id="78" className="square" data-square="7-h"></div>
+		</div>
+		<div className="odd bg-green-500">
+			<div id="61" className="square" data-square="6-a"></div>
+			<div id="62" className="square" data-square="6-b"></div>
+			<div id="63" className="square" data-square="6-c"></div>
+			<div id="64" className="square" data-square="6-d"></div>
+			<div id="65" className="square" data-square="6-e"></div>
+			<div id="66" className="square" data-square="6-f"></div>
+			<div id="67" className="square" data-square="6-g"></div>
+			<div id="68" className="square" data-square="6-h"></div>
+		</div>
+		<div className="even  bg-slate-200">
+			<div id="51" className="square" data-square="5-a"></div>
+			<div id="52" className="square" data-square="5-b"></div>
+			<div id="53" className="square" data-square="5-c"></div>
+			<div id="54" className="square" data-square="5-d"></div>
+			<div id="55" className="square" data-square="5-e"></div>
+			<div id="56" className="square" data-square="5-f"></div>
+			<div id="57" className="square" data-square="5-g"></div>
+			<div id="58" className="square" data-square="5-h"></div>
+		</div>
+		<div className="odd">
+			<div id="41" className="square" data-square="4-a"></div>
+			<div id="42" className="square" data-square="4-b"></div>
+			<div id="43" className="square" data-square="4-c"></div>
+			<div id="44" className="square" data-square="4-d"></div>
+			<div id="45" className="square" data-square="4-e"></div>
+			<div id="46" className="square" data-square="4-f"></div>
+			<div id="47" className="square" data-square="4-g"></div>
+			<div id="48" className="square" data-square="4-h"></div>
+		</div>
+		<div className="even  bg-slate-200">
+			<div id="31" className="square" data-square="3-a"></div>
+			<div id="32" className="square" data-square="3-b"></div>
+			<div id="33" className="square" data-square="3-c"></div>
+			<div id="34" className="square" data-square="3-d"></div>
+			<div id="35" className="square" data-square="3-e"></div>
+			<div id="36" className="square" data-square="3-f"></div>
+			<div id="37" className="square" data-square="3-g"></div>
+			<div id="38" className="square" data-square="3-h"></div>
+		</div>
+		<div className="odd">
+			<div className="square white" id="21" data-square="2-a"></div>
+			<div className="square white" id="22" data-square="2-b"></div>
+			<div className="square white" id="23" data-square="2-c"></div>
+			<div className="square white" id="24" data-square="2-d"></div>
+			<div className="square white" id="25" data-square="2-e"></div>
+			<div className="square white" id="26" data-square="2-f"></div>
+			<div className="square white" id="27" data-square="2-g"></div>
+			<div className="square white" id="28" data-square="2-h"></div>
+		</div>
+		<div className="even">
+			<div id="11" className="square white" data-square="1-a"></div>
+			<div id="12" className="square white" data-square="1-b"></div>
+			<div id="13" className="square white" data-square="1-c"></div>
+			<div id="14" className="square white" data-square="1-d"></div>
+			<div id="15" className="square white" data-square="1-e"></div>
+			<div id="16" className="square white" data-square="1-f"></div>
+			<div id="17" className="square white" data-square="1-g"></div>
+			<div id="18" className="square white" data-square="1-h"></div>
+		</div>
+	</div> */}
+  <table id="board" ref={board} className="w-[400px] ">
+    <tbody>
+    {[...Array(8).keys()].map((_,row) =>
+      <tr key={row}>
+      {[...Array(8).keys()].map((_,col) => {
+        const squareId = `${8 - row}${String.fromCharCode(97 + col)}`;
+        const isEvenSquare = (row + col) % 2 === 0;
+        return (
+          <Square
+            squareId={squareId}
+            isEvenSquare={isEvenSquare}
+            row={row}
+            col={col}
+            squareRef={squares[row * 8 + col]}
+            key={squareId}
+            handleClick={handleSquareClick}
+            startBoard={startBoard}
+            game={game}
+          />
+        );
+      })}
+      </tr>
+    )}
+  </tbody>
+</table>
         <div className="flex lg:items-start justify-between px-4 py-2 mb-4 text-white rounded-lg lg:space-x-[3rem] lg:w-full w-full sm:w-3/4 gap-6 items-center mt-5">
           <div className="flex flex-col items-center lg:flex-row ">
             <div className="flex items-center justify-center w-6 h-6 rounded-full lg:w-12 lg:h-12">
