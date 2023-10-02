@@ -1,9 +1,7 @@
 {
-  "production": {
     "username": "root",
     "password": " ",
     "database": "chess",
     "host": "localhost",
     "dialect": "mysql"
-  }
 }
