@@ -193,7 +193,34 @@ const Play = () => {
             <span className="text-xl font-bold">{countdownTime} sec</span>
           </div>
         </div>
+<<<<<<< HEAD
          <ChessBoard game={game} />
+=======
+        <table className="border-gray-300 rounded-md">
+          <tbody>
+            {[...Array(8)].map((_, row) => (
+              <tr key={row}>
+                {[...Array(8)].map((_, col) => {
+                  const piece = chessIcons[row * 8 + col];
+                  return (
+                    <td
+                      key={col}
+                      className={`w-16 h-16 ${
+                        (row + col) % 2 === 0 ? "bg-[#E9EDCC]" : "bg-[#779954]"
+                      }`}
+                      onClick={() => handlePieceClick(row, col)}
+                    >
+                      <span className="flex items-center justify-center text-3xl hover:scale-[1.1] text-[[#222]]">
+                        {piece}
+                      </span>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+>>>>>>> 5eed306e41444a5128b9d12fd6a40e5ca2856a2b
         <div className="flex lg:items-start justify-between px-4 py-2 mb-4 text-white rounded-lg lg:space-x-[3rem] lg:w-full w-full sm:w-3/4 gap-6 items-center mt-5">
           <div className="flex flex-col items-center lg:flex-row ">
             <div className="flex items-center justify-center w-6 h-6 rounded-full lg:w-12 lg:h-12">
@@ -239,7 +266,7 @@ const Play = () => {
         </div>
         {activeLink === "newGame" && (
           <div className="relative p-4">
-            <div className="bg-[black] absolute inset-0 -z-[1] opacity-[.6]"></div>
+            <div className="bg-[[#222]] absolute inset-0 -z-[1] opacity-[.6]"></div>
             <div className="mb-4">
               <label className="block mb-1 font-medium text-white text-md">
                 Select Chess Game Type:

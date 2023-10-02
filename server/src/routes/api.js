@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { Game, User, Score } = require("../models/index.js");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 router.get("/test", (req, res) => {
   res.json({ message: "Hello from api server home!" });
@@ -9,8 +11,8 @@ router.get("/test", (req, res) => {
 // Create a new user
 router.post("/users", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    const newUser = await User.create({ name, email, password });
+    const { name, email, phoneNumber, password } = req.body;
+    const newUser = await User.create({ name, email, phoneNumber, password });
     res.status(201).json(newUser);
   } catch (error) {
     console.error(error);
@@ -110,6 +112,18 @@ router.get("/users/:userId/scores", async (req, res) => {
   }
 });
 
+// const authenticateJWT = (req, res, next) => {
+//   const token = req.header("Authorization");
+//   if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+//   jwt.verify(token, secret_key, (err, decoded) => {
+//     if (err) return res.status(401).json({ message: "Unauthorized" });
+
+//     req.userId = decoded.userId;
+//     next();
+//   });
+// };
+
 //Auth
 router.post("/login", async (req, res) => {
   try {
@@ -143,14 +157,27 @@ router.post("/login", async (req, res) => {
 
 router.post("/signup", async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { name, email, phoneNumber, password } = req.body;
     // Check if the user with the given email already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ error: "Email already in use." });
     }
+
+    const existingPhoneNumberUser = await User.findOne({ phoneNumber });
+    if (existingPhoneNumberUser) {
+      return res
+        .status(400)
+        .json({ message: "Phone number already registered" });
+    }
+
     // Create a new user
-    const newUser = await User.create({ username, email, password });
+    const newUser = await User.create({
+      name,
+      email,
+      phoneNumber,
+      password,
+    });
     res.status(201).json(newUser);
   } catch (error) {
     console.error(error);

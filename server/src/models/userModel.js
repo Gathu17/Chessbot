@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize, DataTypes } = require("sequelize");
 const bcrypt = require("bcrypt");
 const sequelize = require("./sequelize");
 
@@ -15,6 +15,11 @@ const User = sequelize.define("User", {
       isEmail: true,
     },
   },
+  phoneNumber: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
   password: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -27,5 +32,3 @@ const User = sequelize.define("User", {
 
 module.exports = User;
 console.log(User === sequelize.models.User); // true
-
-
