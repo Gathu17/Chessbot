@@ -75,7 +75,7 @@ export default class Game {
 
 			for (const move of allowedPositions[1]) { //moving moves
 				if (blockedPositions.indexOf(move) !== -1) {
-					break;
+					continue;
 				}
 				// else if (checking && this.myKingChecked(move, false)) continue;
 				unblocked.push(move);
@@ -84,7 +84,7 @@ export default class Game {
 		else if(piece.hasRank('knight')) {
 			for (let i = 0; i < allowedPositions?.length; i++) {
 				if (myBlockedPositions.indexOf(allowedPositions[i]) !== -1) {
-					break;
+					continue;
 				}  
 				unblocked.push(allowedPositions[i]);
 			}
@@ -94,7 +94,7 @@ export default class Game {
   
 				for (let j = 0; j < allowedPositions[i].length; j++) {
 					if (myBlockedPositions.indexOf(allowedPositions[i][j]) !== -1) {
-						break;
+						continue;
 			       }  
 					unblocked.push(allowedPositions[i][j]);
 				}                     
