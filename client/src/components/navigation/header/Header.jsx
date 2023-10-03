@@ -32,8 +32,8 @@ const Header = ({ token }) => {
             >
               {header.map((items, index) => (
                 <React.Fragment key={index}>
-                  <div
-                    // to={items.path}
+                  <Link
+                    to={items.path}
                     className={` ${hoveredMenuItemIndex === index ? "" : ""}`}
                     onMouseEnter={() => {
                       if (items.menu === "Account") {
@@ -99,7 +99,7 @@ const Header = ({ token }) => {
                         ))}
                       </div>
                     )}
-                  </div>
+                  </Link>
                 </React.Fragment>
               ))}
             </div>
