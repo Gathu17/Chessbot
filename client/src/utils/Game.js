@@ -26,7 +26,8 @@ export default class Game {
 	}
 
 	changeTurn() {
-		this.turn = this.turn === 'white' ? 'black' : 'white';
+		if (this.turn === 'white') this.turn = 'black';
+    else this.turn = 'white'
 		this.triggerEvent('turnChange', this.turn);
 	}
 
@@ -42,6 +43,7 @@ export default class Game {
 	}
 
 	filterPositions(positions) {
+        
 		return positions?.filter(pos => {
 			if (typeof pos === 'string') {
                 return pos[0] >= 1 && pos[0] <= 8 && pos[1].toLowerCase() >= 'a' && pos[1].toLowerCase() <= 'h';
@@ -111,7 +113,7 @@ export default class Game {
 	getPieceAllowedMoves(pieceName){
 		const piece = this.getPieceByPos(pieceName);
 
-		if(this.turn == piece?.color){
+		if(this.turn === piece?.color){
 			this.setClickedPiece(piece);
 			let pieceAllowedMoves = piece.getAllowedMoves();
 
