@@ -5,8 +5,8 @@ import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 
 const Watch = () => {
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0); // Track current page
-  const [videoThumbnails, setVideoThumbnails] = useState({}); // Store video thumbnail URLs
+  const [currentPage, setCurrentPage] = useState(0); 
+  const [videoThumbnails, setVideoThumbnails] = useState({}); 
 
   const videoIds = [
     "CSA9se6t82I",
@@ -56,12 +56,9 @@ const Watch = () => {
 
   const fetchVideoData = async () => {
     try {
-      // eslint-disable-next-line no-undef
-      const apiKey = process.env.API_KEY;
+      const apiKey = import.meta.env.VITE_API_KEY ;
       const response = await fetch(
-        `https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&id=${videoIds.join(
-          ","
-        )}&part=snippet`
+        `https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&id=${videoIds.join(",")}&part=snippet`
       );
       const data = await response.json();
 
@@ -77,7 +74,7 @@ const Watch = () => {
       console.error("Error fetching video data: ", error);
     }
   };
-  console.log(videoThumbnails[videoIds]);
+  // console.log(videoThumbnails[videoIds]);
   useEffect(() => {
     fetchVideoData();
   }, []);
