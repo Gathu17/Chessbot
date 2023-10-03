@@ -52,7 +52,7 @@ export default class Game {
 	}
 
 	unblockedPositions(piece, allowedPositions, checking=true) {
-		const unblockedPositions = [];
+		const unblocked = [];
         let myBlockedPositions;
         let otherBlockedPositions;
         
@@ -69,7 +69,7 @@ export default class Game {
 
 				//if (checking && this.myKingChecked(move)) continue;
 				if (otherBlockedPositions.indexOf(move) !== -1) continue; 
-                unblockedPositions.push(move);
+                unblocked.push(move);
 			}
 			const blockedPositions = [...myBlockedPositions, ...otherBlockedPositions];
 
@@ -78,7 +78,7 @@ export default class Game {
 					break;
 				}
 				// else if (checking && this.myKingChecked(move, false)) continue;
-				unblockedPositions.push(move);
+				unblocked.push(move);
 			}
 		} 
 		else if(piece.hasRank('knight')) {
@@ -86,7 +86,7 @@ export default class Game {
 				if (myBlockedPositions.indexOf(allowedPositions[i]) !== -1) {
 					break;
 				}  
-				unblockedPositions.push(allowedPositions[i]);
+				unblocked.push(allowedPositions[i]);
 			}
 		}
 		else{
@@ -96,7 +96,7 @@ export default class Game {
 					if (myBlockedPositions.indexOf(allowedPositions[i][j]) !== -1) {
 						break;
 			       }  
-					unblockedPositions.push(allowedPositions[i][j]);
+					unblocked.push(allowedPositions[i][j]);
 				}                     
                 // else if ( checking && this.myKingChecked(allowedPositions[i]) ) {
                 //     if (otherBlockedPositions.indexOf(allowedPositions[i]) !== -1) {
@@ -107,7 +107,7 @@ export default class Game {
                    
             }   
 		}
-		return unblockedPositions && unblockedPositions.length ? this.filterPositions(unblockedPositions) : unblockedPositions;
+		return unblocked && unblocked.length ? this.filterPositions(unblocked) : unblocked;
 	}
 
 	getPieceAllowedMoves(pieceName){

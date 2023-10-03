@@ -8,7 +8,7 @@ export default class Rook extends Piece {
 	}
 
 	changePosition(position) {
-		this.position = parseInt(position);
+		this.position = position;
 		this.ableToCastle = false;
 	}
 
