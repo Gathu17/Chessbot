@@ -13,17 +13,10 @@ import { BsDot } from "react-icons/bs";
 import {isValidMove} from '../../utils/validate'
 import Game from '../../utils/Game'
 import {pieces} from '../../utils/ChessBoard'
-import Square from "../../components/play/Square";
-import moment from "moment";
-// import startBoard from '../../utils/ChessBoard'
+import ChessBoard from "../../components/play/ChessBoard";
 
 const Play = () => {
-  const board = useRef(null)
-  const squares = Array(64).fill(null).map(() => useRef(null))
   const turnLabel = useRef(null)
-  // let clickedPieceName
-  const [clickedPieceName, setClickedPieceName] = useState()
-  const [duration, setDuration] = useState(moment.duration(5000).asSeconds());
 
   const [selectedPiece, setSelectedPiece] = useState(null);
   const [playerScores, setPlayerScores] = useState([0, 0]);
@@ -46,11 +39,6 @@ const Play = () => {
   const game = new Game(pieces);
   const [turnPlaying, setTurnPlaying] = useState(game.turn)
 
-// debugger
-  function handleSquareClick(e) {
-    movePiece(e.target)
-  }
-
   function handlePieceClick(row, col) {
     const piece = chessIcons[row * 8 + col];
    
@@ -58,7 +46,6 @@ const Play = () => {
       if (selectedPiece.row === row && selectedPiece.col === col) {
         return;
       }
-    //  console.log(isValidMove(selectedPiece.piece, selectedPiece.row, selectedPiece.col, row,col));
       
       if(isValidMove(selectedPiece.piece, selectedPiece.row, selectedPiece.col, row, col)){
           const newChessIcons = [...chessIcons];
@@ -69,175 +56,11 @@ const Play = () => {
           switchPlayers();
       } else {
         return;
-      }
-      
-      
+      } 
     } else if (piece) {
       setSelectedPiece({ piece, row, col });
     }
   }
-
-  // squares.forEach( square => {
-  //     square.addEventListener("click", function () {
-  //         movePiece(this);
-  //     });
-  //     square.addEventListener("dragover", function(event){
-  //         event.preventDefault();
-  //     });
-  //     square.addEventListener("drop", function () {
-  //         movePiece(this);
-  //     });
-  // });
-
-  function setAllowedSquares(pieceImg) {
-    setClickedPieceName(pieceImg.id);
-    const allowedMoves = game.getPieceAllowedMoves(clickedPieceName || pieceImg.id);
-
-    if (allowedMoves) {
-      const clickedSquare = pieceImg.parentNode;
-      clickedSquare.classList.add('clicked-square');
-
-        // allowedMoves.forEach( allowedMove => {
-
-      squares.forEach(element => {
-        if (allowedMoves.includes(element.current.id)) {
-          element.current.classList.add('allowed')
-        }
-      });
-
-            // if (document.contains(document.getElementById(allowedMove))) {
-            //     document.getElementById(allowedMove).classList.add('allowed');
-            // }
-        // });
-    }
-    else{
-        clearSquares();
-    }
-  }
-
-  function movePiece(square) {
-    const position = square.getAttribute('id');
-   
-    // const existedPiece = game.getPieceByPos(position);
-    const existedPieceElem = squares.find(square => square.current.id === position).current
-    const existedPiece = game.pieces.filter(item => item.position == position)[0]
-    if (existedPieceElem && existedPiece?.color === turnPlaying) {
-      const pieceImg = squares.find((item) => item.current.id === existedPiece.position).current;
-      clearSquares();
-      setAllowedSquares(pieceImg);
-      return
-    } 
-    game.movePiece(clickedPieceName, position);
-    setTurnPlaying(turnPlaying === 'white' ? "black" : "white")
-  }
-
-  const clearSquares = () => {
-    // const allowedSquares = board.current.querySelectorAll('.allowed');
-    const allowedSquares = squares.filter((item) => item.current.classList.value.includes('allowed'))
-    allowedSquares.forEach( allowedSquare => allowedSquare.current.classList.remove('allowed') );
-    // const cllickedSquare = document.getElementsByClassName('clicked-square')[0];
-    const cllickedSquare = squares.find(item => item.current.classList.value.includes('clicked-square'));
-    if (cllickedSquare) {
-        cllickedSquare.current.classList.remove('clicked-square');
-    }
-  }
-
-
-  const startBoard = game => {
-
-    const whiteSematary = document.getElementById('whiteSematary');
-    const blackSematary = document.getElementById('blackSematary');
-
-    const resetBoard = () => {
-        for (const square of squares) {
-            square.current.textContent = '';
-        }
-
-        for (const piece of game.pieces) {
-            // const square = document.getElementById(piece.position);
-            const square = squares.find(item => item.current.id === piece.position);
-
-            square.current.textContent = piece.icon
-        }
-    }
-
-    resetBoard();
-
-    // pieces.forEach( piece => {
-    //     const pieceImg = document.getElementById(piece.name);
-    //     pieceImg.addEventListener("drop", function () {
-    //         const square = document.getElementById(piece.position);
-    //         movePiece(square);
-    //     });
-    // });
-
-    document.querySelectorAll('img.piece').forEach( pieceImg => {
-        pieceImg.addEventListener("dragstart", function(event) {
-            event.stopPropagation();
-            event.dataTransfer.setData("text", event.target.id);
-            clearSquares();
-            setAllowedSquares(event.target)
-        });
-        pieceImg.addEventListener("drop", function(event) {
-            event.stopPropagation();
-            clearSquares();
-            setAllowedSquares(event.target)
-        });
-    });
-
-    game.on('pieceMove', piece => {
-        const square = squares.find((elem) => elem.current.id === piece.position)
-        square.current.append( piece.icon );
-        clearSquares();
-    });
-
-    game.on('turnChange', () => {
-      const currentTurn = turnPlaying === 'white' ? "black" : "white"
-      turnLabel.textContent = (currentTurn === 'white' ? "White's Turn" : "Black's Turn");
-    });
-
-    game.on('promotion', queen => {
-        const square = document.getElementById(queen.position);
-        square.textContent = `<img class="piece queen" id="${queen.name}" src="img/${queen.color}Queen.png">`;
-    })
-
-    game.on('kill', piece => {
-        const pieceImg = document.getElementById(piece.name);
-        pieceImg.parentNode.removeChild(pieceImg);
-        pieceImg.className = '';
-
-        const sematary = piece.color === 'white' ? whiteSematary : blackSematary;
-        sematary.querySelector('.'+piece.rank).append(pieceImg);
-    });
-
-    game.on('checkMate', color => {
-        const endScene = document.getElementById('endscene');
-        endScene.getElementsByClassName('winning-sign')[0].textContent = color + ' Wins';
-        endScene.classList.add('show');
-    })
-  }
-
-  
-
-  const flattenedChessIcons = initialChessboard.flat();
-  const [chessIcons, setChessIcons] = useState(flattenedChessIcons);
-  const switchPlayers = () => {
-    setPlayerScores(([score1, score2]) => [score2, score1]);
-    setSelectedPiece(null);
-    setCountdownTime(60);
-  };
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdownTime((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(()=>{
-    startBoard(game);
-  }, [game, turnPlaying])
 
   const handleGameChange = (event) => {
     setSelectedGame(event.target.value);
@@ -315,6 +138,22 @@ const Play = () => {
     },
   ];
 
+  const flattenedChessIcons = initialChessboard.flat();
+  const [chessIcons, setChessIcons] = useState(flattenedChessIcons);
+  const switchPlayers = () => {
+    setPlayerScores(([score1, score2]) => [score2, score1]);
+    setSelectedPiece(null);
+    setCountdownTime(60);
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdownTime((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className="flex flex-col justify-between space-y-8 lg:flex-row">
       <div className="lg:w-[10%] px-4 lg:px-0 shadow-2xl shadow-[#444]">
@@ -342,7 +181,7 @@ const Play = () => {
               />
             </div>
             <span className="ml-3 text-lg font-semibold">Opponent</span>
-            <span id="turn" ref={turnLabel}>{turnPlaying}'s turn</span>
+            <span id="turn" ref={turnLabel}>{`${turnPlaying}'s turn`}</span>
           </div>
           <div className="flex flex-col items-center lg:items-start">
             <span className="text-sm">Score:</span>
@@ -353,113 +192,7 @@ const Play = () => {
             <span className="text-xl font-bold">{countdownTime} sec</span>
           </div>
         </div>
-        {/* <div id="board" className="flex flex-wrap w-[400px] h-[400px]">
-		<div id="final" className="odd bg-green-500">
-			<div id="81" className="square w-1/8 h-1/8 " data-square="8-a"></div>
-			<div id="82" className="square w-1/8 h-1/8 " data-square="8-b"></div>
-			<div id="83" className="square w-1/8 h-1/8" data-square="8-c"></div>
-			<div id="84" className="square w-1/8 h-1/8" data-square="8-d"></div>
-			<div id="85" className="square w-1/8 h-1/8" data-square="8-e"></div>
-			<div id="86" className="square w-1/8 h-1/8" data-square="8-f"></div>
-			<div id="87" className="square w-1/8 h-1/8" data-square="8-g"></div>
-			<div id="88" className="square w-1/8 h-1/8" data-square="8-h"></div>
-		</div>
-		<div className="even bg-slate-200">
-			<div id="71" className="square" data-square="7-a"></div>
-			<div id="72" className="square" data-square="7-b"></div>
-			<div id="73" className="square" data-square="7-c"></div>
-			<div id="74" className="square" data-square="7-d"></div>
-			<div id="75" className="square" data-square="7-e"></div>
-			<div id="76" className="square" data-square="7-f"></div>
-			<div id="77" className="square" data-square="7-g"></div>
-			<div id="78" className="square" data-square="7-h"></div>
-		</div>
-		<div className="odd bg-green-500">
-			<div id="61" className="square" data-square="6-a"></div>
-			<div id="62" className="square" data-square="6-b"></div>
-			<div id="63" className="square" data-square="6-c"></div>
-			<div id="64" className="square" data-square="6-d"></div>
-			<div id="65" className="square" data-square="6-e"></div>
-			<div id="66" className="square" data-square="6-f"></div>
-			<div id="67" className="square" data-square="6-g"></div>
-			<div id="68" className="square" data-square="6-h"></div>
-		</div>
-		<div className="even  bg-slate-200">
-			<div id="51" className="square" data-square="5-a"></div>
-			<div id="52" className="square" data-square="5-b"></div>
-			<div id="53" className="square" data-square="5-c"></div>
-			<div id="54" className="square" data-square="5-d"></div>
-			<div id="55" className="square" data-square="5-e"></div>
-			<div id="56" className="square" data-square="5-f"></div>
-			<div id="57" className="square" data-square="5-g"></div>
-			<div id="58" className="square" data-square="5-h"></div>
-		</div>
-		<div className="odd">
-			<div id="41" className="square" data-square="4-a"></div>
-			<div id="42" className="square" data-square="4-b"></div>
-			<div id="43" className="square" data-square="4-c"></div>
-			<div id="44" className="square" data-square="4-d"></div>
-			<div id="45" className="square" data-square="4-e"></div>
-			<div id="46" className="square" data-square="4-f"></div>
-			<div id="47" className="square" data-square="4-g"></div>
-			<div id="48" className="square" data-square="4-h"></div>
-		</div>
-		<div className="even  bg-slate-200">
-			<div id="31" className="square" data-square="3-a"></div>
-			<div id="32" className="square" data-square="3-b"></div>
-			<div id="33" className="square" data-square="3-c"></div>
-			<div id="34" className="square" data-square="3-d"></div>
-			<div id="35" className="square" data-square="3-e"></div>
-			<div id="36" className="square" data-square="3-f"></div>
-			<div id="37" className="square" data-square="3-g"></div>
-			<div id="38" className="square" data-square="3-h"></div>
-		</div>
-		<div className="odd">
-			<div className="square white" id="21" data-square="2-a"></div>
-			<div className="square white" id="22" data-square="2-b"></div>
-			<div className="square white" id="23" data-square="2-c"></div>
-			<div className="square white" id="24" data-square="2-d"></div>
-			<div className="square white" id="25" data-square="2-e"></div>
-			<div className="square white" id="26" data-square="2-f"></div>
-			<div className="square white" id="27" data-square="2-g"></div>
-			<div className="square white" id="28" data-square="2-h"></div>
-		</div>
-		<div className="even">
-			<div id="11" className="square white" data-square="1-a"></div>
-			<div id="12" className="square white" data-square="1-b"></div>
-			<div id="13" className="square white" data-square="1-c"></div>
-			<div id="14" className="square white" data-square="1-d"></div>
-			<div id="15" className="square white" data-square="1-e"></div>
-			<div id="16" className="square white" data-square="1-f"></div>
-			<div id="17" className="square white" data-square="1-g"></div>
-			<div id="18" className="square white" data-square="1-h"></div>
-		</div>
-	</div> */}
-  <table id="board" ref={board} className="w-[400px] ">
-    <tbody>
-    {[...Array(8).keys()].map((_,row) =>
-      <tr key={row}>
-      {[...Array(8).keys()].map((_,col) => {
-        const squareId = `${8 - row}${String.fromCharCode(97 + col)}`;
-        const isEvenSquare = (row + col) % 2 === 0;
-        return (
-          <Square
-            squareId={squareId}
-            isEvenSquare={isEvenSquare}
-            row={row}
-            col={col}
-            squareRef={squares[row * 8 + col]}
-            key={squareId}
-            handleClick={handleSquareClick}
-            startBoard={startBoard}
-            game={game}
-          />
-        );
-      })}
-      </tr>
-    )}
-  </tbody>
-</table>
+         <ChessBoard game={game} turnPlaying={turnPlaying} />
         <div className="flex lg:items-start justify-between px-4 py-2 mb-4 text-white rounded-lg lg:space-x-[3rem] lg:w-full w-full sm:w-3/4 gap-6 items-center mt-5">
           <div className="flex flex-col items-center lg:flex-row ">
             <div className="flex items-center justify-center w-6 h-6 rounded-full lg:w-12 lg:h-12">
@@ -477,7 +210,7 @@ const Play = () => {
           </div>
           <div className="flex flex-col items-start">
             <span className="text-sm">Time Remaining:</span>
-            <span className="text-xl font-bold">{duration} sec</span>
+            <span className="text-xl font-bold">{countdownTime} sec</span>
           </div>
         </div>
       </div>
@@ -664,7 +397,7 @@ const Play = () => {
         {/* ... Your chessboard code ... */}
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default Play;

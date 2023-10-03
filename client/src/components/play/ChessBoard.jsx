@@ -9,7 +9,7 @@ import Game from '../../utils/Game'
 import Square from "./Square";
 
 
-const ChessBoard = () => {
+const ChessBoard = ({ turnPlaying }) => {
     const board = React.useRef(null)
     const squares = Array(64).fill(null).map(() => React.useRef(null))
     const [clickedPieceName, setClickedPieceName] = React.useState()
@@ -87,6 +87,30 @@ const ChessBoard = () => {
 
         game.movePiece(clickedPieceName, position);
     }
+
+    const startBoard = game => {
+
+      // const whiteSematary = document.getElementById('whiteSematary');
+      // const blackSematary = document.getElementById('blackSematary');
+  
+      const resetBoard = () => {
+          for (const square of squares) {
+              square.current.textContent = '';
+          }
+  
+          for (const piece of game.pieces) {
+              const square = squares.find(item => item.current.id === piece.position);
+  
+              square.current.textContent = piece.icon
+          }
+      }
+  
+      resetBoard();
+    }
+
+    React.useEffect(()=>{
+      startBoard(game);
+    }, [game, turnPlaying])
 
     // squares.forEach( square => {
     //     square.addEventListener("click", function () {
