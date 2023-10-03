@@ -33,6 +33,7 @@ const Header = ({ token }) => {
               {header.map((items, index) => (
                 <React.Fragment key={index}>
                   <div
+                    to={items.path}
                     className={` ${hoveredMenuItemIndex === index ? "" : ""}`}
                     onMouseEnter={() => {
                       if (items.menu === "Account") {
@@ -69,8 +70,8 @@ const Header = ({ token }) => {
                     </div>
                     {hoveredMenuItemIndex === index && index !== 5 && (
                       <motion.div
-                        animate={{ x:2 }}
-                        transition={{delay: .1}}                        
+                        animate={{ x: 2 }}
+                        transition={{ delay: 0.1 }}
                         className="relative bottom-0 flex flex-col gap-1"
                       >
                         <div className="w-full h-[.2rem] bg-[#AC8D75] absolute"></div>
