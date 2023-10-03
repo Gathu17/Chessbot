@@ -141,12 +141,14 @@ const ChessBoard = () => {
     })
 
     game.on('kill', piece => {
-        const pieceImg = squares.find(elem => elem.current.id === piece.name).current;
-        pieceImg.parentNode.removeChild(pieceImg);
-        pieceImg.className = '';
+        // console.log(piece);
+        // const square = document.getElementById(queen.position);
+        // console.log(square.current.children);
+        // square.current.removeChild(piece.icon);
+        // square.className = '';
 
         const sematary = piece.color === 'white' ? whiteSematary : blackSematary;
-        sematary.querySelector('.'+piece.rank).append(pieceImg);
+        sematary.querySelector('.'+piece.rank).append(piece.icon);
     });
 
     game.on('checkMate', color => {

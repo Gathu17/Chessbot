@@ -194,6 +194,22 @@ const Play = () => {
           </div>
         </div>
          <ChessBoard game={game} />
+         <div id="sematary">
+          <div id="whiteSematary">
+            <div className="pawn"></div>
+            <div className="knight"></div>
+            <div className="bishop"></div>
+            <div className="rook"></div>
+            <div className="queen"></div>
+          </div>
+          <div id="blackSematary">
+            <div className="pawn"></div>
+            <div className="knight"></div>
+            <div className="bishop"></div>
+            <div className="rook"></div>
+            <div className="queen"></div>
+          </div>
+        </div>
         <div className="flex lg:items-start justify-between px-4 py-2 mb-4 text-white rounded-lg lg:space-x-[3rem] lg:w-full w-full sm:w-3/4 gap-6 items-center mt-5">
           <div className="flex flex-col items-center lg:flex-row ">
             <div className="flex items-center justify-center w-6 h-6 rounded-full lg:w-12 lg:h-12">

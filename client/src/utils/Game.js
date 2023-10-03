@@ -64,9 +64,8 @@ export default class Game {
 		}
 		if (piece.hasRank('pawn')) {
 			for (const move of allowedPositions[0]) { //attacking moves
-
 				//if (checking && this.myKingChecked(move)) continue;
-				if (otherBlockedPositions.indexOf(move) !== -1) continue; 
+				// if (otherBlockedPositions.indexOf(move) !== -1) continue; 
                 unblockedPositions.push(move);
 			}
 			const blockedPositions = [...myBlockedPositions, ...otherBlockedPositions];
@@ -180,11 +179,10 @@ export default class Game {
 	movePiece(pieceName, position) {
 		const piece = this.getPieceByPos(pieceName);
 		const prevPosition = piece?.position;
-		
 		if (piece && this.getPieceAllowedMoves(piece?.position).indexOf(position) !== -1) {
 			
 			const existedPiece = this.getPieceByPos(position)
-
+            console.log(existedPiece,position);
 			if (existedPiece) {
 				this.kill(existedPiece);
 			}
