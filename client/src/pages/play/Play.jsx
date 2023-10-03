@@ -10,8 +10,13 @@ import { MdLogout, MdRestartAlt } from "react-icons/md";
 import { BiMessageSquareDetail } from "react-icons/bi";
 import { ImExit } from "react-icons/im";
 import { BsDot } from "react-icons/bs";
+import {isValidMove} from '../../utils/validate'
+import Game from '../../utils/Game'
+import {pieces} from '../../components/play/ChessBoard'
+import ChessBoard from '../../components/play/ChessBoard'
 
 const Play = () => {
+  
   const [selectedPiece, setSelectedPiece] = useState(null);
   const [playerScores, setPlayerScores] = useState([0, 0]);
   const [countdownTime, setCountdownTime] = useState(60);
@@ -30,7 +35,9 @@ const Play = () => {
     ["♙", "♙", "♙", "♙", "♙", "♙", "♙", "♙"],
     ["♖", "♘", "♗", "♕", "♔", "♗", "♘", "♖"],
   ];
-
+  const game = new Game(pieces);
+  
+  
   const flattenedChessIcons = initialChessboard.flat();
   const [chessIcons, setChessIcons] = useState(flattenedChessIcons);
   const switchPlayers = () => {
@@ -49,18 +56,24 @@ const Play = () => {
 
   const handlePieceClick = (row, col) => {
     const piece = chessIcons[row * 8 + col];
-
+   
     if (selectedPiece) {
       if (selectedPiece.row === row && selectedPiece.col === col) {
         return;
       }
-
-      const newChessIcons = [...chessIcons];
-      newChessIcons[row * 8 + col] = selectedPiece.piece;
-      newChessIcons[selectedPiece.row * 8 + selectedPiece.col] = "";
-      setChessIcons(newChessIcons);
-      setSelectedPiece(null);
-      switchPlayers();
+      
+      if(isValidMove(selectedPiece.piece, selectedPiece.row, selectedPiece.col, row, col)){
+          const newChessIcons = [...chessIcons];
+          newChessIcons[row * 8 + col] = selectedPiece.piece;
+          newChessIcons[selectedPiece.row * 8 + selectedPiece.col] = "";
+          setChessIcons(newChessIcons);
+          setSelectedPiece(null);
+          switchPlayers();
+      } else {
+        return;
+      }
+      
+      
     } else if (piece) {
       setSelectedPiece({ piece, row, col });
     }
@@ -169,6 +182,7 @@ const Play = () => {
               />
             </div>
             <span className="ml-3 text-lg font-semibold">Opponent</span>
+            <span id="turn"></span>
           </div>
           <div className="flex flex-col items-center lg:items-start">
             <span className="text-sm">Score:</span>
@@ -179,30 +193,7 @@ const Play = () => {
             <span className="text-xl font-bold">{countdownTime} sec</span>
           </div>
         </div>
-        <table className="border-gray-300 rounded-md">
-          <tbody>
-            {[...Array(8)].map((_, row) => (
-              <tr key={row}>
-                {[...Array(8)].map((_, col) => {
-                  const piece = chessIcons[row * 8 + col];
-                  return (
-                    <td
-                      key={col}
-                      className={`w-16 h-16 ${
-                        (row + col) % 2 === 0 ? "bg-[#E9EDCC]" : "bg-[#779954]"
-                      }`}
-                      onClick={() => handlePieceClick(row, col)}
-                    >
-                      <span className="flex items-center justify-center text-3xl hover:scale-[1.1] text-[[#222]]">
-                        {piece}
-                      </span>
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+         <ChessBoard game={game} />
         <div className="flex lg:items-start justify-between px-4 py-2 mb-4 text-white rounded-lg lg:space-x-[3rem] lg:w-full w-full sm:w-3/4 gap-6 items-center mt-5">
           <div className="flex flex-col items-center lg:flex-row ">
             <div className="flex items-center justify-center w-6 h-6 rounded-full lg:w-12 lg:h-12">
@@ -403,8 +394,6 @@ const Play = () => {
           </div>
         )}
 
-        {/* Chessboard */}
-        {/* ... Your chessboard code ... */}
       </div>
     </div>
   );
