@@ -12,8 +12,9 @@ import Square from "./Square";
 const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
     const board = React.useRef(null)
     const squares = Array(64).fill(null).map(() => React.useRef(null))
-    const [clickedPieceName, setClickedPieceName] = React.useState()
-    const game = new Game(pieces);
+    const [clickedPieceName, setClickedPieceName] = React.useState('')
+    const [turnPlaying, setTurnPlaying] = React.useState('white')
+    const game = new Game(pieces,turnPlaying);
     
     const whiteSematary = document.getElementById('whiteSematary');
     const blackSematary = document.getElementById('blackSematary');
@@ -34,10 +35,11 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
 
             square.textContent = piece.icon
         }
+
     }
     React.useEffect(()=>{
         resetBoard();
-    })
+    },[turnPlaying])
     
     const setAllowedSquares = (pieceImg) => {
        setClickedPieceName(pieceImg.id);
@@ -63,7 +65,7 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
     const clearSquares = () => {
         const allowedSquares = squares.filter((item) => item.current.classList.value.includes('allowed'))
         allowedSquares.forEach( allowedSquare => allowedSquare.current.classList.remove('allowed') );
-
+        
         const cllickedSquare = squares.find(item => item.current.classList.value.includes('clicked-square'));
         if (cllickedSquare) {
             cllickedSquare.current.classList.remove('clicked-square');
@@ -160,7 +162,6 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
 
     game.on('kill', piece => {
         const pieceImg = squares.find(elem => elem.current.id === piece.name).current;
-        // const pieceImg = document.getElementById(piece.name);
         pieceImg.parentNode.removeChild(pieceImg);
         pieceImg.className = '';
 

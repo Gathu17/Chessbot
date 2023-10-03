@@ -1,9 +1,9 @@
 import Queen from './Pieces/Queen'
 
 export default class Game {
-	constructor(pieces) {
+	constructor(pieces, turnPlaying) {
 		this.pieces  = pieces;
-		this.turn    = 'white';
+		this.turn    = turnPlaying;
 		this.clickedPiece = null;
 		this._events = {
 			pieceMove: [],
@@ -64,7 +64,6 @@ export default class Game {
 			myBlockedPositions    = this.getPlayerPositions('black');
 			otherBlockedPositions = this.getPlayerPositions('white');
 		}
-
 		if (piece.hasRank('pawn')) {
 			for (const move of allowedPositions[0]) { //attacking moves
 
@@ -81,20 +80,32 @@ export default class Game {
 				// else if (checking && this.myKingChecked(move, false)) continue;
 				unblockedPositions.push(move);
 			}
+		} 
+		else if(piece.hasRank('knight')) {
+			for (let i = 0; i < allowedPositions?.length; i++) {
+				if (myBlockedPositions.indexOf(allowedPositions[i]) !== -1) {
+					break;
+				}  
+				unblockedPositions.push(allowedPositions[i]);
+			}
 		}
 		else{
              for (let i = 0; i < allowedPositions?.length; i++) {
-                if (myBlockedPositions.indexOf(allowedPositions[i]) !== -1) {
+  
+				for (let j = 0; j < allowedPositions[i].length; j++) {
+					if (myBlockedPositions.indexOf(allowedPositions[i][j]) !== -1) {
 						break;
-				}                   
+			       }  
+					unblockedPositions.push(allowedPositions[i][j]);
+				}                     
                 // else if ( checking && this.myKingChecked(allowedPositions[i]) ) {
                 //     if (otherBlockedPositions.indexOf(allowedPositions[i]) !== -1) {
                 //         break;
                 //     }
                 //     continue;
                 // }
-                    unblockedPositions.push(allowedPositions[i]);
-             }   
+                   
+            }   
 		}
 		return unblockedPositions && unblockedPositions.length ? this.filterPositions(unblockedPositions) : unblockedPositions;
 	}
@@ -170,10 +181,11 @@ export default class Game {
 
 	movePiece(pieceName, position, turn) {
 		const piece = this.getPieceByPos(pieceName);
-
-		if (piece && this.getPieceAllowedMoves(piece.position, turn).indexOf(position) !== -1) {
-			const prevPosition = piece.position;
-      const existedPiece = this.getPieceByPos(position)
+		const prevPosition = piece?.position;
+		
+		if (piece && this.getPieceAllowedMoves(piece?.position).indexOf(position) !== -1) {
+			
+			const existedPiece = this.getPieceByPos(position)
 
 			if (existedPiece) {
 				this.kill(existedPiece);

@@ -21,66 +21,98 @@ export default class Piece {
 
 	getMovesTop() {
 		const movesTop = [];
-		for (let move = this.position+10; move <= 88; move+=10) movesTop.push(move);
+		const col = this.position.charAt(1);
+        const row = parseInt(this.position.charAt(0));
+		for (let move = row + 1; move <= 8; move++) {
+			movesTop.push(`${move}${col}`);
+		}
 		return movesTop;
 	}
 
 	getMovesBottom() {
 		const movesBottom = [];
-		for (let move = this.position-10; move >= 11 ; move-=10) movesBottom.push(move);
+		const col = this.position.charAt(1);
+        const row = parseInt(this.position.charAt(0));
+		for (let move = row - 1; move >= 1; move--) {
+			movesBottom.push(`${move}${col}`);
+		}
 		return movesBottom;
 	}
 
 	getMovesRight() {
-		const num = this.position+'';
-		const movesRight = [];
-		for (let move = this.position+1; move <= parseInt(num[0]+'8'); move++) movesRight.push(move);
+		const movesRight = []; 
+		const col = this.position.charCodeAt(1) - 97;
+        const row = parseInt(this.position.charAt(0));
+		for (let move = col + 1; move < 8; move++){
+			let colStr = String.fromCharCode(move + 97);
+			movesRight.push(`${row}${colStr}`)
+		}
 		return movesRight;
 	}
 
 	getMovesLeft() {
-		const num = this.position+'';
 		const movesLeft = [];
-		for (let move = this.position-1; move >= parseInt(num[0]+'1'); move--) movesLeft.push(move);
+		const col = this.position.charCodeAt(1) - 97;
+        const row = parseInt(this.position.charAt(0));
+		for (let move = col - 1; move >= 0; move--){
+			let colStr = String.fromCharCode(move + 97);
+			movesLeft.push(`${row}${colStr}`)
+		}
 		return movesLeft;
 	}
 
 	getMovesTopRight() {
 		const movesTopRight = [];
-		for (let move = this.position+11; move <= 88; move+=11) {
-			const firstDigit = (''+move)[1];
-			if (firstDigit > 8 || firstDigit < 1) break;
-			movesTopRight.push(move);
+		let row = parseInt(this.position.charAt(0));
+		let col = this.position.charCodeAt(1) - 97;
+
+		while (row < 8 && col < 7) {
+			row++;
+			col++;
+			const colStr = String.fromCharCode(col + 97);
+			movesTopRight.push(`${row}${colStr}`);
 		}
 		return movesTopRight;
 	}
 
 	getMovesTopLeft() {
 		const movesTopLeft = [];
-		for (let move = this.position+9; move <= 88; move+=9) {
-			const firstDigit = (''+move)[1];
-			if (firstDigit > 8 || firstDigit < 1) break;
-			movesTopLeft.push(move);
+		let row = parseInt(this.position.charAt(0));
+		let col = this.position.charCodeAt(1) - 97;
+
+		while (row < 8 && col > 0) {
+			row++;
+			col--;
+			const colStr = String.fromCharCode(col + 97);
+			movesTopLeft.push(`${row}${colStr}`);
 		}
 		return movesTopLeft;
 	}
 
 	getMovesBottomRight() {
 		const movesBottomRight = [];
-		for (let move = this.position-9; move >= 11 ; move-=9) {
-			const firstDigit = (''+move)[1];
-			if (firstDigit > 8 || firstDigit < 1) break;
-			movesBottomRight.push(move);
+		let row = parseInt(this.position.charAt(0));
+		let col = this.position.charCodeAt(1) - 97;
+
+		while (row > 1 && col < 7) {
+			row--;
+			col++;
+			const colStr = String.fromCharCode(col + 97);
+			movesBottomRight.push(`${row}${colStr}`);
 		}
 		return movesBottomRight;
 	}
 
 	getMovesBottomLeft() {
 		const movesBottomLeft = [];
-		for (let move = this.position-11; move >= 11 ; move-=11) {
-			const firstDigit = (''+move)[1];
-			if (firstDigit > 8 || firstDigit < 1) break;
-			movesBottomLeft.push(move);
+		let row = parseInt(this.position.charAt(0));
+		let col = this.position.charCodeAt(1) - 97;
+
+		while (row > 1 && col > 0) {
+			row--;
+			col--;
+			const colStr = String.fromCharCode(col + 97);
+			movesBottomLeft.push(`${row}${colStr}`);
 		}
 		return movesBottomLeft;
 	}
