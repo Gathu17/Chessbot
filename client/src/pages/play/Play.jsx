@@ -192,6 +192,23 @@ const Play = () => {
             <span className="text-xl font-bold">{countdownTime} sec</span>
           </div>
         </div>
+         {/* <ChessBoard game={game} /> */}
+         <div id="sematary">
+          <div id="whiteSematary">
+            <div className="pawn"></div>
+            <div className="knight"></div>
+            <div className="bishop"></div>
+            <div className="rook"></div>
+            <div className="queen"></div>
+          </div>
+          <div id="blackSematary">
+            <div className="pawn"></div>
+            <div className="knight"></div>
+            <div className="bishop"></div>
+            <div className="rook"></div>
+            <div className="queen"></div>
+          </div>
+        </div>
          <ChessBoard 
           game={game} 
           turnPlaying={turnPlaying}
