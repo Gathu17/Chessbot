@@ -151,7 +151,10 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
 
     game.on('promotion', queen => {
         const square = squares.find((elem) => elem.current.id === queen.position).current
-        square.textContent = `<img class="piece queen" id="${queen.name}" src="img/${queen.color}Queen.png">`;
+        const queenChar = pieces.find(elem => elem.color === queen.color && elem.rank === 'queen');
+        // square.textContent = `<img class="piece queen" id="${queen.name}" src="img/${queen.color}Queen.png">`;
+        queen.icon = queenChar.icon
+        square.textContent = queenChar.icon
     })
 
     game.on('kill', piece => {
