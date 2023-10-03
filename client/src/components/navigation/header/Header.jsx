@@ -1,16 +1,22 @@
-import React, { useState } from "react";
+/* eslint-disable react/prop-types */
+import React, { useEffect, useState } from "react";
 import { header, subMenu } from "../Data";
 import { Link } from "react-router-dom";
 import { CgMenuRight } from "react-icons/cg";
+import { motion } from "framer-motion";
 
-const Header = () => {
+const Header = ({ token }) => {
   const [showSubmenu, setShowSubMenu] = useState(false);
   const [hoveredMenuItemIndex, setHoveredMenuItemIndex] = useState(null);
   const [mobileMenu, setMobileMenu] = useState(false);
 
+  useEffect(() => {
+    // console.log({ token });
+  }, [token]);
+
   return (
     <>
-      <div className="flex flex-col justify-between px-3 rounded shadow-2xl shadow-[#222] lg:flex-row lg:items-center">
+      <div className="flex flex-col justify-between px-3 py-5 lg:py-0 rounded shadow-2xl shadow-[#222] lg:flex-row lg:items-center">
         <div className="flex items-center justify-between ">
           <img src="https://picsum.photos/50/30" className="rounded" alt="" />
           <div className="flex lg:hidden text-[2rem]">
@@ -51,7 +57,7 @@ const Header = () => {
                             <React.Fragment key={subIndex}>
                               <Link to={submenuItem.path}>
                                 <p
-                                  className="p-1 px-2 my-1 border rounded-sm"
+                                  className="p-1 px-2 my-1 rounded-sm bg-[#333] flex justify-center "
                                   onClick={() => setShowSubMenu(!showSubmenu)}
                                 >
                                   {submenuItem.menu}
@@ -63,10 +69,14 @@ const Header = () => {
                       )}
                     </div>
                     {hoveredMenuItemIndex === index && index !== 5 && (
-                      <div className="relative bottom-0 flex flex-col gap-1">
+                      <motion.div
+                        animate={{ x:2 }}
+                        transition={{delay: .1}}                        
+                        className="relative bottom-0 flex flex-col gap-1"
+                      >
                         <div className="w-full h-[.2rem] bg-[#AC8D75] absolute"></div>
                         <div className="w-1/2 h-[.2rem] bg-[#AC8D75] absolute top-[0.3rem]"></div>
-                      </div>
+                      </motion.div>
                     )}
 
                     {hoveredMenuItemIndex === 5 && showSubmenu && (
@@ -79,7 +89,7 @@ const Header = () => {
                           <React.Fragment key={subIndex}>
                             <Link to={submenuItem.path}>
                               <p
-                                className="p-1 my-1 border rounded-sm"
+                                className="p-1 my-2 rounded-sm bg-[#444] flex justify-center px-2 hover:scale-[1.05]"
                                 onClick={() => setShowSubMenu(!showSubmenu)}
                               >
                                 {submenuItem.menu}
