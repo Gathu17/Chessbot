@@ -110,7 +110,7 @@ export default class Piece {
 
 		while (row > 1 && col > 0) {
 			row--;
-			col++;
+			col--;
 			const colStr = String.fromCharCode(col + 97);
 			movesBottomLeft.push(`${row}${colStr}`);
 		}
