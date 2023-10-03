@@ -29,8 +29,8 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
         }
 
         for (const piece of game.pieces) {
-            const square = squares.find(elem => elem.current.id === piece.position).current;
-            square.textContent = piece.icon
+            const square = squares.find(elem => elem.current.id === piece.position)?.current;
+            if (square) square.textContent = piece.icon
         }
 
     }
@@ -40,7 +40,7 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
     
     const setAllowedSquares = (pieceImg) => {
        setClickedPieceName(pieceImg.id);
-        const allowedMoves = game.getPieceAllowedMoves(clickedPieceName || pieceImg.id, turnPlaying);
+        const allowedMoves = game.getPieceAllowedMoves(clickedPieceName || pieceImg.id);
 
         if (allowedMoves) {
             const clickedSquare = pieceImg.parentNode;
@@ -48,9 +48,8 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
             clickedSquare.classList.add('clicked-square');
 
             allowedMoves.forEach( allowedMove => {
-
-                if (document.contains(document.getElementById(allowedMove))) {
-                    document.getElementById(allowedMove).classList.add('allowed');
+                if (squares.find(item => item.current.id === allowedMove).current) {
+                    squares.find(item => item.current.id === allowedMove).current.classList.add('allowed');
                 }
             });
         }
@@ -73,11 +72,9 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
         const position = square.getAttribute('id');
         const existedPiece = game.getPieceByPos(position);
         if (existedPiece && existedPiece.color === turnPlaying) {
-
-            // const pieceImg = document.getElementById(existedPiece.position);
-            const pieceImg = squares.find(item => item.current.id === existedPiece.position).current;
-            clearSquares();
-           return setAllowedSquares(pieceImg);
+          const pieceImg = squares.find(item => item.current.id === existedPiece.position).current;
+          clearSquares();
+          return setAllowedSquares(pieceImg);
         }
 
         game.movePiece(clickedPieceName, position, turnPlaying);
@@ -95,8 +92,8 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
   
           for (const piece of game.pieces) {
               const square = squares.find(item => item.current.id === piece.position);
-  
-              square.current.textContent = piece.icon
+
+              if (square) square.current.textContent = piece.icon;
           }
       }
   
