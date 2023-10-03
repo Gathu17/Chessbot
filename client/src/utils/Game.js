@@ -206,7 +206,7 @@ export default class Game {
                   
 			this.triggerEvent('pieceMove', piece);
 
-			if (piece.rank === 'pawn' && (position > 80 || position < 20)) {
+			if (piece.rank === 'pawn' && (position.includes('8') || position.includes('1'))) {
 				this.promote(piece);
 			}
 
