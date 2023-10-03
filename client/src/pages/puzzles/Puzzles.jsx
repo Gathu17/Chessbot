@@ -31,7 +31,7 @@ const Puzzles = () => {
 
   return (
     <div className="flex flex-col items-center justify-center my-4">
-      <div className="absolute inset-0 bg-black opacity-[.7] -z-10"></div>
+      <div className="absolute inset-0 bg-[#222] opacity-[.7] -z-10"></div>
       <div className="flex gap-5">
         {puzzleOptions.map((option, index) => (
           <React.Fragment key={index}>

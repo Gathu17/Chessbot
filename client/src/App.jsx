@@ -12,6 +12,7 @@ function App() {
       <div className="flex flex-col justify-between min-h-screen z-[99] relative bg-hero bg-center bg-no-repeat bg-cover rounded-xl overflow-hidden">
         <Header />
         <Routing />
+
         <Footer />
       </div>
     </main>
