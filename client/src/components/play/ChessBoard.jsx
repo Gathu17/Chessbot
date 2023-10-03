@@ -13,8 +13,7 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
     const board = React.useRef(null)
     const squares = Array(64).fill(null).map(() => React.useRef(null))
     const [clickedPieceName, setClickedPieceName] = React.useState('')
-    const [turnPlaying, setTurnPlaying] = React.useState('white')
-    const game = new Game(pieces,turnPlaying);
+    const game = new Game(pieces, turnPlaying);
     
     const whiteSematary = document.getElementById('whiteSematary');
     const blackSematary = document.getElementById('blackSematary');
@@ -31,8 +30,6 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
 
         for (const piece of game.pieces) {
             const square = squares.find(elem => elem.current.id === piece.position).current;
-            // const square = document.getElementById(piece.position);
-
             square.textContent = piece.icon
         }
 

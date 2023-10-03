@@ -110,10 +110,10 @@ export default class Game {
 		return unblockedPositions && unblockedPositions.length ? this.filterPositions(unblockedPositions) : unblockedPositions;
 	}
 
-	getPieceAllowedMoves(pieceName, turn){
+	getPieceAllowedMoves(pieceName){
 		const piece = this.getPieceByPos(pieceName);
 
-		if(turn === piece?.color){
+		if(this.turn === piece?.color){
 			this.setClickedPiece(piece);
 			let pieceAllowedMoves = piece.getAllowedMoves();
 
@@ -179,7 +179,7 @@ export default class Game {
 		}
 	}
 
-	movePiece(pieceName, position, turn) {
+	movePiece(pieceName, position) {
 		const piece = this.getPieceByPos(pieceName);
 		const prevPosition = piece?.position;
 		
