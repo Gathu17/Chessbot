@@ -243,7 +243,7 @@ const Play = () => {
         </div>
         {activeLink === "newGame" && (
           <div className="relative p-4">
-            <div className="bg-[black] absolute inset-0 -z-[1] opacity-[.6]"></div>
+            <div className="bg-[[#222]] absolute inset-0 -z-[1] opacity-[.6]"></div>
             <div className="mb-4">
               <label className="block mb-1 font-medium text-white text-md">
                 Select Chess Game Type:
@@ -398,8 +398,6 @@ const Play = () => {
           </div>
         )}
 
-        {/* Chessboard */}
-        {/* ... Your chessboard code ... */}
       </div>
     </div>
   )
