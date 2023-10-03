@@ -37,7 +37,7 @@ const Play = () => {
     ["♖", "♘", "♗", "♕", "♔", "♗", "♘", "♖"],
   ];
   const game = new Game(pieces);
-  const [turnPlaying, setTurnPlaying] = useState(game.turn)
+  const [turnPlaying, setTurnPlaying] = useState('white')
 
   function handlePieceClick(row, col) {
     const piece = chessIcons[row * 8 + col];
@@ -192,7 +192,12 @@ const Play = () => {
             <span className="text-xl font-bold">{countdownTime} sec</span>
           </div>
         </div>
-         <ChessBoard game={game} turnPlaying={turnPlaying} />
+         <ChessBoard 
+          game={game} 
+          turnPlaying={turnPlaying}
+          setTurnPlaying={setTurnPlaying}
+          turnLabel={turnLabel} 
+        />
         <div className="flex lg:items-start justify-between px-4 py-2 mb-4 text-white rounded-lg lg:space-x-[3rem] lg:w-full w-full sm:w-3/4 gap-6 items-center mt-5">
           <div className="flex flex-col items-center lg:flex-row ">
             <div className="flex items-center justify-center w-6 h-6 rounded-full lg:w-12 lg:h-12">

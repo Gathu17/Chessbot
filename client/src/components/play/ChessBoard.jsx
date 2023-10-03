@@ -9,7 +9,7 @@ import Game from '../../utils/Game'
 import Square from "./Square";
 
 
-const ChessBoard = ({ turnPlaying }) => {
+const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
     const board = React.useRef(null)
     const squares = Array(64).fill(null).map(() => React.useRef(null))
     const [clickedPieceName, setClickedPieceName] = React.useState()
@@ -17,23 +17,22 @@ const ChessBoard = ({ turnPlaying }) => {
     
     const whiteSematary = document.getElementById('whiteSematary');
     const blackSematary = document.getElementById('blackSematary');
-    const turnSign = document.getElementById('turn');
-  //  let clickedPieceName;
+  
 
     function handleSquareClick(e) {
-        movePiece(e.target)
-      }
+      movePiece(e.target)
+    }
 
     const resetBoard = () => {
         for (const square of squares) {
-            square.current.innerHTML = '';
+            square.current.textContent = '';
         }
-       // const game = new Game(pieces);
 
         for (const piece of game.pieces) {
-            const square = document.getElementById(piece.position);
+            const square = squares.find(elem => elem.current.id === piece.position).current;
+            // const square = document.getElementById(piece.position);
 
-            square.innerHTML = piece.icon
+            square.textContent = piece.icon
         }
     }
     React.useEffect(()=>{
@@ -41,9 +40,8 @@ const ChessBoard = ({ turnPlaying }) => {
     })
     
     const setAllowedSquares = (pieceImg) => {
-       console.log(pieceImg.id)
        setClickedPieceName(pieceImg.id);
-        const allowedMoves = game.getPieceAllowedMoves(clickedPieceName || pieceImg.id);
+        const allowedMoves = game.getPieceAllowedMoves(clickedPieceName || pieceImg.id, turnPlaying);
 
         if (allowedMoves) {
             const clickedSquare = pieceImg.parentNode;
@@ -73,19 +71,17 @@ const ChessBoard = ({ turnPlaying }) => {
       }
 
     function movePiece(square) {
-        console.log(square)
         const position = square.getAttribute('id');
-        console.log(position)
         const existedPiece = game.getPieceByPos(position);
-        console.log(existedPiece,game)
-        if (existedPiece && existedPiece.color === game.turn) {
+        if (existedPiece && existedPiece.color === turnPlaying) {
 
-            const pieceImg = document.getElementById(existedPiece.position);
+            // const pieceImg = document.getElementById(existedPiece.position);
+            const pieceImg = squares.find(item => item.current.id === existedPiece.position).current;
             clearSquares();
            return setAllowedSquares(pieceImg);
         }
 
-        game.movePiece(clickedPieceName, position);
+        game.movePiece(clickedPieceName, position, turnPlaying);
     }
 
     const startBoard = game => {
@@ -147,22 +143,24 @@ const ChessBoard = ({ turnPlaying }) => {
     });
 
     game.on('pieceMove', piece => {
-        const square = squares.find((elem) => elem.current.id === piece.position)
-        square.current.append( piece.icon );
+        const square = squares.find((elem) => elem.current.id === piece.position).current
+        square.textContent = piece.icon
         clearSquares();
     });
 
     game.on('turnChange', turn => {
-        turnSign.innerHTML = turn === 'white' ? "White's Turn" : "Black's Turn";
+        turnLabel.textContent = turnPlaying === 'white' ? "Black's Turn" : "White's Turn";
+        setTurnPlaying(turnPlaying === 'white' ? "black" : "white");
     });
 
     game.on('promotion', queen => {
-        const square = document.getElementById(queen.position);
-        square.innerHTML = `<img class="piece queen" id="${queen.name}" src="img/${queen.color}Queen.png">`;
+        const square = squares.find((elem) => elem.current.id === queen.position).current
+        square.textContent = `<img class="piece queen" id="${queen.name}" src="img/${queen.color}Queen.png">`;
     })
 
     game.on('kill', piece => {
-        const pieceImg = document.getElementById(piece.name);
+        const pieceImg = squares.find(elem => elem.current.id === piece.name).current;
+        // const pieceImg = document.getElementById(piece.name);
         pieceImg.parentNode.removeChild(pieceImg);
         pieceImg.className = '';
 
