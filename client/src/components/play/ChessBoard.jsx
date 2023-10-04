@@ -9,39 +9,36 @@ import Game from '../../utils/Game'
 import Square from "./Square";
 
 
-const ChessBoard = () => {
+const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
     const board = React.useRef(null)
     const squares = Array(64).fill(null).map(() => React.useRef(null))
-    const [clickedPieceName, setClickedPieceName] = React.useState()
-    const game = new Game(pieces);
+    const [clickedPieceName, setClickedPieceName] = React.useState('')
+    const game = new Game(pieces, turnPlaying);
     
     const whiteSematary = document.getElementById('whiteSematary');
     const blackSematary = document.getElementById('blackSematary');
-    const turnSign = document.getElementById('turn');
-  //  let clickedPieceName;
+  
 
     function handleSquareClick(e) {
-        movePiece(e.target)
-      }
+      movePiece(e.target)
+    }
 
     const resetBoard = () => {
         for (const square of squares) {
-            square.current.innerHTML = '';
+            square.current.textContent = '';
         }
-       // const game = new Game(pieces);
 
         for (const piece of game.pieces) {
-            const square = document.getElementById(piece.position);
-
-            square.innerHTML = piece.icon
+            const square = squares.find(elem => elem.current.id === piece.position)?.current;
+            if (square) square.textContent = piece.icon
         }
+
     }
     React.useEffect(()=>{
         resetBoard();
-    })
+    },[turnPlaying])
     
     const setAllowedSquares = (pieceImg) => {
-       console.log(pieceImg.id)
        setClickedPieceName(pieceImg.id);
         const allowedMoves = game.getPieceAllowedMoves(clickedPieceName || pieceImg.id);
 
@@ -51,9 +48,8 @@ const ChessBoard = () => {
             clickedSquare.classList.add('clicked-square');
 
             allowedMoves.forEach( allowedMove => {
-
-                if (document.contains(document.getElementById(allowedMove))) {
-                    document.getElementById(allowedMove).classList.add('allowed');
+                if (squares.find(item => item.current.id === allowedMove).current) {
+                    squares.find(item => item.current.id === allowedMove).current.classList.add('allowed');
                 }
             });
         }
@@ -65,7 +61,7 @@ const ChessBoard = () => {
     const clearSquares = () => {
         const allowedSquares = squares.filter((item) => item.current.classList.value.includes('allowed'))
         allowedSquares.forEach( allowedSquare => allowedSquare.current.classList.remove('allowed') );
-
+        
         const cllickedSquare = squares.find(item => item.current.classList.value.includes('clicked-square'));
         if (cllickedSquare) {
             cllickedSquare.current.classList.remove('clicked-square');
@@ -73,20 +69,40 @@ const ChessBoard = () => {
       }
 
     function movePiece(square) {
-        console.log(square)
         const position = square.getAttribute('id');
-        console.log(position)
         const existedPiece = game.getPieceByPos(position);
-        console.log(existedPiece,game)
-        if (existedPiece && existedPiece.color === game.turn) {
-
-            const pieceImg = document.getElementById(existedPiece.position);
-            clearSquares();
-           return setAllowedSquares(pieceImg);
+        if (existedPiece && existedPiece.color === turnPlaying) {
+          const pieceImg = squares.find(item => item.current.id === existedPiece.position).current;
+          clearSquares();
+          return setAllowedSquares(pieceImg);
         }
 
-        game.movePiece(clickedPieceName, position);
+        game.movePiece(clickedPieceName, position, turnPlaying);
     }
+
+    const startBoard = game => {
+
+      // const whiteSematary = document.getElementById('whiteSematary');
+      // const blackSematary = document.getElementById('blackSematary');
+  
+      const resetBoard = () => {
+          for (const square of squares) {
+              square.current.textContent = '';
+          }
+  
+          for (const piece of game.pieces) {
+              const square = squares.find(item => item.current.id === piece.position);
+
+              if (square) square.current.textContent = piece.icon;
+          }
+      }
+  
+      resetBoard();
+    }
+
+    React.useEffect(()=>{
+      startBoard(game);
+    }, [game, turnPlaying])
 
     // squares.forEach( square => {
     //     square.addEventListener("click", function () {
@@ -123,27 +139,33 @@ const ChessBoard = () => {
     });
 
     game.on('pieceMove', piece => {
-        const square = squares.find((elem) => elem.current.id === piece.position)
-        square.current.append( piece.icon );
+        const square = squares.find((elem) => elem.current.id === piece.position).current
+        square.textContent = piece.icon
         clearSquares();
     });
 
     game.on('turnChange', turn => {
-        turnSign.innerHTML = turn === 'white' ? "White's Turn" : "Black's Turn";
+        turnLabel.textContent = turnPlaying === 'white' ? "Black's Turn" : "White's Turn";
+        setTurnPlaying(turnPlaying === 'white' ? "black" : "white");
     });
 
     game.on('promotion', queen => {
-        const square = document.getElementById(queen.position);
-        square.innerHTML = `<img class="piece queen" id="${queen.name}" src="img/${queen.color}Queen.png">`;
+        const square = squares.find((elem) => elem.current.id === queen.position).current
+        const queenChar = pieces.find(elem => elem.color === queen.color && elem.rank === 'queen');
+        // square.textContent = `<img class="piece queen" id="${queen.name}" src="img/${queen.color}Queen.png">`;
+        queen.icon = queenChar.icon
+        square.textContent = queenChar.icon
     })
 
     game.on('kill', piece => {
-        const pieceImg = document.getElementById(piece.name);
-        pieceImg.parentNode.removeChild(pieceImg);
-        pieceImg.className = '';
+        // console.log(piece);
+        // const square = document.getElementById(queen.position);
+        // console.log(square.current.children);
+        // square.current.removeChild(piece.icon);
+        // square.className = '';
 
         const sematary = piece.color === 'white' ? whiteSematary : blackSematary;
-        sematary.querySelector('.'+piece.rank).append(pieceImg);
+        sematary.querySelector('.'+piece.rank).append(piece.icon);
     });
 
     game.on('checkMate', color => {

@@ -1,9 +1,9 @@
 import Queen from './Pieces/Queen'
 
 export default class Game {
-	constructor(pieces) {
+	constructor(pieces, turnPlaying) {
 		this.pieces  = pieces;
-		this.turn    = 'white';
+		this.turn    = turnPlaying;
 		this.clickedPiece = null;
 		this._events = {
 			pieceMove: [],
@@ -26,7 +26,8 @@ export default class Game {
 	}
 
 	changeTurn() {
-		this.turn = this.turn === 'white' ? 'black' : 'white';
+		if (this.turn === 'white') this.turn = 'black';
+    else this.turn = 'white'
 		this.triggerEvent('turnChange', this.turn);
 	}
 
@@ -42,6 +43,7 @@ export default class Game {
 	}
 
 	filterPositions(positions) {
+        
 		return positions?.filter(pos => {
 			if (typeof pos === 'string') {
                 return pos[0] >= 1 && pos[0] <= 8 && pos[1].toLowerCase() >= 'a' && pos[1].toLowerCase() <= 'h';
@@ -50,7 +52,7 @@ export default class Game {
 	}
 
 	unblockedPositions(piece, allowedPositions, checking=true) {
-		const unblockedPositions = [];
+		const unblocked = [];
         let myBlockedPositions;
         let otherBlockedPositions;
         
@@ -62,43 +64,54 @@ export default class Game {
 			myBlockedPositions    = this.getPlayerPositions('black');
 			otherBlockedPositions = this.getPlayerPositions('white');
 		}
-
 		if (piece.hasRank('pawn')) {
 			for (const move of allowedPositions[0]) { //attacking moves
-
 				//if (checking && this.myKingChecked(move)) continue;
-				if (otherBlockedPositions.indexOf(move) !== -1) continue; 
-                unblockedPositions.push(move);
+				// if (otherBlockedPositions.indexOf(move) !== -1) continue; 
+                unblocked.push(move);
 			}
 			const blockedPositions = [...myBlockedPositions, ...otherBlockedPositions];
 
 			for (const move of allowedPositions[1]) { //moving moves
 				if (blockedPositions.indexOf(move) !== -1) {
-					break;
+					continue;
 				}
 				// else if (checking && this.myKingChecked(move, false)) continue;
-				unblockedPositions.push(move);
+				unblocked.push(move);
+			}
+		} 
+		else if(piece.hasRank('knight')) {
+			for (let i = 0; i < allowedPositions?.length; i++) {
+				if (myBlockedPositions.indexOf(allowedPositions[i]) !== -1) {
+					continue;
+				}  
+				unblocked.push(allowedPositions[i]);
 			}
 		}
 		else{
              for (let i = 0; i < allowedPositions?.length; i++) {
-                if (myBlockedPositions.indexOf(allowedPositions[i]) !== -1) {
-						break;
-				}                   
+  
+				for (let j = 0; j < allowedPositions[i].length; j++) {
+					if (myBlockedPositions.indexOf(allowedPositions[i][j]) !== -1) {
+						continue;
+			       }  
+					unblocked.push(allowedPositions[i][j]);
+				}                     
                 // else if ( checking && this.myKingChecked(allowedPositions[i]) ) {
                 //     if (otherBlockedPositions.indexOf(allowedPositions[i]) !== -1) {
                 //         break;
                 //     }
                 //     continue;
                 // }
-                    unblockedPositions.push(allowedPositions[i]);
-             }   
+                   
+            }   
 		}
-		return unblockedPositions && unblockedPositions.length ? this.filterPositions(unblockedPositions) : unblockedPositions;
+		return unblocked && unblocked.length ? this.filterPositions(unblocked) : unblocked;
 	}
 
 	getPieceAllowedMoves(pieceName){
 		const piece = this.getPieceByPos(pieceName);
+
 		if(this.turn === piece?.color){
 			this.setClickedPiece(piece);
 			let pieceAllowedMoves = piece.getAllowedMoves();
@@ -167,13 +180,11 @@ export default class Game {
 
 	movePiece(pieceName, position) {
 		const piece = this.getPieceByPos(pieceName);
-
 		const prevPosition = piece?.position;
-		//position = parseInt(position);
-
 		if (piece && this.getPieceAllowedMoves(piece?.position).indexOf(position) !== -1) {
+			
 			const existedPiece = this.getPieceByPos(position)
-
+            console.log(existedPiece,position);
 			if (existedPiece) {
 				this.kill(existedPiece);
 			}
@@ -193,7 +204,7 @@ export default class Game {
                   
 			this.triggerEvent('pieceMove', piece);
 
-			if (piece.rank === 'pawn' && (position > 80 || position < 20)) {
+			if (piece.rank === 'pawn' && (position.includes('8') || position.includes('1'))) {
 				this.promote(piece);
 			}
 
