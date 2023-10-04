@@ -32,7 +32,7 @@ const Header = ({ token }) => {
             >
               {header.map((items, index) => (
                 <React.Fragment key={index}>
-                  <div
+                  <Link
                     to={items.path}
                     className={` ${hoveredMenuItemIndex === index ? "" : ""}`}
                     onMouseEnter={() => {
@@ -99,6 +99,7 @@ const Header = ({ token }) => {
                         ))}
                       </div>
                     )}
+                  </Link>
                   </div>
                   {hoveredMenuItemIndex === index && index !== 5 && (
                     <div className="relative bottom-0 flex flex-col gap-1">
