@@ -44,7 +44,7 @@ const SignIn = () => {
       } else {
         const data = await response.json();
         toast.error(data.message);
-        console.log(data.message);
+        // console.log(data.message);
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -76,7 +76,7 @@ const SignIn = () => {
    </div>
     <div className="h-fit w-screen  py-[5rem] flex justify-evenly items-center px-4 ">
       <div className="container flex items-center mx-auto justify-evenly" >
-      <div className="justify-center hidden w-full lg:flex">
+      <div className="justify-center hidden w-full lg:flex ">
 
           <img
             src="https://cdn3.iconfinder.com/data/icons/hobbies-and-free-time-17/512/Chess_Chess_game_Game_Marketing_Pawn_Pawns_Strategy.png"
@@ -89,7 +89,7 @@ const SignIn = () => {
          
           <form
             onSubmit={handleSubmit}
-            className="lg:w-[70%] px-8 pt-6 pb-8 my-4 space-y-6 bg-[#333] rounded shadow-md mx-auto lg:mx-0"
+            className="lg:w-[70%] px-8 pt-6 pb-8 my-4 space-y-6 bg-[#333] rounded shadow-md"
 
           >
             <div className="mb-4">
@@ -107,7 +107,7 @@ const SignIn = () => {
                 placeholder="mike"
                 onChange={(e) => setUserName(e.target.value)}
                 required
-                className="w-full px-3 py-2 leading-tight text-[#ddd] border rounded appearance-none focus:outline-none focus:shadow-outline text-[black]"
+                className="w-full px-3 py-2 leading-tight border rounded appearance-none focus:outline-none focus:shadow-outline text-[black]"
               />
             </div>
             <div className="mb-6">

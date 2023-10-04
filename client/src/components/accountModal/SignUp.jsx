@@ -132,10 +132,10 @@ const SignUp = () => {
           />
         </div>
 
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full ">
           <form
             onSubmit={handleSubmit}
-            className="w-[70%] px-8 pt-6 pb-8 my-4 space-y-2 bg-[#333] rounded shadow-md mx-auto lg:mx-0"
+            className="lg:w-[70%] px-8 pt-6 pb-8 my-4 space-y-2 bg-[#333] rounded shadow-md"
           >
             <div className="space-y-4">
               <label

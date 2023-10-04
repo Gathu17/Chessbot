@@ -11,7 +11,7 @@ const Header = ({ token }) => {
   const [mobileMenu, setMobileMenu] = useState(false);
 
   useEffect(() => {
-    console.log({ token });
+    // console.log({ token });
   }, [token]);
 
   return (
@@ -100,7 +100,6 @@ const Header = ({ token }) => {
                       </div>
                     )}
                   </Link>
-                  </div>
                   {hoveredMenuItemIndex === index && index !== 5 && (
                     <div className="relative bottom-0 flex flex-col gap-1">
                       <div className="w-full h-[.2rem] bg-[#AC8D75] absolute"></div>

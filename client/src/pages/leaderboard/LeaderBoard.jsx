@@ -10,6 +10,7 @@ function Leaderboard() {
   const [showMore, setShowMore] = useState(true);
   const [visibleRecords, setVisibleRecords] = useState(10);
   const [countryFlags, setCountryFlags] = useState({});
+  const [loadingFlags, setLoadingFlags] = useState({});
 
   useEffect(() => {
     async function fetchLeaderboard() {
@@ -38,19 +39,20 @@ function Leaderboard() {
   useEffect(() => {
     async function fetchCountryFlags() {
       const flags = {};
+      const loadingFlagsData = {};
       const countryCodes = leaderboardData.map((item) => {
         const parts = item.country.split("/");
         let countryCode = parts[parts.length - 1];
 
-        // Replace "XE" with "LU"
-        countryCode = countryCode.replace(/^XB/, 'UM');
-        countryCode = countryCode.replace(/^XE/, 'LU');
+        countryCode = countryCode.replace(/^XB/, "UM");
+        countryCode = countryCode.replace(/^XE/, "LU");
 
         return countryCode;
       });
 
       for (const countryCode of countryCodes) {
         try {
+          loadingFlagsData[countryCode] = true; 
           const response = await axios.get(
             `https://restcountries.com/v3/alpha/${countryCode}`
           );
@@ -64,14 +66,18 @@ function Leaderboard() {
           }
         } catch (error) {
           console.error("Error fetching country flag:", error);
+        } finally {
+          loadingFlagsData[countryCode] = false;
         }
       }
 
       setCountryFlags(flags);
+      setLoadingFlags(loadingFlagsData); 
     }
 
     fetchCountryFlags();
   }, [leaderboardData]);
+
 
   return (
     <div className="min-h-screen p-4">
@@ -88,11 +94,22 @@ function Leaderboard() {
       {leaderboardData.slice(0, visibleRecords).map((item, index) => {
         const countryCode = item.country.split("/").pop();
         const flagUrl = countryFlags[countryCode];
+        const isLoadingFlag = loadingFlags[countryCode];
+        const trendRankDirection = item.trend_rank
+          ? item.trend_rank.direction
+          : null;
+        const trendScoreDirection = item.score_rank
+          ? item.score_rank.direction
+          : null;
 
         return (
           <div key={index} className="flex justify-between p-4">
             <div className="flex items-center w-1/2 gap-4">
-              <img src={item.avatar} className="w-1/6 border rounded-md" alt="" />{" "}
+              <img
+                src={item.avatar}
+                className="w-1/6 border rounded-md"
+                alt=""
+              />{" "}
               <p className="flex items-center gap-2">
                 <a
                   data-tooltip-id="name-tooltip"
@@ -121,29 +138,72 @@ function Leaderboard() {
                 </a>
                 <Tooltip id="badge-tooltip" />
               </p>
-              <img src={flagUrl} alt="" className="w-[1rem]"/>
+              {isLoadingFlag && (
+                <span className="w-6 h-6 rounded-full inline-block border-t-[#fff] border-[3px] box-border border-r-transparent animate-spin"></span>
+              )}
+              {!isLoadingFlag && (
+                <img
+                  src={flagUrl}
+                  alt=""
+                  className="w-[1rem]"
+                  onLoad={() => setLoadingFlags({ ...loadingFlags, [countryCode]: false })}
+                />
+              )}
             </div>
             <div className="flex w-full gap-2 justify-evenly">
-              <p className="flex items-center  w-full justify-between px-[5%] rounded-sm lg:rounded-xl border-2 border-[#afaf3f]">
-                <div className="flex items-center ">
-                    {item.trend_rank.direction < 0 ? (<BsArrowDown className="animate-pulse text-[red]" />) : item.trend_rank.direction === 0 ? ("") : <BsArrowUp className="animate-pulse text-[green]"/>}
+              <p className="flex items-center w-full justify-between px-[5%] rounded-sm lg:rounded-xl border-2 border-[#afaf3f]">
+                <p className="flex items-center">
+                  {trendRankDirection && trendRankDirection < 0 ? (
+                    <BsArrowDown className="animate-pulse text-[red]" />
+                  ) : trendRankDirection === 0 ? null : (
+                    <BsArrowUp className="animate-pulse text-[gold]" />
+                  )}
                   <span>{item.rank}</span>
-                </div>
-                {item.score}
+                </p>
+                <p className="flex items-center">
+                  {trendScoreDirection && trendScoreDirection < 0 ? (
+                    <BsArrowDown className="animate-pulse text-[red]" />
+                  ) : trendScoreDirection === 0 ? null : (
+                    <BsArrowUp className="animate-pulse text-[gold]" />
+                  )}
+                  <span>{item.score}</span>
+                </p>
               </p>
-              <p className="flex items-center  w-full justify-between px-[5%] rounded-sm lg:rounded-xl border-2 border-[#d3a19e]">
-              <div className="flex items-center gap-1 ">
-                    {item.trend_rank.direction < 0 ? (<BsArrowDown className="animate-pulse text-[red]" />) : item.trend_rank.direction === 0 ? ("") : <BsArrowUp className="animate-pulse text-[green]"/>}
-                <span>{item.rank}</span>
-                </div>
-                {item.score}
+              <p className="flex items-center w-full justify-between px-[5%] rounded-sm lg:rounded-xl border-2 border-[#d3a19e]">
+                <p className="flex items-center">
+                  {trendRankDirection && trendRankDirection < 0 ? (
+                    <BsArrowDown className="animate-pulse text-[red]" />
+                  ) : trendRankDirection === 0 ? null : (
+                    <BsArrowUp className="animate-pulse text-[gold]" />
+                  )}
+                  <span>{item.rank}</span>
+                </p>
+                <p className="flex items-center">
+                  {trendScoreDirection && trendScoreDirection < 0 ? (
+                    <BsArrowDown className="animate-pulse text-[red]" />
+                  ) : trendScoreDirection === 0 ? null : (
+                    <BsArrowUp className="animate-pulse text-[gold]" />
+                  )}
+                  <span>{item.score}</span>
+                </p>
               </p>
-              <p className="flex items-center  w-full justify-between px-[5%] rounded-sm lg:rounded-xl border-2 border-[#3f8daf]">
-              <div className="flex items-center gap-1 ">
-                    {item.trend_rank.direction < 0 ? (<BsArrowDown className="animate-pulse text-[red]" />) : item.trend_rank.direction === 0 ? ("") : <BsArrowUp className="animate-pulse text-[green]"/>}
-                <span>{item.rank}</span>
-                </div>
-                {item.score}
+              <p className="flex items-center w-full justify-between px-[5%] rounded-sm lg:rounded-xl border-2 border-[#3f8daf]">
+                <p className="flex items-center">
+                  {trendRankDirection && trendRankDirection < 0 ? (
+                    <BsArrowDown className="animate-pulse text-[red]" />
+                  ) : trendRankDirection === 0 ? null : (
+                    <BsArrowUp className="animate-pulse text-[gold]" />
+                  )}
+                  <span>{item.rank}</span>
+                </p>
+                <p className="flex items-center">
+                  {trendScoreDirection && trendScoreDirection < 0 ? (
+                    <BsArrowDown className="animate-pulse text-[red]" />
+                  ) : trendScoreDirection === 0 ? null : (
+                    <BsArrowUp className="animate-pulse text-[gold]" />
+                  )}
+                  <span>{item.score}</span>
+                </p>
               </p>
             </div>
           </div>
