@@ -20,3 +20,9 @@ h5 {
 h6 {
   font-size: 1.5rem;
 }
+
+td {
+  font-size: 2em;
+  color: black;
+  font-weight: 600;
+}
