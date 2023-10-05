@@ -10,57 +10,30 @@ import { MdLogout, MdRestartAlt } from "react-icons/md";
 import { BiMessageSquareDetail } from "react-icons/bi";
 import { ImExit } from "react-icons/im";
 import { BsDot } from "react-icons/bs";
-import {isValidMove} from '../../utils/validate'
-import Game from '../../utils/Game'
-import {pieces} from '../../utils/ChessBoard'
+import Game from "../../utils/Game";
+import { pieces } from "../../utils/ChessBoard";
 import ChessBoard from "../../components/play/ChessBoard";
 
-const Play = () => {
-  const turnLabel = useRef(null)
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+}
 
-  const [selectedPiece, setSelectedPiece] = useState(null);
+const Play = () => {
+  const turnLabel = useRef(null);
+
+  const [whiteCountdown, setWhiteCountdown] = useState(600); // Example initial value
+  const [blackCountdown, setBlackCountdown] = useState(600); // Example initial value
+
   const [playerScores, setPlayerScores] = useState([0, 0]);
-  const [countdownTime, setCountdownTime] = useState(60);
   const [activeLink, setActiveLink] = useState(["newGame", "games", "players"]);
   const [selectedGame, setSelectedGame] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [peopleOnline, setPeopleOnline] = useState([]);
 
-  const initialChessboard = [
-    ["♜", "♞", "♝", "♛", "♚", "♝", "♞", "♜"],
-    ["♟", "♟", "♟", "♟", "♟", "♟", "♟", "♟"],
-    ["", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", ""],
-    ["♙", "♙", "♙", "♙", "♙", "♙", "♙", "♙"],
-    ["♖", "♘", "♗", "♕", "♔", "♗", "♘", "♖"],
-  ];
   const game = new Game(pieces);
-  const [turnPlaying, setTurnPlaying] = useState('white')
-
-  function handlePieceClick(row, col) {
-    const piece = chessIcons[row * 8 + col];
-   
-    if (selectedPiece) {
-      if (selectedPiece.row === row && selectedPiece.col === col) {
-        return;
-      }
-      
-      if(isValidMove(selectedPiece.piece, selectedPiece.row, selectedPiece.col, row, col)){
-          const newChessIcons = [...chessIcons];
-          newChessIcons[row * 8 + col] = selectedPiece.piece;
-          newChessIcons[selectedPiece.row * 8 + selectedPiece.col] = "";
-          setChessIcons(newChessIcons);
-          setSelectedPiece(null);
-          switchPlayers();
-      } else {
-        return;
-      } 
-    } else if (piece) {
-      setSelectedPiece({ piece, row, col });
-    }
-  }
+  const [turnPlaying, setTurnPlaying] = useState("white");
 
   const handleGameChange = (event) => {
     setSelectedGame(event.target.value);
@@ -138,22 +111,6 @@ const Play = () => {
     },
   ];
 
-  const flattenedChessIcons = initialChessboard.flat();
-  const [chessIcons, setChessIcons] = useState(flattenedChessIcons);
-  const switchPlayers = () => {
-    setPlayerScores(([score1, score2]) => [score2, score1]);
-    setSelectedPiece(null);
-    setCountdownTime(60);
-  };
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdownTime((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
   return (
     <div className="flex flex-col justify-between space-y-8 lg:flex-row">
       <div className="lg:w-[10%] px-4 lg:px-0 shadow-2xl shadow-[#444]">
@@ -181,7 +138,11 @@ const Play = () => {
               />
             </div>
             <span className="ml-3 text-lg font-semibold">Opponent</span>
-            <span id="turn" ref={turnLabel}>{`${turnPlaying}'s turn`}</span>
+            <span
+              id="turn"
+              ref={turnLabel}
+            >{`${turnPlaying}'s turn`}</span>{" "}
+            <br />
           </div>
           <div className="flex flex-col items-center lg:items-start">
             <span className="text-sm">Score:</span>
@@ -189,11 +150,10 @@ const Play = () => {
           </div>
           <div className="flex flex-col items-center lg:items-start">
             <span className="text-sm">Time Remaining:</span>
-            <span className="text-xl font-bold">{countdownTime} sec</span>
+            <span className="text-xl font-bold">{formatTime(blackCountdown)} </span>
           </div>
         </div>
-         {/* <ChessBoard game={game} /> */}
-         <div id="sematary">
+        <div id="sematary">
           <div id="whiteSematary">
             <div className="pawn"></div>
             <div className="knight"></div>
@@ -209,11 +169,15 @@ const Play = () => {
             <div className="queen"></div>
           </div>
         </div>
-         <ChessBoard 
-          game={game} 
+        <ChessBoard
+          game={game}
           turnPlaying={turnPlaying}
           setTurnPlaying={setTurnPlaying}
-          turnLabel={turnLabel} 
+          turnLabel={turnLabel}
+          whiteCountdown={whiteCountdown}
+          blackCountdown={blackCountdown}
+          setWhiteCountdown={setWhiteCountdown}
+          setBlackCountdown={setBlackCountdown}
         />
         <div className="flex lg:items-start justify-between px-4 py-2 mb-4 text-white rounded-lg lg:space-x-[3rem] lg:w-full w-full sm:w-3/4 gap-6 items-center mt-5">
           <div className="flex flex-col items-center lg:flex-row ">
@@ -232,7 +196,7 @@ const Play = () => {
           </div>
           <div className="flex flex-col items-start">
             <span className="text-sm">Time Remaining:</span>
-            <span className="text-xl font-bold">{countdownTime} sec</span>
+            <span className="text-xl font-bold">{formatTime(whiteCountdown)}</span>
           </div>
         </div>
       </div>
@@ -414,10 +378,9 @@ const Play = () => {
             ))}
           </div>
         )}
-
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Play;
