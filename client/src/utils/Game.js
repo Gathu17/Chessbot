@@ -5,6 +5,8 @@ export default class Game {
 		this.pieces  = pieces;
 		this.turn    = turnPlaying;
 		this.clickedPiece = null;
+		this.saveKingMoves = [];
+		this.checked = '';
 		this._events = {
 			pieceMove: [],
 			kill: [],
@@ -42,13 +44,15 @@ export default class Game {
 		return pieces.map( a => a.position);
 	}
 
-	filterPositions(positions) {
+	filterPositions(positions,piece) {
         
-		return positions?.filter(pos => {
+		const filteredPositions =  positions?.filter(pos => {
 			if (typeof pos === 'string') {
                 return pos[0] >= 1 && pos[0] <= 8 && pos[1].toLowerCase() >= 'a' && pos[1].toLowerCase() <= 'h';
             }
           });
+
+		return filteredPositions;  
 	}
 
 	unblockedPositions(piece, allowedPositions, checking=true) {
@@ -66,8 +70,9 @@ export default class Game {
 		}
 		if (piece.hasRank('pawn')) {
 			for (const move of allowedPositions[0]) { //attacking moves
-				if (checking && this.myKingChecked(move)) continue;
-			        if (otherBlockedPositions.indexOf(move) !== -1) continue; 
+				
+			        if (otherBlockedPositions.indexOf(move) == -1) continue;
+					else if (checking && this.myKingChecked(move)) continue; 
                     unblocked.push(move);
 			}
 			const blockedPositions = [...myBlockedPositions, ...otherBlockedPositions];
@@ -85,12 +90,14 @@ export default class Game {
 			for (let i = 0; i < allowedPositions?.length; i++) {
 				if (myBlockedPositions.indexOf(allowedPositions[i]) !== -1) {
 					continue;
-				}  
+				}
+				else if (checking && this.myKingChecked(allowedPositions[i])) continue;  
 				unblocked.push(allowedPositions[i]);
+				
 			}
 		}
 		else{
-			console.log(otherBlockedPositions);
+			//console.log(otherBlockedPositions);
              for (let i = 0; i < allowedPositions?.length; i++) {
   
 				for (let j = 0; j < allowedPositions[i].length; j++) {
@@ -109,7 +116,7 @@ export default class Game {
                    
             }   
 		}
-		return unblocked && unblocked.length ? this.filterPositions(unblocked) : unblocked;
+		return unblocked && unblocked.length ? this.filterPositions(unblocked,piece) : unblocked;
 	}
 
 	getPieceAllowedMoves(pieceName){
@@ -132,11 +139,10 @@ export default class Game {
 
 
 	getCastlingSquares(king, allowedMoves) {
-		console.log(this.king_checked(this.turn, king));
 		if ( !king.ableToCastle || this.king_checked(this.turn, king) ) return allowedMoves;
 		const rook1 = this.getPieceByName(this.turn+'Rook1');
 		const rook2 = this.getPieceByName(this.turn+'Rook2');
-		console.log(allowedMoves);
+
 		if (rook1 && rook1.ableToCastle) {
 			const col = rook1.position.charCodeAt(1) - 95
 			const castlingPosition = `${rook1.position.charAt(0)}${String.fromCharCode(col + 97)}`;
@@ -173,7 +179,6 @@ export default class Game {
 	}
 
 	positionHasExistingPiece(position) {
-		console.log(position);
 		return this.getPieceByPos(position) !== undefined;
 	}
 
@@ -192,14 +197,15 @@ export default class Game {
 	}
 
 	movePiece(pieceName, position) {
-		console.log(position);
 		const piece = this.getPieceByPos(pieceName);
 		const prevPosition = piece?.position;
-		console.log(this.getPieceAllowedMoves(piece?.position));
+		if(this.king_checked(piece?.color) && this.saveKingMoves.indexOf(position) == -1) {
+			return false;
+		}
 		if (piece && this.getPieceAllowedMoves(piece?.position).indexOf(position) !== -1) {
 			
 			const existedPiece = this.getPieceByPos(position)
-            console.log(existedPiece,position);
+
 			if (existedPiece) {
 				this.kill(existedPiece);
 			}
@@ -268,19 +274,18 @@ export default class Game {
 	}
 
 	myKingChecked(pos, kill=true){
-		console.log(pos);
 		const piece = this.clickedPiece;
 		const originalPosition = piece.position;
-		console.log(originalPosition);
+
 		const otherPiece = this.getPieceByPos(pos);
 		const should_kill_other_piece = kill && otherPiece && otherPiece.rank !== 'king';
 		
-		console.log(should_kill_other_piece);
+
 		if (should_kill_other_piece) this.pieces.splice(this.pieces.indexOf(otherPiece), 1);
 		piece.changePosition(pos);
-		
+
 		if (this.king_checked(piece.color)) {
-			console.log('king ako check');
+
 			piece.changePosition(originalPosition);
 			if (should_kill_other_piece) {
 				this.pieces.push(otherPiece);
@@ -318,7 +323,6 @@ export default class Game {
 			this.setClickedPiece(enemyPiece);
 			
 			const allowedMoves = this.unblockedPositions(enemyPiece, enemyPiece.getAllowedMoves(), false);
-			if(enemyPiece.rank == 'bishop') console.log(allowedMoves);
 			
 			if (allowedMoves.indexOf(king.position) !== -1) {
 				let enemyPos = enemyPiece.position;
@@ -326,8 +330,13 @@ export default class Game {
 				let enemyRow = parseInt(enemyPiece.position.charAt(0));
 				const destCol = king.position.charCodeAt(1) - 97;
 				const destRow = parseInt(king.position.charAt(0));
+				const saveKingMoves = [];
+				this.checked = color;
 				
                 while (enemyPos !== king.position) {
+
+					saveKingMoves.push(enemyPos);
+
 					// Move to the next square
 					if(destCol < enemyCol) enemyCol--; 
 					if(destRow < enemyRow) enemyRow--;
@@ -335,20 +344,25 @@ export default class Game {
 					if(destRow > enemyRow) enemyRow++;
 
 					enemyPos = enemyRow.toString() + String.fromCharCode(enemyCol + 97);
-					
+                    
+					const found = this.getPieceByPos(enemyPos)
 					if (this.getPieceByPos(enemyPos) && enemyPos !== king.position) {
 						// Obstruction found, cannot move
+
 						return 0;
 					}				
 					
 				}
-
+				this.saveKingMoves = saveKingMoves;
 				this.setClickedPiece(piece);
 				return 1;
 			}
 		}
 		this.setClickedPiece(piece);
 		return 0;
+	}
+	getAllowedCheckMoves(){
+
 	}
 
 	checkmate(color){
