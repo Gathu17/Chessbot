@@ -10,7 +10,7 @@ const Header = ({ token }) => {
   const [mobileMenu, setMobileMenu] = useState(false);
 
   useEffect(() => {
-    console.log({ token });
+    // console.log({ token });
   }, [token]);
 
   return (

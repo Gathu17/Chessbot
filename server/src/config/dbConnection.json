@@ -1,6 +1,6 @@
 {
-  "username": "john",
-  "password": "root",
+  "username": "mike",
+  "password": "Arsenal123*",
   "database": "chess",
   "host": "localhost",
   "dialect": "mysql"

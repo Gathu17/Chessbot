@@ -33,62 +33,62 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      setErrorTracker(true);
-      return;
-    }
+  e.preventDefault();
+  if (password !== confirmPassword) {
+    setErrorTracker(true);
+    return;
+  }
 
-    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-    const phoneRegex = /^\+\d{10,}$/;
+  const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+  const phoneRegex = /^\+\d{10,}$/;
 
-    if (!emailRegex.test(email)) {
-      setEmailError(true);
-      return;
-    }
+  if (!emailRegex.test(email)) {
+    setEmailError(true);
+    return;
+  }
 
-    if (!phoneRegex.test(phoneNumber)) {
-      setPhoneError(true);
-      toast.error("Please enter a valid phone number");
-      return;
-    }
+  if (!phoneRegex.test(phoneNumber)) {
+    setPhoneError(true);
+    toast.error("Please enter a valid phone number");
+    return;
+  }
 
-    try {
-      const response = await fetch("http://localhost:3001/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          username,
-          email,
-          phoneNumber,
-          password,
-        }),
-      });
+  try {
+    const response = await fetch("http://localhost:8000/api/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        phoneNumber,
+        password,
+      }),
+    });
 
-      if (response.ok) {
-        toast.success("User Created Successfully");
-        setTimeout(() => {
-          navigate("/sign-in");
-        }, 3000);
-      } else {
-        const data = await response.json();
-        toast.error(data.message);
+    if (response.ok) {
+      toast.success("User Created Successfully");
+      setTimeout(() => {
+        navigate("/sign-in");
+      }, 3000);
+    } else {
+      const data = await response.json();
+      toast.error(data.error);
 
-        if (response.status === 400) {
-          if (data.message === "Email already registered") {
-            setEmailError(true);
-          } else if (data.message === "Phone number already registered") {
-            setPhoneError(true);
-          }
+      if (response.status === 400) {
+        if (data.error === "Email already in use") {
+          setEmailError(true);
+        } else if (data.error === "Phone number already registered") {
+          setPhoneError(true);
         }
       }
-    } catch (error) {
-      toast.error("An unexpected error occurred");
     }
-  };
+  } catch (error) {
+    toast.error("An unexpected error occurred");
+  }
+};
+
 
   const isPasswordValid = () => {
     const hasCapitalLetter = /[A-Z]/.test(password);
