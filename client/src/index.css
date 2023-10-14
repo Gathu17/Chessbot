@@ -26,3 +26,10 @@ td {
   color: black;
   font-weight: 600;
 }
+
+.allowed {
+  border: 1px dashed #ffff00;
+  /* background-color: #80ff00; */
+  background-color: #779954;
+  opacity: 0.5;
+}
