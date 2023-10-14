@@ -34,16 +34,28 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
     }
 
   }
+
+  function alwaysSetAllowedSquares() {
+    if (squares.filter(item => item.current.classList.contains('clicked-square')).length) {
+      removeHighlightedSquares()
+      setAllowedSquares(squares.find(item => item.current.classList.contains('clicked-square')).current);
+    } 
+  }
+
   React.useEffect(() => {
     resetBoard();
   }, [turnPlaying])
 
-  const setAllowedSquares = (pieceImg) => {
+  React.useEffect(() => {
+    alwaysSetAllowedSquares()
+  }, [clickedPieceName])
+
+  function setAllowedSquares(pieceImg) {
     setClickedPieceName(pieceImg.id);
     const allowedMoves = game.getPieceAllowedMoves(clickedPieceName || pieceImg.id);
 
     if (allowedMoves) {
-      const clickedSquare = pieceImg.parentNode;
+      const clickedSquare = pieceImg;
 
       clickedSquare.classList.add('clicked-square');
 
@@ -58,9 +70,13 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
     }
   }
 
-  const clearSquares = () => {
+  function removeHighlightedSquares() {
     const allowedSquares = squares.filter((item) => item.current.classList.value.includes('allowed'))
     allowedSquares.forEach(allowedSquare => allowedSquare.current.classList.remove('allowed'));
+  }
+
+  const clearSquares = () => {
+    removeHighlightedSquares()
 
     const cllickedSquare = squares.find(item => item.current.classList.value.includes('clicked-square'));
     if (cllickedSquare) {
