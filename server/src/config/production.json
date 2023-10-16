@@ -1,0 +1,7 @@
+{
+  "username": "keywaifi_chess",
+  "password": "chess1234",
+  "database": "keywaifi_chess",
+  "host": "localhost",
+  "dialect": "mysql"
+}
