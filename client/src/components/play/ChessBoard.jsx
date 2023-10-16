@@ -145,8 +145,13 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
     });
 
     game.on('turnChange', turn => {
-        turnLabel.textContent = turnPlaying === 'white' ? "Black's Turn" : "White's Turn";
+      if (!game.king_checked(turn)) {
+        turnLabel.current.textContent = turnPlaying === 'white' ? "Black's Turn" : "White's Turn";
         setTurnPlaying(turnPlaying === 'white' ? "black" : "white");
+      } else {
+        turnLabel.current.textContent = turn === 'white' ? 'White Checked' : 'Black Checked'
+        setTurnPlaying(turnPlaying === 'white' ? "black" : "white");
+      }
     });
 
     game.on('promotion', queen => {
