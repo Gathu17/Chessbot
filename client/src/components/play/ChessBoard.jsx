@@ -9,17 +9,13 @@ import Game from '../../utils/Game'
 import Square from "./Square";
 
 
-const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
+const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel, winningSign, blackSematary, whiteSematary }) => {
     const board = React.useRef(null)
     const squares = Array(64).fill(null).map(() => React.useRef(null))
     const [clickedPieceName, setClickedPieceName] = React.useState('')
     const game = new Game(pieces, turnPlaying);
     const [playBot, setPlayBot] = React.useState({state: true, color: 'black'})
-    
-    const whiteSematary = document.getElementById('whiteSematary');
-    const blackSematary = document.getElementById('blackSematary');
-    const winningSign = document.getElementById('winning-sign');
-  
+
 
     function handleSquareClick(e) {
       movePiece(e.target)
@@ -151,13 +147,13 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
     })
 
     game.on('kill', piece => {
-        const sematary = piece.color === 'white' ? whiteSematary : blackSematary;
+        const sematary = piece.color === 'white' ? whiteSematary.current : blackSematary.current;
         sematary.querySelector('.'+piece.rank).append(piece.icon);
     });
 
     game.on('checkMate', color => {
         // const endScene = document.getElementById('endscene');
-        winningSign.innerHTML = color + ' Wins';
+        winningSign.current.textContent = color + ' Wins';
         // endScene.classList.add('show');
     })
     return(

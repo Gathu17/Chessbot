@@ -17,6 +17,9 @@ import ChessBoard from "../../components/play/ChessBoard";
 
 const Play = () => {
   const turnLabel = useRef(null)
+  const winningSign = useRef(null);
+  const whiteSematary = useRef(null);
+  const blackSematary = useRef(null);
 
   const [selectedPiece, setSelectedPiece] = useState(null);
   const [playerScores, setPlayerScores] = useState([0, 0]);
@@ -183,7 +186,7 @@ const Play = () => {
 
             <span className="ml-3 text-lg font-semibold">Opponent</span>
             <span id="turn" ref={turnLabel}></span>
-            <span id="winning-sign"></span>
+            <span id="winning-sign" ref={winningSign}></span>
           </div>
           <div className="flex flex-col items-center lg:items-start">
             <span className="text-sm">Score:</span>
@@ -196,14 +199,14 @@ const Play = () => {
         </div>
          {/* <ChessBoard game={game} /> */}
          <div id="sematary">
-          <div id="whiteSematary">
+          <div id="whiteSematary" ref={whiteSematary}>
             <div className="pawn"></div>
             <div className="knight"></div>
             <div className="bishop"></div>
             <div className="rook"></div>
             <div className="queen"></div>
           </div>
-          <div id="blackSematary">
+          <div id="blackSematary" ref={blackSematary}>
             <div className="pawn"></div>
             <div className="knight"></div>
             <div className="bishop"></div>
@@ -214,7 +217,10 @@ const Play = () => {
          <ChessBoard  
           turnPlaying={turnPlaying}
           setTurnPlaying={setTurnPlaying}
-          turnLabel={turnLabel} 
+          turnLabel={turnLabel}
+          winningSign={winningSign}
+          blackSematary={blackSematary}
+          whiteSematary={whiteSematary}
         />
         <div className="flex lg:items-start justify-between px-4 py-2 mb-4 text-white rounded-lg lg:space-x-[3rem] lg:w-full w-full sm:w-3/4 gap-6 items-center mt-5">
           <div className="flex flex-col items-center lg:flex-row ">
