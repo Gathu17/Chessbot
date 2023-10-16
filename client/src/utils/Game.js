@@ -1,4 +1,5 @@
 import Queen from './Pieces/Queen'
+import minimax  from './bot'
 
 export default class Game {
 	constructor(pieces, turnPlaying) {
@@ -97,12 +98,11 @@ export default class Game {
 			}
 		}
 		else{
-			//console.log(otherBlockedPositions);
              for (let i = 0; i < allowedPositions?.length; i++) {
-  
+              if(allowedPositions[i] && allowedPositions[i].length){
 				for (let j = 0; j < allowedPositions[i].length; j++) {
 					if (myBlockedPositions.indexOf(allowedPositions[i][j]) !== -1) {
-						continue;
+						break;
 			       } 
 					else if ( checking && this.myKingChecked(allowedPositions[i][j]) ) {
 						if (otherBlockedPositions.indexOf(allowedPositions[i][j]) !== -1) {
@@ -112,7 +112,7 @@ export default class Game {
 						} 
 						unblocked.push(allowedPositions[i][j]);
 				}                     
-                
+			}   
                    
             }   
 		}
@@ -127,7 +127,7 @@ export default class Game {
 			let pieceAllowedMoves = piece.getAllowedMoves();
 
 			if (piece.hasRank('king')) {
-				pieceAllowedMoves = this.getCastlingSquares(piece, pieceAllowedMoves);
+				// pieceAllowedMoves = this.getCastlingSquares(piece, pieceAllowedMoves);
 			}
 
 			return this.unblockedPositions(piece, pieceAllowedMoves, true);
@@ -300,17 +300,18 @@ export default class Game {
 	}
 
 	king_dead(color) {
-		const pieces = this.getPiecesByColor(color);
-		for (const piece of pieces) {
-			this.setClickedPiece(piece);
-			const allowedMoves = this.unblockedPositions(piece, piece.getAllowedMoves(), true);
-			if (allowedMoves.length) {
-				this.setClickedPiece(null);
-				return 0;
-			}
-		}
-		this.setClickedPiece(null);
-		return 1;
+		// const pieces = this.getPiecesByColor(color);
+		// for (const piece of pieces) {
+		// 	this.setClickedPiece(piece);
+		// 	const allowedMoves = this.unblockedPositions(piece, piece.getAllowedMoves(), true);
+		// 	if (allowedMoves.length) {
+		// 		this.setClickedPiece(null);
+		// 		return 0;
+		// 	}
+		// }
+		// this.setClickedPiece(null);
+		// return 1;
+		return false;
 	}
 
 	king_checked(color) {
@@ -361,8 +362,37 @@ export default class Game {
 		this.setClickedPiece(piece);
 		return 0;
 	}
-	getAllowedCheckMoves(){
-
+	getBestMove(piece){
+		const moves = this.unblockedPositions(piece, piece.getAllowedMoves(), true)
+		
+        var bestMove = minimax(
+			2,
+			Number.NEGATIVE_INFINITY,
+			Number.POSITIVE_INFINITY,
+			true,
+			piece,
+			piece.color
+		  );
+	}
+	makeBestMove(color){
+		const myPieces = this.getPiecesByColor(this.turn);
+		myPieces.forEach((piece)=>{
+			this.setClickedPiece(piece);
+            const bestMoves = this.getBestMove(piece)
+			 console.log(bestMoves)
+		})
+		
+	}
+	getAllPiecesAllowedMoves(){
+		let allowedMoves = [];
+		this.pieces.forEach((piece)=>{
+			this.setClickedPiece(piece)
+			const moves = this.unblockedPositions(piece, piece.getAllowedMoves(), true).map((pos)=>{
+				return pos += `${piece.name[5]}${piece.color[0]}${piece.name[piece.name.length -1]}`
+			})
+           allowedMoves.push(...moves)
+		})
+		return allowedMoves;
 	}
 
 	checkmate(color){

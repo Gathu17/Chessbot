@@ -4,9 +4,11 @@ export default class Queen extends Piece {
 	constructor(position, name, icon) {
 		super(position, 'queen', name);
         this.icon = icon
+		this.weight = 9
 	}
 
 	getAllowedMoves(){
+		console.log(this.getMovesBottomRight());
 		return [
 			this.getMovesTop(),
 			this.getMovesTopRight(),

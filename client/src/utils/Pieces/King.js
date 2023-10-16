@@ -5,6 +5,7 @@ export default class King extends Piece {
 		super(position, 'king', name);
 		this.ableToCastle = true;
         this.icon = icon
+		this.weight = Number.POSITIVE_INFINITY
 	}
 
 
@@ -36,6 +37,6 @@ export default class King extends Piece {
 		if (castle) {
 			this.ableToCastle = false;
 		}
-		this.position = parseInt(position);
+		this.position = position;
 	}
 }

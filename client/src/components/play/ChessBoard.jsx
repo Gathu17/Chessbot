@@ -14,6 +14,7 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
     const squares = Array(64).fill(null).map(() => React.useRef(null))
     const [clickedPieceName, setClickedPieceName] = React.useState('')
     const game = new Game(pieces, turnPlaying);
+    const [playBot, setPlayBot] = React.useState({state: true, color: 'black'})
     
     const whiteSematary = document.getElementById('whiteSematary');
     const blackSematary = document.getElementById('blackSematary');
@@ -34,8 +35,17 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
         }
 
     }
+    function botPlay(){
+        console.log('bot');
+        if(playBot.state && turnPlaying == playBot.color){
+            console.log('bot play');
+            game.makeBestMove(playBot.color)
+        }
+    }
+
     React.useEffect(()=>{
         resetBoard();
+        botPlay()
     },[turnPlaying])
     
     const setAllowedSquares = (pieceImg) => {
@@ -80,29 +90,29 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
         game.movePiece(clickedPieceName, position, turnPlaying);
     }
 
-    const startBoard = game => {
+    // const startBoard = game => {
 
       // const whiteSematary = document.getElementById('whiteSematary');
       // const blackSematary = document.getElementById('blackSematary');
   
-      const resetBoard = () => {
-          for (const square of squares) {
-              square.current.textContent = '';
-          }
+    //   const resetBoard = () => {
+    //       for (const square of squares) {
+    //           square.current.textContent = '';
+    //       }
   
-          for (const piece of game.pieces) {
-              const square = squares.find(item => item.current.id === piece.position);
+    //       for (const piece of game.pieces) {
+    //           const square = squares.find(item => item.current.id === piece.position);
 
-              if (square) square.current.textContent = piece.icon;
-          }
-      }
+    //           if (square) square.current.textContent = piece.icon;
+    //       }
+    //   }
   
-      resetBoard();
-    }
+    //   resetBoard();
+    // }
 
-    React.useEffect(()=>{
-      startBoard(game);
-    }, [game, turnPlaying])
+    // React.useEffect(()=>{
+    //   startBoard(game);
+    // }, [game, turnPlaying])
 
     // squares.forEach( square => {
     //     square.addEventListener("click", function () {
