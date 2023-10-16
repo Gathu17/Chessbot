@@ -14,9 +14,11 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
     const squares = Array(64).fill(null).map(() => React.useRef(null))
     const [clickedPieceName, setClickedPieceName] = React.useState('')
     const game = new Game(pieces, turnPlaying);
+    const [playBot, setPlayBot] = React.useState({state: true, color: 'black'})
     
     const whiteSematary = document.getElementById('whiteSematary');
     const blackSematary = document.getElementById('blackSematary');
+    const winningSign = document.getElementById('winning-sign');
   
 
     function handleSquareClick(e) {
@@ -34,8 +36,16 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
         }
 
     }
+    function botPlay(){
+        if(playBot.state && turnPlaying == playBot.color){
+            console.log('bot play');
+            game.makeBestMove(playBot.color)
+        }
+    }
+
     React.useEffect(()=>{
         resetBoard();
+        // botPlay()  
     },[turnPlaying])
     
     const setAllowedSquares = (pieceImg) => {
@@ -80,29 +90,7 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
         game.movePiece(clickedPieceName, position, turnPlaying);
     }
 
-    const startBoard = game => {
 
-      // const whiteSematary = document.getElementById('whiteSematary');
-      // const blackSematary = document.getElementById('blackSematary');
-  
-      const resetBoard = () => {
-          for (const square of squares) {
-              square.current.textContent = '';
-          }
-  
-          for (const piece of game.pieces) {
-              const square = squares.find(item => item.current.id === piece.position);
-
-              if (square) square.current.textContent = piece.icon;
-          }
-      }
-  
-      resetBoard();
-    }
-
-    React.useEffect(()=>{
-      startBoard(game);
-    }, [game, turnPlaying])
 
     // squares.forEach( square => {
     //     square.addEventListener("click", function () {
@@ -163,20 +151,14 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
     })
 
     game.on('kill', piece => {
-        // console.log(piece);
-        // const square = document.getElementById(queen.position);
-        // console.log(square.current.children);
-        // square.current.removeChild(piece.icon);
-        // square.className = '';
-
         const sematary = piece.color === 'white' ? whiteSematary : blackSematary;
         sematary.querySelector('.'+piece.rank).append(piece.icon);
     });
 
     game.on('checkMate', color => {
-        const endScene = document.getElementById('endscene');
-        endScene.getElementsByClassName('winning-sign')[0].innerHTML = color + ' Wins';
-        endScene.classList.add('show');
+        // const endScene = document.getElementById('endscene');
+        winningSign.innerHTML = color + ' Wins';
+        // endScene.classList.add('show');
     })
     return(
         <>

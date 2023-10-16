@@ -36,7 +36,7 @@ const Play = () => {
     ["♙", "♙", "♙", "♙", "♙", "♙", "♙", "♙"],
     ["♖", "♘", "♗", "♕", "♔", "♗", "♘", "♖"],
   ];
-  const game = new Game(pieces);
+  // const game = new Game(pieces);
   const [turnPlaying, setTurnPlaying] = useState('white')
 
   function handlePieceClick(row, col) {
@@ -180,8 +180,10 @@ const Play = () => {
                 alt=""
               />
             </div>
+
             <span className="ml-3 text-lg font-semibold">Opponent</span>
             <span id="turn" ref={turnLabel}></span>
+            <span id="winning-sign"></span>
           </div>
           <div className="flex flex-col items-center lg:items-start">
             <span className="text-sm">Score:</span>
@@ -209,8 +211,7 @@ const Play = () => {
             <div className="queen"></div>
           </div>
         </div>
-         <ChessBoard 
-          game={game} 
+         <ChessBoard  
           turnPlaying={turnPlaying}
           setTurnPlaying={setTurnPlaying}
           turnLabel={turnLabel} 
