@@ -180,8 +180,10 @@ const Play = () => {
                 alt=""
               />
             </div>
+
             <span className="ml-3 text-lg font-semibold">Opponent</span>
             <span id="turn" ref={turnLabel}>{`${turnPlaying}'s turn`}</span>
+            <span id="winning-sign"></span>
           </div>
           <div className="flex flex-col items-center lg:items-start">
             <span className="text-sm">Score:</span>

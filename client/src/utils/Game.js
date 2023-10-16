@@ -233,8 +233,9 @@ export default class Game {
 
 			if (this.king_checked(this.turn)) {
 				this.triggerEvent('check', this.turn);
-
+                console.log('chunga');
 				if (this.king_dead(this.turn)) {
+					console.log('mwisho');
 					this.checkmate(piece.color);
 				}
 				else{
@@ -300,17 +301,23 @@ export default class Game {
 	}
 
 	king_dead(color) {
-		// const pieces = this.getPiecesByColor(color);
-		// for (const piece of pieces) {
-		// 	this.setClickedPiece(piece);
-		// 	const allowedMoves = this.unblockedPositions(piece, piece.getAllowedMoves(), true);
-		// 	if (allowedMoves.length) {
-		// 		this.setClickedPiece(null);
-		// 		return 0;
-		// 	}
-		// }
-		// this.setClickedPiece(null);
-		// return 1;
+		const pieces = this.getPiecesByColor(color);
+		
+		if(this.king_checked(color)){
+			let isKingDead = true;
+            for (const piece of pieces) {
+				this.setClickedPiece(piece);
+				const allowedMoves = this.unblockedPositions(piece, piece.getAllowedMoves(), true);
+				allowedMoves.forEach((move)=>{
+                   if(this.saveKingMoves.indexOf(move) !== -1){
+					this.setClickedPiece(null);
+					isKingDead = false;
+				   }
+				})
+			}
+			this.setClickedPiece(null);
+			return isKingDead;
+		}
 		return false;
 	}
 
@@ -362,33 +369,31 @@ export default class Game {
 		this.setClickedPiece(piece);
 		return 0;
 	}
-	getBestMove(piece){
-		const moves = this.unblockedPositions(piece, piece.getAllowedMoves(), true)
+	getBestMove(color){
 		
         var bestMove = minimax(
 			2,
 			Number.NEGATIVE_INFINITY,
 			Number.POSITIVE_INFINITY,
 			true,
-			piece,
-			piece.color
+			color
 		  );
+		  console.log(bestMove);
+		  debugger
+		return bestMove;
 	}
 	makeBestMove(color){
-		const myPieces = this.getPiecesByColor(this.turn);
-		myPieces.forEach((piece)=>{
-			this.setClickedPiece(piece);
-            const bestMoves = this.getBestMove(piece)
-			 console.log(bestMoves)
-		})
+		const bestMove = this.getBestMove(color)
 		
 	}
 	getAllPiecesAllowedMoves(){
 		let allowedMoves = [];
 		this.pieces.forEach((piece)=>{
 			this.setClickedPiece(piece)
+			const nameSymbol = piece.name[5] == 'K' ? piece.rank == 'king' ? 'K' : 'N'  : piece.name[5]
 			const moves = this.unblockedPositions(piece, piece.getAllowedMoves(), true).map((pos)=>{
-				return pos += `${piece.name[5]}${piece.color[0]}${piece.name[piece.name.length -1]}`
+
+				return pos += `${nameSymbol}${piece.color[0]}${piece.name[piece.name.length -1]}`
 			})
            allowedMoves.push(...moves)
 		})

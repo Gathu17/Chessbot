@@ -8,7 +8,6 @@ export default class Queen extends Piece {
 	}
 
 	getAllowedMoves(){
-		console.log(this.getMovesBottomRight());
 		return [
 			this.getMovesTop(),
 			this.getMovesTopRight(),
