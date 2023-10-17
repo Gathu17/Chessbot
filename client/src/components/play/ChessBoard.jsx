@@ -9,17 +9,13 @@ import Game from '../../utils/Game'
 import Square from "./Square";
 
 
-const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
+const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel, winningSign, blackSematary, whiteSematary }) => {
     const board = React.useRef(null)
     const squares = Array(64).fill(null).map(() => React.useRef(null))
     const [clickedPieceName, setClickedPieceName] = React.useState('')
     const game = new Game(pieces, turnPlaying);
     const [playBot, setPlayBot] = React.useState({state: true, color: 'black'})
-    
-    const whiteSematary = document.getElementById('whiteSematary');
-    const blackSematary = document.getElementById('blackSematary');
-    const winningSign = document.getElementById('winning-sign');
-  
+
 
   function handleSquareClick(e) {
     movePiece(e.target)
@@ -106,27 +102,6 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
     game.movePiece(clickedPieceName, position, turnPlaying);
   }
 
-  // const startBoard = game => {
-
-  //   const resetBoard = () => {
-  //     for (const square of squares) {
-  //       square.current.textContent = '';
-  //     }
-
-  //     for (const piece of game.pieces) {
-  //       const square = squares.find(item => item.current.id === piece.position);
-
-  //       if (square) square.current.textContent = piece.icon;
-  //     }
-  //   }
-
-  //   resetBoard();
-  // }
-
-  // React.useEffect(() => {
-  //   startBoard(game);
-  // }, [game, turnPlaying])
-
   // squares.forEach( square => {
   //     square.addEventListener("click", function () {
   //         movePiece(this);
@@ -158,7 +133,6 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
       event.stopPropagation();
       clearSquares();
       setAllowedSquares(event.target)
-    });
   });
 
   game.on('pieceMove', piece => {
@@ -167,10 +141,15 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
     clearSquares();
   });
 
-  game.on('turnChange', turn => {
-    turnLabel.current.textContent = turnPlaying === 'white' ? "Black's Turn" : "White's Turn";
-    setTurnPlaying(turnPlaying === 'white' ? "black" : "white");
-  });
+   game.on('turnChange', turn => {
+      if (!game.king_checked(turn)) {
+        turnLabel.current.textContent = turnPlaying === 'white' ? "Black's Turn" : "White's Turn";
+        setTurnPlaying(turnPlaying === 'white' ? "black" : "white");
+      } else {
+        turnLabel.current.textContent = turn === 'white' ? 'White Checked' : 'Black Checked'
+        setTurnPlaying(turnPlaying === 'white' ? "black" : "white");
+      }
+    });
 
   game.on('promotion', queen => {
     const square = squares.find((elem) => elem.current.id === queen.position).current
@@ -181,14 +160,12 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel }) => {
   })
 
     game.on('kill', piece => {
-        const sematary = piece.color === 'white' ? whiteSematary : blackSematary;
+        const sematary = piece.color === 'white' ? whiteSematary.current : blackSematary.current;
         sematary.querySelector('.'+piece.rank).append(piece.icon);
     });
 
     game.on('checkMate', color => {
-        // const endScene = document.getElementById('endscene');
-        winningSign.innerHTML = color + ' Wins';
-        // endScene.classList.add('show');
+        winningSign.current.textContent = color + ' Wins';
     })
     return(
         <>
