@@ -102,6 +102,7 @@ export default class Game {
               if(allowedPositions[i] && allowedPositions[i].length){
 				for (let j = 0; j < allowedPositions[i].length; j++) {
 					if (myBlockedPositions.indexOf(allowedPositions[i][j]) !== -1) {
+                        if (piece.name.includes('King')) continue;
 						break;
 			       } 
 					else if ( checking && this.myKingChecked(allowedPositions[i][j]) ) {
@@ -127,7 +128,7 @@ export default class Game {
 			let pieceAllowedMoves = piece.getAllowedMoves();
 
 			if (piece.hasRank('king')) {
-				// pieceAllowedMoves = this.getCastlingSquares(piece, pieceAllowedMoves);
+				pieceAllowedMoves = this.getCastlingSquares(piece, pieceAllowedMoves);
 			}
 
 			return this.unblockedPositions(piece, pieceAllowedMoves, true);
@@ -144,28 +145,33 @@ export default class Game {
 		const rook2 = this.getPieceByName(this.turn+'Rook2');
 
 		if (rook1 && rook1.ableToCastle) {
-			const col = rook1.position.charCodeAt(1) - 95
-			const castlingPosition = `${rook1.position.charAt(0)}${String.fromCharCode(col + 97)}`;
-			const castlingPosition1 = `${rook1.position.charAt(0)}${String.fromCharCode(col + 98)}`;
-			const castlingPosition2 = `${rook1.position.charAt(0)}${String.fromCharCode(col + 96)}`;
-            
-            if(
-                !this.positionHasExistingPiece(castlingPosition2) &&
-                !this.positionHasExistingPiece(castlingPosition) && !this.myKingChecked(castlingPosition, true) &&
-                !this.positionHasExistingPiece(castlingPosition1) && !this.myKingChecked(castlingPosition1, true)
-            )
-			allowedMoves[0].push(castlingPosition);
+            if (this.turn === 'white') {
+                if (!this.getPieceByPos('1d') && 
+                    !this.getPieceByPos('1c') && 
+                    !this.getPieceByPos('1b')) {
+                        allowedMoves[0].push('1c');
+                }
+            } else {
+                if (!this.getPieceByPos('8d') && 
+                    !this.getPieceByPos('8c') &&
+                    !this.getPieceByPos('8b')) {
+                        allowedMoves[0].push('8c');
+                }
+            }
 		}
 		if (rook2 && rook2.ableToCastle) {
-			const col = rook1.position.charCodeAt(1) - 96
-			const castlingPosition = `${rook1.position.charAt(0)}${String.fromCharCode(col + 97)}`;
-			const castlingPosition1 = `${rook1.position.charAt(0)}${String.fromCharCode(col + 96)}`;
-            
-			if(
-                !this.positionHasExistingPiece(castlingPosition1) && !this.myKingChecked(castlingPosition1, true) &&
-                !this.positionHasExistingPiece(castlingPosition) && !this.myKingChecked(castlingPosition, true)
-            )
-			allowedMoves[0].push(castlingPosition);
+            if (this.turn === 'white') {
+                if (!this.getPieceByPos('1f') &&
+                    !this.getPieceByPos('1g')) {
+                        allowedMoves[0].push('1g');
+                    }
+            } else {
+                if (!this.getPieceByPos('8f') && 
+                    !this.getPieceByPos('8g')) {
+                        allowedMoves[0].push('8g');
+
+                    }
+            }
 		}
 		return allowedMoves;
 	}
@@ -210,10 +216,10 @@ export default class Game {
 			}
 
 			if (!existedPiece && piece.hasRank('king') && piece.ableToCastle === true) {
-				if (position - prevPosition === 2) {
+				if (position.charCodeAt(1) - prevPosition.charCodeAt(1) === 2) {
 					this.castleRook(piece.color + 'Rook2');
 				}
-				else if (position - prevPosition === -2) {
+				else if (position.charCodeAt(1) - prevPosition.charCodeAt(1) === -2) {
 					this.castleRook(piece.color + 'Rook1');
 				}
 				piece.changePosition(position, true);
@@ -256,11 +262,13 @@ export default class Game {
 
 	castleRook(rookName) {
 		const rook = this.getPieceByName(rookName);
-		const newPosition = rookName.indexOf('Rook2') !== -1 ? rook.position - 2 : rook.position + 3;
+		const newPosition = rookName.indexOf('Rook2') !== -1 ? 
+            rook.position[0] + String.fromCharCode(rook.position.charCodeAt(1) - 2) : 
+            rook.position[0] + String.fromCharCode(rook.position.charCodeAt(1) + 3);
 
 		this.setClickedPiece(rook);
 
-		this.movePiece(rookName, newPosition);
+		this.movePiece(rook.position, newPosition);
 		this.triggerEvent('pieceMove', rook);
 		this.changeTurn();
 	}
@@ -331,7 +339,7 @@ export default class Game {
 			
 			const allowedMoves = this.unblockedPositions(enemyPiece, enemyPiece.getAllowedMoves(), false);
 			
-			if (allowedMoves.indexOf(king.position) !== -1) {
+			if (allowedMoves.indexOf(king?.position) !== -1) {
 				let enemyPos = enemyPiece.position;
 				let enemyCol = enemyPiece.position.charCodeAt(1) - 97;
 				let enemyRow = parseInt(enemyPiece.position.charAt(0));
