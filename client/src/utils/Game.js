@@ -205,7 +205,6 @@ export default class Game {
 		if (piece && this.getPieceAllowedMoves(piece?.position).indexOf(position) !== -1) {
 			
 			const existedPiece = this.getPieceByPos(position)
-
 			if (existedPiece) {
 				this.kill(existedPiece);
 			}

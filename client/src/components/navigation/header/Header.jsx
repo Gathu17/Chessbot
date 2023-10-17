@@ -94,14 +94,13 @@ const Header = ({ token }) => {
                                 >
                                  {submenuItem.menu}
                               </p>
-                              </Link>
-                            </React.Fragment>
-                            ))}
-                        </div>
-                     )} 
-                   </Link> 
-                  </React.Fragment>
-                 
+                            </Link>
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    )}
+                  </Link>
+                </React.Fragment>
               ))}
              </div>    
           </>
