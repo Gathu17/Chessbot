@@ -5,6 +5,7 @@ export default class Pawn extends Piece {
 	constructor(position, name, icon) {
 		super(position, 'pawn', name)
         this.icon = icon
+        this.weight = 1
 	}
 
 	getAllowedMoves() {
@@ -15,7 +16,7 @@ export default class Pawn extends Piece {
             const mathSign = (this.color === 'white') ? 1 : -1;
             const allowedMoves = [position + mathSign * 10];
 
-            if ((position > 20 && position < 29) || (position > 70 && position < 79)) {
+            if ((position > 19 && position < 28) || (position > 69 && position < 78)) {
                 allowedMoves.push(position + mathSign * 20);
             }
 

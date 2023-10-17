@@ -4,6 +4,7 @@ export default class Bishop extends Piece {
 	constructor(position, name, icon) {
 		super(position, 'bishop', name);
         this.icon = icon
+		this.weight = 3
 	}
 
 	getAllowedMoves() {
