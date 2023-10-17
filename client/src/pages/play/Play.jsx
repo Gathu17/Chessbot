@@ -10,7 +10,6 @@ import { MdLogout, MdRestartAlt } from "react-icons/md";
 import { BiMessageSquareDetail } from "react-icons/bi";
 import { ImExit } from "react-icons/im";
 import { BsDot } from "react-icons/bs";
-import { isValidMove } from "../../utils/validate";
 import Game from "../../utils/Game";
 import { pieces } from "../../utils/ChessBoard";
 import ChessBoard from "../../components/play/ChessBoard";
@@ -37,7 +36,6 @@ const Play = () => {
   const [peopleOnline, setPeopleOnline] = useState([]);
 
   const game = new Game(pieces);
-
   const [turnPlaying, setTurnPlaying] = useState("white");
 
   const handleGameChange = (event) => {
@@ -116,22 +114,6 @@ const Play = () => {
     },
   ];
 
-  // const flattenedChessIcons = initialChessboard.flat();
-  // const [chessIcons, setChessIcons] = useState(flattenedChessIcons);
-  // const switchPlayers = () => {
-  //   setPlayerScores(([score1, score2]) => [score2, score1]);
-  //   setSelectedPiece(null);
-  //   setCountdownTime(60);
-  // };
-
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     setCountdownTime((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
-  //   }, 1000);
-
-  //   return () => clearInterval(timer);
-  // }, []);
-
   return (
     <div className="flex flex-col justify-between space-y-8 lg:flex-row">
       <div className="lg:w-[10%] px-4 lg:px-0 shadow-2xl shadow-[#444]">
@@ -159,7 +141,6 @@ const Play = () => {
               />
             </div>
             <span className="ml-3 text-lg font-semibold">Opponent</span>
-            <span id="turn" ref={turnLabel}></span>
             <span
               id="turn"
               ref={turnLabel}
