@@ -27,12 +27,12 @@ const ChessBoard = ({
   const [clickedPieceName, setClickedPieceName] = React.useState("");
   const game = new Game(pieces, turnPlaying);
 
-  const whiteSematary = document.getElementById("whiteSematary");
-  const blackSematary = document.getElementById("blackSematary");
+  // const whiteSematary = document.getElementById("whiteSematary");
+  // const blackSematary = document.getElementById("blackSematary");
 
-//   game status
-// status can be ongoing, white won, black won, draw, aborted
-const [gameStatus, setGameStatus] = useState("ongoing");
+  //   game status
+  // status can be ongoing, white won, black won, draw, aborted
+  const [gameStatus, setGameStatus] = useState("ongoing");
 
   React.useEffect(() => {
     const whiteTimer = setInterval(() => {
@@ -61,9 +61,9 @@ const [gameStatus, setGameStatus] = useState("ongoing");
         );
 
         if (blackCountdown <= 0) {
-            setGameStatus("white-won");
-            // award white points
-          }
+          setGameStatus("white-won");
+          // award white points
+        }
       }
     }, 1000);
 
