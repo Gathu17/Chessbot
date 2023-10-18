@@ -155,7 +155,7 @@ const SignUp = () => {
                 className="w-full px-3 py-3 leading-tight text-[#000] border rounded appearance-none focus:outline-none focus:shadow-outline"
               />
             </div>
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
               <label
                 className="block text-sm font-bold text-[#ddd]"
                 htmlFor="name"
@@ -172,7 +172,7 @@ const SignUp = () => {
                 placeholder="Username"
                 className="w-full px-3 py-3 leading-tight text-[#000] border rounded appearance-none focus:outline-none focus:shadow-outline"
               />
-            </div>
+            </div> */}
             <div className="space-y-4">
               <label
                 className="block text-sm font-bold text-[#ddd] 2"

@@ -2,6 +2,7 @@ import Footer from "./components/navigation/footer/Footer";
 import Routing from "./routes/Routing";
 import Header from "./components/navigation/header/Header";
 import { BrowserRouter } from "react-router-dom";
+import JwtDecode from "./utils/JwtDecode";
 
 function App() {
   return (
@@ -11,8 +12,8 @@ function App() {
       <div className="shadow-[#252525] shadow-2xl w-[4rem]  h-[4rem] absolute rounded-full bg-[#AC8D75] left-10 top-[50%] z-[999] hidden lg:flex"></div>
       <div className="flex flex-col justify-between min-h-screen z-[99] relative bg-hero bg-center bg-no-repeat bg-cover rounded-xl overflow-hidden">
         <Header />
-        <Routing />
-
+        <JwtDecode />
+<Routing />
         <Footer />
       </div>
     </main>

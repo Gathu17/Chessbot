@@ -4,7 +4,8 @@ import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import Redux from "../../redux/redux";
-import { auth } from "../accountModal/Firebase";
+
+// import { auth } from "../accountModal/Firebase";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -18,15 +19,15 @@ const SignIn = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleGoogleSignIn = async () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    try {
-      const result = await auth.signInWithPopup(provider);
-      console.log("Google Sign-In successful:", result.user);
-    } catch (error) {
-      console.error("Google Sign-In failed:", error);
-    }
-  };
+  // const handleGoogleSignIn = async () => {
+  //   const provider = new firebase.auth.GoogleAuthProvider();
+  //   try {
+  //     const result = await auth.signInWithPopup(provider);
+  //     console.log("Google Sign-In successful:", result.user);
+  //   } catch (error) {
+  //     console.error("Google Sign-In failed:", error);
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,9 +43,14 @@ const SignIn = () => {
 
       if (response.ok) {
         const data = await response.json();
-        const { token } = data;
-        setToken(token);
-        navigate("/");
+        toast.success("Log-In Success");
+        setToken(data.token);
+        setTimeout(() => {
+          navigate("/");
+        }, 3000);
+        setTimeout(() => {
+          toast.success("Redirecting...");
+        }, 900);
       } else {
         const errorData = await response.json();
         toast.error(errorData.error || "Login failed");
@@ -54,6 +60,7 @@ const SignIn = () => {
       toast.error("An error occurred while logging in");
     }
   };
+
 
   return (
     <>
@@ -160,7 +167,7 @@ const SignIn = () => {
               </button>
               <p className="flex justify-center mt-4">or</p>
               <div
-                onClick={handleGoogleSignIn}
+                // onClick={handleGoogleSignIn}
                 className="flex items-center justify-center w-full p-3 mt-4 border rounded gap-x-3"
               >
                 <FcGoogle className="text-2xl" /> Continue with Google

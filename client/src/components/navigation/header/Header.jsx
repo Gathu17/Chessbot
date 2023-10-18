@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
 import { header, subMenu } from "../Data";
 import { Link } from "react-router-dom";
@@ -8,10 +9,13 @@ const Header = ({ token }) => {
   const [showSubmenu, setShowSubMenu] = useState(false);
   const [hoveredMenuItemIndex, setHoveredMenuItemIndex] = useState(null);
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState()
 
   useEffect(() => {
     // console.log({ token });
+    setLoggedInUser(localStorage.getItem('decodedToken'));
   }, [token]);
+
 
   return (
     <>
@@ -33,26 +37,26 @@ const Header = ({ token }) => {
                 <React.Fragment key={index}>
                   <Link
                     to={items.path}
-                    className={hoveredMenuItemIndex === index ? "" : ""}
+                    className={` ${hoveredMenuItemIndex === index ? "" : ""}`}
                     onMouseEnter={() => {
                       if (items.menu === "Account") {
                         setShowSubMenu(true);
-                      }
+                      } 
                       setHoveredMenuItemIndex(index);
                     }}
                     onMouseLeave={() => {
-                      if (items.menu === "Account") {
-                        setShowSubMenu(false);
-                      }
-                      setHoveredMenuItemIndex(null);
-                    }}
+                       if (items.menu === "Account") { 
+                         setShowSubMenu(false);
+                       }
+                       setHoveredMenuItemIndex(null);
+                      }}
                     onClick={() => setMobileMenu(!mobileMenu)}
-                  >
-                    <div className="flex flex-col items-center">
-                      {items.menu}
-                      {items.menu === "Account" && (
-                        <div className="mt-5 lg:hidden">
-                          {subMenu.map((submenuItem, subIndex) => (
+                    >
+                     <div className="flex flex-col items-center">
+                       {items.menu}
+                         {items.menu === "Account" && ( 
+                           <div className="mt-5 lg:hidden">
+                           {subMenu.map((submenuItem, subIndex) => (
                             <React.Fragment key={subIndex}>
                               <Link to={submenuItem.path}>
                                 <p
@@ -67,7 +71,7 @@ const Header = ({ token }) => {
                         </div>
                       )}
                     </div>
-                    {hoveredMenuItemIndex === index && index !== 5 && (
+                      {hoveredMenuItemIndex === index && index !== 5 && (
                       <motion.div
                         animate={{ x: 2 }}
                         transition={{ delay: 0.1 }}
@@ -76,21 +80,22 @@ const Header = ({ token }) => {
                         <div className="w-full h-[.2rem] bg-[#AC8D75] absolute"></div>
                         <div className="w-1/2 h-[.2rem] bg-[#AC8D75] absolute top-[0.3rem]"></div>
                       </motion.div>
-                    )}
-                    {hoveredMenuItemIndex === 5 && showSubmenu && (
-                      <div
-                        className={` flex-col  ${
+                     )}
+
+                      {hoveredMenuItemIndex === 5 && showSubmenu && (
+                         <div
+                          className={` flex-col  ${
                           index === 5 ? "absolute" : "hidden"
-                        }`}
-                      >
-                        {subMenu.map((submenuItem, subIndex) => (
-                          <React.Fragment key={subIndex}>
-                            <Link to={submenuItem.path}>
-                              <p
-                                className="p-1 my-2 rounded-sm bg-[#444] flex justify-center px-2 hover:scale-[1.05]"
-                                onClick={() => setShowSubMenu(!showSubmenu)}
-                              >
-                                {submenuItem.menu}
+                          }`}
+                          >
+                           {subMenu.map((submenuItem, subIndex) => ( 
+                            <React.Fragment key={subIndex}>
+                              <Link to={submenuItem.path}>
+                               <p
+                                  className="p-1 my-2 rounded-sm bg-[#444] flex justify-center px-2 hover:scale-[1.05]"
+                                  onClick={() => setShowSubMenu(!showSubmenu)}
+                                >
+                                 {submenuItem.menu}
                               </p>
                             </Link>
                           </React.Fragment>
@@ -100,7 +105,7 @@ const Header = ({ token }) => {
                   </Link>
                 </React.Fragment>
               ))}
-            </div>
+             </div>    
           </>
         </div>
       </div>
