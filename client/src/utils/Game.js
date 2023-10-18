@@ -105,6 +105,10 @@ export default class Game {
                         if (piece.name.includes('King')) continue;
 						break;
 			       } 
+                   else if (otherBlockedPositions.indexOf(allowedPositions[i][j]) !== -1) {
+                        if (piece.name.includes('King')) continue;
+                        break;
+                   }
 					else if ( checking && this.myKingChecked(allowedPositions[i][j]) ) {
 						if (otherBlockedPositions.indexOf(allowedPositions[i][j]) !== -1) {
 							break;
