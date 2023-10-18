@@ -4,13 +4,16 @@ import {pieces} from '../components/play/ChessBoard'
 
 export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,oldCapturedPieces = [],currentMove='') {
     const game = new Game(pieces, color)
-
-    const newGameMoves = game.getAllPiecesAllowedMoves()
-    console.log(depth);
+    const newColor = color == 'white' ? 'black' : 'white'
+    const newGameMoves = game.getAllPiecesAllowedMovesByColor(newColor)
+    
+    // const newGameMoves = game.getAllPiecesAllowedMoves()
+    // // console.log(newGameMoves)
     let currMove;
-    let capturedPieces = oldCapturedPieces;
-    // Maximum depth exceeded 
+    let capturedPieces = [...oldCapturedPieces];
+    // // Maximum depth exceeded 
     if (depth === 0 || newGameMoves.length === 0) {
+      console.log('mwisho');
       return evaluateBoard(game,capturedPieces,currentMove);
     }
   
@@ -19,14 +22,13 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
     let bestMove;
     for (var i = 0; i < newGameMoves.length; i++) {
       currMove = newGameMoves[i];
-
       const pieceValue = pieceValues[currMove[3]][currMove[2]];
       const isNumeric = !isNaN(Number(currMove[4]));
       const pieceName = isNumeric ? pieceValue + currMove[4] : pieceValue;
       const piece = game.getPieceByName(pieceName)
       game.setClickedPiece(piece);
 
-       const existingPiece = game.getPieceByPos(`${currMove[0]}${currMove[1]}`)
+      const existingPiece = game.getPieceByPos(`${currMove[0]}${currMove[1]}`)
       if (existingPiece && existingPiece.color[0] !== currMove[4] ) {
         capturedPieces.push(existingPiece)
         game.pieces.splice(game.pieces.indexOf(existingPiece), 1)
@@ -43,13 +45,14 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
         !isMaximizingPlayer,
         color,
         capturedPieces,
-        currMove
+        currMove,
       );
       piece.changePosition(originalPosition);
       game.setClickedPiece(null)
       if(existingPiece) game.pieces.push(existingPiece);
-
+      
       if (isMaximizingPlayer) {
+        console.log(childValue,'ongese');
         if (childValue > maxValue) {
           maxValue = childValue;
           bestMove = currMove;
@@ -66,14 +69,15 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
           beta = childValue;
         }
       }
-  
+      if(depth == 1)console.log(bestMove,childValue,i);
       // Alpha-beta pruning
       if (alpha >= beta) {
         break;
       }
     }
-    console.log(bestMove);
-    return bestMove;
+    // console.log(bestMove);
+    // return bestMove;
+    
   }
   function evaluateBoard(game,capturedPieces,move) {
     let prevSum = 0;
@@ -112,21 +116,24 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
     //   // }
     // }
 
-    if(capturedPieces){
-      for(let piece of capturedPieces){
-        if(piece.color == game.turn){
-          prevSum -= piece.weight
-        }else{
-          prevSum += piece.weight
-        }
+    // if(capturedPieces){
+    //   console.log(capturedPieces);
+    //   debugger
+    //   for(let piece of capturedPieces){
+    //     if(piece.color == game.turn){
+    //       prevSum -= piece.weight
+    //     }else{
+    //       prevSum += piece.weight
+    //     }
           
-      }
-    }
+    //   }
+    // }
+
   
     return prevSum;
   }
 
-const pieceValues = {
+export const pieceValues = {
   'b': {
     'B': 'blackBishop',
     'K': 'blackKing',

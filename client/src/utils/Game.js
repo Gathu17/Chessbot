@@ -1,5 +1,6 @@
 import Queen from './Pieces/Queen'
 import minimax  from './bot'
+import { pieceValues } from './bot';
 
 export default class Game {
 	constructor(pieces, turnPlaying) {
@@ -370,17 +371,48 @@ export default class Game {
 		return 0;
 	}
 	getBestMove(color){
-		
-        var bestMove = minimax(
-			2,
-			Number.NEGATIVE_INFINITY,
-			Number.POSITIVE_INFINITY,
-			true,
-			color
-		  );
-		  console.log(bestMove);
-		  debugger
-		return bestMove;
+		let botMoveValues = []
+        // var bestMove = minimax(
+		// 	2,
+		// 	Number.NEGATIVE_INFINITY,
+		// 	Number.POSITIVE_INFINITY,
+		// 	true,
+		// 	color
+		//   );
+		//   console.log(bestMove);
+		//   debugger
+		// return bestMove;
+		const botMoves = this.getAllPiecesAllowedMovesByColor(color)
+		botMoves.forEach((move)=>{
+			const pieceValue = pieceValues[move[3]][move[2]];
+			const isNumeric = !isNaN(Number(move[4]));
+			const pieceName = isNumeric ? pieceValue + move[4] : pieceValue;
+			const piece = this.getPieceByName(pieceName)
+			this.setClickedPiece(piece);
+
+			const existingPiece = this.getPieceByPos(`${move[0]}${move[1]}`)
+			if (existingPiece && existingPiece.color[0] !== move[4] ) {
+				capturedPieces.push(existingPiece)
+				this.pieces.splice(this.pieces.indexOf(existingPiece), 1)
+			};
+
+			const originalPosition = piece.position
+			piece.changePosition(`${move[0]}${move[1]}`)
+
+			// var newSum = evaluateBoard( this, color);
+			let moveValue = minimax(
+				1,
+				Number.NEGATIVE_INFINITY,
+				Number.POSITIVE_INFINITY,
+				false,
+				color,
+				[existingPiece] ?? []
+			);
+			piece.changePosition(originalPosition);
+			if(existingPiece) this.pieces.push(existingPiece);
+			this.setClickedPiece(null)
+            botMoveValues.push({move: moveValue})
+		})
 	}
 	makeBestMove(color){
 		const bestMove = this.getBestMove(color)
@@ -389,6 +421,20 @@ export default class Game {
 	getAllPiecesAllowedMoves(){
 		let allowedMoves = [];
 		this.pieces.forEach((piece)=>{
+			this.setClickedPiece(piece)
+			const nameSymbol = piece.name[5] == 'K' ? piece.rank == 'king' ? 'K' : 'N'  : piece.name[5]
+			const moves = this.unblockedPositions(piece, piece.getAllowedMoves(), true).map((pos)=>{
+
+				return pos += `${nameSymbol}${piece.color[0]}${piece.name[piece.name.length -1]}`
+			})
+           allowedMoves.push(...moves)
+		})
+		return allowedMoves;
+	}
+	getAllPiecesAllowedMovesByColor(color){
+		let allowedMoves = [];
+		const pieces = this.getPiecesByColor(color)
+		pieces.forEach((piece)=>{
 			this.setClickedPiece(piece)
 			const nameSymbol = piece.name[5] == 'K' ? piece.rank == 'king' ? 'K' : 'N'  : piece.name[5]
 			const moves = this.unblockedPositions(piece, piece.getAllowedMoves(), true).map((pos)=>{
