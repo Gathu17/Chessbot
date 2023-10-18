@@ -122,18 +122,19 @@ const ChessBoard = ({ turnPlaying, setTurnPlaying, turnLabel, winningSign, black
   //     });
   // });
 
-  document.querySelectorAll('img.piece').forEach(pieceImg => {
-    pieceImg.addEventListener("dragstart", function (event) {
-      event.stopPropagation();
-      event.dataTransfer.setData("text", event.target.id);
-      clearSquares();
-      setAllowedSquares(event.target)
+    document.querySelectorAll('img.piece').forEach(pieceImg => {
+        pieceImg.addEventListener("dragstart", function (event) {
+          event.stopPropagation();
+          event.dataTransfer.setData("text", event.target.id);
+          clearSquares();
+          setAllowedSquares(event.target)
+        });
+        pieceImg.addEventListener("drop", function (event) {
+          event.stopPropagation();
+          clearSquares();
+          setAllowedSquares(event.target)
+      });
     });
-    pieceImg.addEventListener("drop", function (event) {
-      event.stopPropagation();
-      clearSquares();
-      setAllowedSquares(event.target)
-  });
 
   game.on('pieceMove', piece => {
     const square = squares.find((elem) => elem.current.id === piece.position).current
