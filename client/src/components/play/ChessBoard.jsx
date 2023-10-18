@@ -243,6 +243,7 @@ const ChessBoard = ({
     });
   });
 
+
   game.on("pieceMove", (piece) => {
     const square = squares.find(
       (elem) => elem.current.id === piece.position
