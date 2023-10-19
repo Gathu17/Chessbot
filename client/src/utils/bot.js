@@ -6,14 +6,13 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
     const game = new Game(pieces, color)
     const newColor = color == 'white' ? 'black' : 'white'
     const newGameMoves = game.getAllPiecesAllowedMovesByColor(newColor)
-    
+   
     // const newGameMoves = game.getAllPiecesAllowedMoves()
-    // // console.log(newGameMoves)
+    // console.log(newGameMoves)
     let currMove;
     let capturedPieces = [...oldCapturedPieces];
     // // Maximum depth exceeded 
     if (depth === 0 || newGameMoves.length === 0) {
-      console.log('mwisho');
       return evaluateBoard(game,capturedPieces,currentMove);
     }
   
@@ -29,7 +28,9 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
       game.setClickedPiece(piece);
 
       const existingPiece = game.getPieceByPos(`${currMove[0]}${currMove[1]}`)
+      // debugger
       if (existingPiece && existingPiece.color[0] !== currMove[4] ) {
+
         capturedPieces.push(existingPiece)
         game.pieces.splice(game.pieces.indexOf(existingPiece), 1)
       };
@@ -43,7 +44,7 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
         alpha,
         beta,
         !isMaximizingPlayer,
-        color,
+        newColor,
         capturedPieces,
         currMove,
       );
@@ -51,8 +52,7 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
       game.setClickedPiece(null)
       if(existingPiece) game.pieces.push(existingPiece);
       
-      if (isMaximizingPlayer) {
-        console.log(childValue,'ongese');
+      if (!isMaximizingPlayer) {
         if (childValue > maxValue) {
           maxValue = childValue;
           bestMove = currMove;
@@ -69,14 +69,13 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
           beta = childValue;
         }
       }
-      if(depth == 1)console.log(bestMove,childValue,i);
       // Alpha-beta pruning
       if (alpha >= beta) {
         break;
       }
     }
-    // console.log(bestMove);
-    // return bestMove;
+    
+    return maxValue;
     
   }
   function evaluateBoard(game,capturedPieces,move) {
@@ -116,18 +115,16 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
     //   // }
     // }
 
-    // if(capturedPieces){
-    //   console.log(capturedPieces);
-    //   debugger
-    //   for(let piece of capturedPieces){
-    //     if(piece.color == game.turn){
-    //       prevSum -= piece.weight
-    //     }else{
-    //       prevSum += piece.weight
-    //     }
+    if(capturedPieces[0]){
+      for(let piece of capturedPieces){
+        if(piece.color == game.turn){
+          prevSum -= piece.weight
+        }else{
+          prevSum += piece.weight
+        }
           
-    //   }
-    // }
+      }
+    }
 
   
     return prevSum;

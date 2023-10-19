@@ -239,9 +239,7 @@ export default class Game {
 
 			if (this.king_checked(this.turn)) {
 				this.triggerEvent('check', this.turn);
-                console.log('chunga');
 				if (this.king_dead(this.turn)) {
-					console.log('mwisho');
 					this.checkmate(piece.color);
 				}
 				else{
@@ -399,7 +397,6 @@ export default class Game {
 
 			const existingPiece = this.getPieceByPos(`${move[0]}${move[1]}`)
 			if (existingPiece && existingPiece.color[0] !== move[4] ) {
-				capturedPieces.push(existingPiece)
 				this.pieces.splice(this.pieces.indexOf(existingPiece), 1)
 			};
 
@@ -413,16 +410,34 @@ export default class Game {
 				Number.POSITIVE_INFINITY,
 				false,
 				color,
-				[existingPiece] ?? []
+				existingPiece ? [existingPiece] : []
 			);
 			piece.changePosition(originalPosition);
 			if(existingPiece) this.pieces.push(existingPiece);
 			this.setClickedPiece(null)
-            botMoveValues.push({move: moveValue})
+            botMoveValues.push({move, moveValue})
 		})
+		console.log(botMoveValues);
+		const bestMove = botMoveValues.reduce((maxObject, currentObject) => {
+			if (currentObject.moveValue > maxObject.moveValue) {
+			  return currentObject;
+			}
+			return maxObject;
+		  }, botMoveValues[0]);
+
+		  return bestMove;
+		
 	}
 	makeBestMove(color){
-		const bestMove = this.getBestMove(color)
+		const {move,moveValue}= this.getBestMove(color)
+		
+		const pieceValue = pieceValues[move[3]][move[2]];
+		const isNumeric = !isNaN(Number(move[4]));
+		const pieceName = isNumeric ? pieceValue + move[4] : pieceValue;
+		const piece = this.getPieceByName(pieceName)
+		
+		this.setClickedPiece(piece);
+		this.movePiece(piece.position,`${move[0]}${move[1]}`)
 		
 	}
 	getAllPiecesAllowedMoves(){

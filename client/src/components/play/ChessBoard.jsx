@@ -25,6 +25,7 @@ const ChessBoard = ({
     .fill(null)
     .map(() => React.useRef(null));
   const [clickedPieceName, setClickedPieceName] = React.useState("");
+  
   const game = new Game(pieces, turnPlaying);
 
   // const whiteSematary = document.getElementById("whiteSematary");
@@ -33,6 +34,7 @@ const ChessBoard = ({
   //   game status
   // status can be ongoing, white won, black won, draw, aborted
   const [gameStatus, setGameStatus] = useState("ongoing");
+  const [playBot, setPlayBot] = useState({state: true,color: 'black'})
 
   React.useEffect(() => {
     const whiteTimer = setInterval(() => {
@@ -87,6 +89,7 @@ const ChessBoard = ({
     }
   };
   function botPlay() {
+    console.log(playBot,turnPlaying);
     if (playBot.state && turnPlaying == playBot.color) {
       console.log("bot play");
       game.makeBestMove(playBot.color);
@@ -146,6 +149,7 @@ const ChessBoard = ({
   React.useEffect(() => {
     resetBoard();
     // botPlay()
+    
   }, [turnPlaying]);
 
   React.useEffect(() => {
@@ -206,7 +210,7 @@ const ChessBoard = ({
       return setAllowedSquares(pieceImg);
     }
 
-    game.movePiece(clickedPieceName, position, turnPlaying);
+    game.movePiece(clickedPieceName, position, turnPlaying) && console.log('player') && botPlay();
   }
 
   // squares.forEach( square => {
