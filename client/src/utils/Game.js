@@ -399,7 +399,7 @@ export default class Game {
 			if (existingPiece && existingPiece.color[0] !== move[4] ) {
 				this.pieces.splice(this.pieces.indexOf(existingPiece), 1)
 			};
-
+            console.log(piece,existingPiece);
 			const originalPosition = piece.position
 			piece.changePosition(`${move[0]}${move[1]}`)
 
@@ -417,7 +417,6 @@ export default class Game {
 			this.setClickedPiece(null)
             botMoveValues.push({move, moveValue})
 		})
-		console.log(botMoveValues);
 		const bestMove = botMoveValues.reduce((maxObject, currentObject) => {
 			if (currentObject.moveValue > maxObject.moveValue) {
 			  return currentObject;

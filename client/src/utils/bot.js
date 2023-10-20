@@ -116,8 +116,10 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
     // }
 
     if(capturedPieces[0]){
+      console.log(move,capturedPieces);
       for(let piece of capturedPieces){
         if(piece.color == game.turn){
+          console.log('imekulwa');
           prevSum -= piece.weight
         }else{
           prevSum += piece.weight

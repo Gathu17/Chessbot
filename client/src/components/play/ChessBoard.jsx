@@ -148,7 +148,7 @@ const ChessBoard = ({
 
   React.useEffect(() => {
     resetBoard();
-    // botPlay()
+    botPlay()
     
   }, [turnPlaying]);
 
