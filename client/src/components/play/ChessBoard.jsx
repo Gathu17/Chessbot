@@ -93,7 +93,7 @@ const ChessBoard = ({
     console.log(playBot,turnPlaying);
     if (playBot.state && turnPlaying == playBot.color) {
       console.log("bot play");
-      game.makeBestMove(playBot.color);
+      setTimeout(() => game.makeBestMove(playBot.color), 100);
     }
   }
 
