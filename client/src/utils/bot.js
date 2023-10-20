@@ -2,23 +2,26 @@ import Game from './Game'
 import {pieces} from '../components/play/ChessBoard'
 
 
-export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,oldCapturedPieces = [],currentMove='') {
-    const game = new Game(pieces, color)
+export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, color,oldCapturedPieces = [],currentMove='') {
+    const game = new Game(pieces, color,bot)
+
     const newColor = color == 'white' ? 'black' : 'white'
     const newGameMoves = game.getAllPiecesAllowedMovesByColor(newColor)
-   
+
     // const newGameMoves = game.getAllPiecesAllowedMoves()
     // console.log(newGameMoves)
     let currMove;
     let capturedPieces = [...oldCapturedPieces];
     // // Maximum depth exceeded 
     if (depth === 0 || newGameMoves.length === 0) {
-      return evaluateBoard(game,capturedPieces,currentMove);
+      let sum = evaluateBoard(game,capturedPieces,currentMove);
+      return [null,sum]
     }
   
     let maxValue = Number.NEGATIVE_INFINITY;
     let minValue = Number.POSITIVE_INFINITY;
-    let bestMove;
+    let bestMove = '';
+    let bestMoveValue = 0;
     for (var i = 0; i < newGameMoves.length; i++) {
       currMove = newGameMoves[i];
       const pieceValue = pieceValues[currMove[3]][currMove[2]];
@@ -39,7 +42,8 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
       piece.changePosition(`${currMove[0]}${currMove[1]}`)
 
       // var newSum = evaluateBoard( game, color);
-      let childValue = minimax(
+      let [childBestMove,childValue] = minimax(
+        bot,
         depth - 1,
         alpha,
         beta,
@@ -48,11 +52,12 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
         capturedPieces,
         currMove,
       );
+
       piece.changePosition(originalPosition);
       game.setClickedPiece(null)
       if(existingPiece) game.pieces.push(existingPiece);
-      
-      if (!isMaximizingPlayer) {
+
+      if (game.bot.color == newColor) {
         if (childValue > maxValue) {
           maxValue = childValue;
           bestMove = currMove;
@@ -75,7 +80,11 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
       }
     }
     
-    return maxValue;
+    if (isMaximizingPlayer) {
+      return [bestMove, maxValue];
+    } else {
+      return [bestMove, minValue];
+    }
     
   }
   function evaluateBoard(game,capturedPieces,move) {
@@ -93,14 +102,14 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
     // {
     //   return 0;
     // }
-  
-    if (game.king_checked(game.turn)) {
-      // Opponent is in check (good for us)
-        prevSum += 50;
-     
-      }   // Our king's in check (bad for us)
-      else if(game.king_checked(game.turn == 'white' ? 'black' : 'white')) {
+    if (game.king_checked(game.bot.color)) {
+       // Our king's in check (bad for us)
+       console.log('king checked');
         prevSum -= 50;
+      // Opponent is in check (good for us)
+      }   
+      else if(game.king_checked(game.bot.color == 'white' ? 'black' : 'white')) {
+        prevSum += 50;
       }
     
   
@@ -116,7 +125,7 @@ export default function minimax( depth, alpha, beta, isMaximizingPlayer, color,o
     // }
 
     if(capturedPieces[0]){
-      console.log(move,capturedPieces);
+      // console.log(move,capturedPieces,game.turn);
       for(let piece of capturedPieces){
         if(piece.color == game.turn){
           console.log('imekulwa');

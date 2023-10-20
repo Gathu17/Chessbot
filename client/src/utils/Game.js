@@ -3,12 +3,13 @@ import minimax  from './bot'
 import { pieceValues } from './bot';
 
 export default class Game {
-	constructor(pieces, turnPlaying) {
+	constructor(pieces, turnPlaying,bot) {
 		this.pieces  = pieces;
 		this.turn    = turnPlaying;
 		this.clickedPiece = null;
 		this.saveKingMoves = [];
 		this.checked = '';
+		this.bot = bot;
 		this._events = {
 			pieceMove: [],
 			kill: [],
@@ -381,58 +382,21 @@ export default class Game {
 	}
 	getBestMove(color){
 		let botMoveValues = []
-        // var bestMove = minimax(
-		// 	2,
-		// 	Number.NEGATIVE_INFINITY,
-		// 	Number.POSITIVE_INFINITY,
-		// 	true,
-		// 	color
-		//   );
-		//   console.log(bestMove);
-		//   debugger
-		// return bestMove;
-		const botMoves = this.getAllPiecesAllowedMovesByColor(color)
-		botMoves.forEach((move)=>{
-			const pieceValue = pieceValues[move[3]][move[2]];
-			const isNumeric = !isNaN(Number(move[4]));
-			const pieceName = isNumeric ? pieceValue + move[4] : pieceValue;
-			const piece = this.getPieceByName(pieceName)
-			this.setClickedPiece(piece);
+        var bestMove = minimax(
+			this.bot,
+			2,
+			Number.NEGATIVE_INFINITY,
+			Number.POSITIVE_INFINITY,
+			true,
+			this.bot.color == 'white' ? 'black' : 'white'
+		  );
 
-			const existingPiece = this.getPieceByPos(`${move[0]}${move[1]}`)
-			if (existingPiece && existingPiece.color[0] !== move[4] ) {
-				this.pieces.splice(this.pieces.indexOf(existingPiece), 1)
-			};
-            console.log(piece,existingPiece);
-			const originalPosition = piece.position
-			piece.changePosition(`${move[0]}${move[1]}`)
-
-			// var newSum = evaluateBoard( this, color);
-			let moveValue = minimax(
-				1,
-				Number.NEGATIVE_INFINITY,
-				Number.POSITIVE_INFINITY,
-				false,
-				color,
-				existingPiece ? [existingPiece] : []
-			);
-			piece.changePosition(originalPosition);
-			if(existingPiece) this.pieces.push(existingPiece);
-			this.setClickedPiece(null)
-            botMoveValues.push({move, moveValue})
-		})
-		const bestMove = botMoveValues.reduce((maxObject, currentObject) => {
-			if (currentObject.moveValue > maxObject.moveValue) {
-			  return currentObject;
-			}
-			return maxObject;
-		  }, botMoveValues[0]);
-
-		  return bestMove;
+		return bestMove;
+		
 		
 	}
 	makeBestMove(color){
-		const {move,moveValue}= this.getBestMove(color)
+		const [move,moveValue] = this.getBestMove(color)
 		
 		const pieceValue = pieceValues[move[3]][move[2]];
 		const isNumeric = !isNaN(Number(move[4]));
@@ -441,6 +405,7 @@ export default class Game {
 		
 		this.setClickedPiece(piece);
 		this.movePiece(piece.position,`${move[0]}${move[1]}`)
+		
 		
 	}
 	getAllPiecesAllowedMoves(){
