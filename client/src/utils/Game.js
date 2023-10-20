@@ -10,6 +10,7 @@ export default class Game {
 		this.saveKingMoves = [];
 		this.checked = '';
 		this.bot = bot;
+		this.botPiece = null;
 		this._events = {
 			pieceMove: [],
 			kill: [],
@@ -196,6 +197,10 @@ export default class Game {
 
 	setClickedPiece(piece) {
 		this.clickedPiece = piece;
+	}
+
+	setClickedBotPiece(piece){
+		this.botPiece = piece;
 	}
 
 	triggerEvent(eventName, params) {
@@ -388,7 +393,7 @@ export default class Game {
 			Number.NEGATIVE_INFINITY,
 			Number.POSITIVE_INFINITY,
 			true,
-			this.bot.color == 'white' ? 'black' : 'white'
+			this.bot.color
 		  );
 
 		return bestMove;
@@ -398,13 +403,20 @@ export default class Game {
 	makeBestMove(color){
 		const [move,moveValue] = this.getBestMove(color)
 		
-		const pieceValue = pieceValues[move[3]][move[2]];
-		const isNumeric = !isNaN(Number(move[4]));
-		const pieceName = isNumeric ? pieceValue + move[4] : pieceValue;
-		const piece = this.getPieceByName(pieceName)
 		
-		this.setClickedPiece(piece);
-		this.movePiece(piece.position,`${move[0]}${move[1]}`)
+		if(move){
+			const pieceValue = pieceValues[move[3]][move[2]];
+			const isNumeric = !isNaN(Number(move[4]));
+			const pieceName = isNumeric ? pieceValue + move[4] : pieceValue;
+			const piece = this.getPieceByName(pieceName)
+			
+			this.setClickedPiece(piece);
+			this.movePiece(piece.position,`${move[0]}${move[1]}`)
+		}
+		else{
+			console.log(move);
+		}
+		
 		
 		
 	}
