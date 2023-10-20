@@ -25,8 +25,10 @@ const ChessBoard = ({
     .fill(null)
     .map(() => React.useRef(null));
   const [clickedPieceName, setClickedPieceName] = React.useState("");
+  const [playBot, setPlayBot] = useState({state: true,color: 'black'})
+
   
-  const game = new Game(pieces, turnPlaying);
+  const game = new Game(pieces, turnPlaying,playBot);
 
   // const whiteSematary = document.getElementById("whiteSematary");
   // const blackSematary = document.getElementById("blackSematary");
@@ -34,7 +36,6 @@ const ChessBoard = ({
   //   game status
   // status can be ongoing, white won, black won, draw, aborted
   const [gameStatus, setGameStatus] = useState("ongoing");
-  const [playBot, setPlayBot] = useState({state: true,color: 'black'})
 
   React.useEffect(() => {
     const whiteTimer = setInterval(() => {
@@ -148,7 +149,7 @@ const ChessBoard = ({
 
   React.useEffect(() => {
     resetBoard();
-    // botPlay()
+    botPlay()
     
   }, [turnPlaying]);
 
