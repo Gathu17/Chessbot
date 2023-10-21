@@ -30,9 +30,6 @@ const ChessBoard = ({
   
   const game = new Game(pieces, turnPlaying,playBot);
 
-  // const whiteSematary = document.getElementById("whiteSematary");
-  // const blackSematary = document.getElementById("blackSematary");
-
   //   game status
   // status can be ongoing, white won, black won, draw, aborted
   const [gameStatus, setGameStatus] = useState("ongoing");
@@ -90,7 +87,6 @@ const ChessBoard = ({
     }
   };
   function botPlay() {
-    console.log(playBot,turnPlaying);
     if (playBot.state && turnPlaying == playBot.color) {
       console.log("bot play");
       setTimeout(() => game.makeBestMove(playBot.color), 100);
@@ -111,41 +107,6 @@ const ChessBoard = ({
       );
     }
   }
-
-  React.useEffect(() => {
-    const whiteTimer = setInterval(() => {
-      if (turnPlaying === "white") {
-        setWhiteCountdown((prevCountdown) =>
-          prevCountdown > 0 ? prevCountdown - 1 : prevCountdown
-        );
-        // if white takes more than 15 seconds to make first move, abort game
-        // if countdown gets to 0, end game and show lost to white, award black points
-        if (whiteCountdown <= 0) {
-          setGameStatus("black-won");
-          // award black points
-        }
-      }
-    }, 1000);
-
-    return () => clearInterval(whiteTimer);
-  }, [turnPlaying]);
-
-  React.useEffect(() => {
-    const blackTimer = setInterval(() => {
-      if (turnPlaying === "black") {
-        setBlackCountdown((prevCountdown) =>
-          prevCountdown > 0 ? prevCountdown - 1 : prevCountdown
-        );
-
-        if (blackCountdown <= 0) {
-          setGameStatus("white-won");
-          // award white points
-        }
-      }
-    }, 1000);
-
-    return () => clearInterval(blackTimer);
-  }, [turnPlaying]);
 
   React.useEffect(() => {
     resetBoard();
