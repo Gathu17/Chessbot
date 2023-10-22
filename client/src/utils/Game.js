@@ -17,7 +17,8 @@ export default class Game {
 			check: [],
 			promotion: [],
 			checkMate: [],
-			turnChange: []
+			turnChange: [],
+			staleMate: []
 		}
 	}
 
@@ -33,9 +34,9 @@ export default class Game {
 
 	changeTurn() {
 		if (this.turn === 'white') this.turn = 'black';
-    else this.turn = 'white'
-		this.triggerEvent('turnChange', this.turn);
-	}
+		else this.turn = 'white'
+			this.triggerEvent('turnChange', this.turn);
+		}
 
 	getPiecesByColor(color) {
 		return this.pieces.filter(obj => {
@@ -63,6 +64,7 @@ export default class Game {
 		const unblocked = [];
         let myBlockedPositions;
         let otherBlockedPositions;
+		const piecePos = piece.position.charCodeAt(1) -97
         
 		if (piece.color === 'white') {
 			myBlockedPositions    = this.getPlayerPositions('white');
@@ -74,13 +76,19 @@ export default class Game {
 		}
 		if (piece.hasRank('pawn')) {
 			for (const move of allowedPositions[0]) { //attacking moves
-				
-			        if (otherBlockedPositions.indexOf(move) == -1) continue;
+				    let row = Number(move[0])
+					let otherPiece = this.getPieceByPos(`${row == 3 ? '4' : '5'}${move[1]}`)
+					
+			        if (otherBlockedPositions.indexOf(move) == -1) {
+                        if(otherPiece && otherPiece.color !== piece.color && otherPiece.enPassant){
+							unblocked.push(move);
+						}
+						continue
+					}
 					else if (checking && this.myKingChecked(move)) continue; 
                     unblocked.push(move);
 			}
 			const blockedPositions = [...myBlockedPositions, ...otherBlockedPositions];
-
 			for (const move of allowedPositions[1]) { //moving moves
 				//console.log(this.myKingChecked(move, false));
 				if (blockedPositions.indexOf(move) !== -1) {
@@ -88,6 +96,12 @@ export default class Game {
 				}
 				else if (checking && this.myKingChecked(move, false)) continue;
 				unblocked.push(move);
+			}
+			
+			if(this.getPieceByPos(piecePos -1) && this.getPieceByPos(piecePos -1).hasRank('pawn') && this.getPieceByPos(piecePos -1).enPassant){
+					console.log('piece to the left');
+			}else if(this.getPieceByPos(piecePos + 1) && this.getPieceByPos(piecePos + 1).hasRank('pawn') && this.getPieceByPos(piecePos +1).enPassant){
+				console.log('piece to the right');
 			}
 		} 
 		else if(piece.hasRank('knight')) {
@@ -215,16 +229,23 @@ export default class Game {
 
 	movePiece(pieceName, position) {
 		const piece = this.getPieceByPos(pieceName);
+		let movesCount = Math.abs(Number(position[0]) - Number(pieceName[0]))
+		const king = this.getPieceByName(piece?.color + 'King');
+
 		const prevPosition = piece?.position;
-		if(this.king_checked(piece?.color) && this.saveKingMoves.indexOf(position) == -1) {
+		if(this.king_checked(piece?.color) && this.saveKingMoves.indexOf(position) == -1 && piece.rank !== 'king') {
 			return false;
 		}
 		if (piece && this.getPieceAllowedMoves(piece?.position).indexOf(position) !== -1) {
 			
 			const existedPiece = this.getPieceByPos(position)
+			let row = Number(position[0])
+			const enemyPawn = this.getPieceByPos(`${row == 3 ? '4' : '5'}${position[1]}`)
 			if (existedPiece) {
 				this.kill(existedPiece);
-			}
+			}else if(piece.hasRank('pawn') && enemyPawn && enemyPawn.enPassant){
+				this.kill(enemyPawn);
+			} 
 
 			if (!existedPiece && piece.hasRank('king') && piece.ableToCastle === true) {
 				if (position.charCodeAt(1) - prevPosition.charCodeAt(1) === 2) {
@@ -243,6 +264,8 @@ export default class Game {
 
 			if (piece.rank === 'pawn' && (position.includes('8') || position.includes('1'))) {
 				this.promote(piece);
+			}else if(piece.rank == 'pawn' && movesCount < 2){
+				piece.enPassant = false
 			}
 
 			this.changeTurn();
@@ -255,6 +278,8 @@ export default class Game {
 				else{
 					// alert('check');
 				}
+			} else if(this.king_stalemate(this.turn)){
+                 this.stalemate()
 			}
 
 			return true;
@@ -302,7 +327,7 @@ export default class Game {
 		piece.changePosition(pos);
 
 		if (this.king_checked(piece.color)) {
-
+           
 			piece.changePosition(originalPosition);
 			if (should_kill_other_piece) {
 				this.pieces.push(otherPiece);
@@ -326,6 +351,9 @@ export default class Game {
 				const allowedMoves = this.unblockedPositions(piece, piece.getAllowedMoves(), true);
 				allowedMoves.forEach((move)=>{
                    if(this.saveKingMoves.indexOf(move) !== -1){
+					this.setClickedPiece(null);
+					isKingDead = false;
+				   } else if(piece.rank ==  'king'){
 					this.setClickedPiece(null);
 					isKingDead = false;
 				   }
@@ -447,9 +475,19 @@ export default class Game {
 		})
 		return allowedMoves;
 	}
+	king_stalemate(color){
+			if(!this.getAllPiecesAllowedMovesByColor(color)[0]){
+                return 1
+			}
+			return 0;	
+	}
 
 	checkmate(color){
 		this.triggerEvent('checkMate', color);
+		this.clearEvents();
+	}
+	stalemate(){
+		this.triggerEvent('staleMate');
 		this.clearEvents();
 	}
 }

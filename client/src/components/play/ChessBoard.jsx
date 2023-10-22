@@ -90,10 +90,9 @@ const ChessBoard = ({
     }
   };
   function botPlay() {
-    console.log(playBot,turnPlaying);
     if (playBot.state && turnPlaying == playBot.color) {
       console.log("bot play");
-      setTimeout(() => game.makeBestMove(playBot.color), 100);
+      setTimeout(() => game.makeBestMove(playBot.color), 0);
     }
   }
 
@@ -149,7 +148,7 @@ const ChessBoard = ({
 
   React.useEffect(() => {
     resetBoard();
-    botPlay()
+    // botPlay()
     
   }, [turnPlaying]);
 
@@ -290,6 +289,10 @@ const ChessBoard = ({
   game.on("checkMate", (color) => {
     winningSign.current.textContent = color + " Wins";
   });
+
+  game.on("staleMate", () => {
+    winningSign.current.textContent = "Stalemate"
+  })
   return (
     <>
       <table ref={board} id="board" className="w-[400px] ">
@@ -355,5 +358,14 @@ export const pieces = [
   new Knight("8g", "blackKnight2", "♞"),
   new Rook("8h", "blackRook2", "♜"),
 ];
+
+const testPieces = [
+    new King("1e", "whiteKing", "♔"),
+    new Queen("8d", "blackQueen", "♛"),
+    new King("8e", "blackKing", "♚"),
+    new Bishop("8f", "blackBishop2", "♝"),
+    new Knight("8g", "blackKnight2", "♞"),
+    new Rook("8h", "blackRook2", "♜"),
+]
 
 export default ChessBoard;

@@ -1,8 +1,9 @@
 import Game from './Game'
 import {pieces} from '../components/play/ChessBoard'
 
-
+const transpositionTable = new Map();
 export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, color,oldCapturedPieces = [],currentMove='') {
+  
     const game = new Game(pieces, color,bot)
   
     console.log(pieces);
@@ -144,6 +145,10 @@ export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, col
   
     return prevSum;
   }
+  function storeTranspositionEntry(hash, bestMove, value, depth, type) {
+    transpositionTable.set(hash, { bestMove, value, depth, type });
+  }
+  
 
 export const pieceValues = {
   'b': {
