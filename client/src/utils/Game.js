@@ -90,18 +90,11 @@ export default class Game {
 			}
 			const blockedPositions = [...myBlockedPositions, ...otherBlockedPositions];
 			for (const move of allowedPositions[1]) { //moving moves
-				//console.log(this.myKingChecked(move, false));
 				if (blockedPositions.indexOf(move) !== -1) {
 					continue;
 				}
 				else if (checking && this.myKingChecked(move, false)) continue;
 				unblocked.push(move);
-			}
-			
-			if(this.getPieceByPos(piecePos -1) && this.getPieceByPos(piecePos -1).hasRank('pawn') && this.getPieceByPos(piecePos -1).enPassant){
-					console.log('piece to the left');
-			}else if(this.getPieceByPos(piecePos + 1) && this.getPieceByPos(piecePos + 1).hasRank('pawn') && this.getPieceByPos(piecePos +1).enPassant){
-				console.log('piece to the right');
 			}
 		} 
 		else if(piece.hasRank('knight')) {
@@ -421,7 +414,7 @@ export default class Game {
 			Number.NEGATIVE_INFINITY,
 			Number.POSITIVE_INFINITY,
 			true,
-			this.bot.color
+			color
 		  );
 
 		return bestMove;
@@ -441,11 +434,6 @@ export default class Game {
 			this.setClickedPiece(piece);
 			this.movePiece(piece.position,`${move[0]}${move[1]}`)
 		}
-		else{
-			console.log(move);
-		}
-		
-		
 		
 	}
 	getAllPiecesAllowedMoves(){

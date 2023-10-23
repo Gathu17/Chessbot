@@ -1,24 +1,31 @@
 import Game from './Game'
 import {pieces} from '../components/play/ChessBoard'
+import { generateGameHash } from './hash';
 
 const transpositionTable = new Map();
 export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, color,oldCapturedPieces = [],currentMove='') {
   
     const game = new Game(pieces, color,bot)
   
-    console.log(pieces);
     const newGameMoves = game.getAllPiecesAllowedMovesByColor(color)
-    if(game.king_checked(color)){
-      console.log(newGameMoves)
-    }
-    // const newGameMoves = game.getAllPiecesAllowedMoves()
-    // 
+  
     let currMove;
     let capturedPieces = [...oldCapturedPieces];
     // // Maximum depth exceeded 
     if (depth === 0 || newGameMoves.length === 0) {
       let sum = evaluateBoard(game,capturedPieces,currentMove);
       return [null,sum]
+    }
+    const gameHash = generateGameHash(game.pieces);
+    // console.log(gameHash);
+    // debugger
+
+    if (transpositionTable.has(gameHash)) {
+      const entry = transpositionTable.get(gameHash);
+      console.log(entry);
+      if (entry.type === 'exact' || (entry.type === 'lower' && entry.value >= beta) || (entry.type === 'upper' && entry.value <= alpha)) {
+          return [entry.bestMove, entry.value];
+      }
     }
   
     let maxValue = Number.NEGATIVE_INFINITY;
@@ -80,10 +87,13 @@ export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, col
       }
       // Alpha-beta pruning
       if (alpha >= beta) {
+        storeTranspositionEntry(gameHash, bestMove, maxValue, depth, 'lower');
         break;
+      }else{
+        storeTranspositionEntry(gameHash, bestMove, minValue, depth, 'upper');
       }
     }
-    
+    // console.log(transpositionTable);
     if (isMaximizingPlayer) {
       return [bestMove, maxValue];
     } else {
@@ -109,7 +119,7 @@ export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, col
      
     if (game.king_checked(game.bot.color)) {
        // Our king's in check (bad for us)
-       console.log('king checked');
+      //  console.log('king checked');
         prevSum -= 50;
       // Opponent is in check (good for us)
       }   
@@ -133,7 +143,7 @@ export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, col
       // console.log(move,capturedPieces,game.turn);
       for(let piece of capturedPieces){
         if(piece.color == game.bot.color){
-          console.log('imekulwa');
+          // console.log('imekulwa');
           prevSum -= piece.weight
         }else{
           prevSum += piece.weight
@@ -148,7 +158,7 @@ export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, col
   function storeTranspositionEntry(hash, bestMove, value, depth, type) {
     transpositionTable.set(hash, { bestMove, value, depth, type });
   }
-  
+
 
 export const pieceValues = {
   'b': {
