@@ -216,7 +216,7 @@ const ChessBoard = ({
       return setAllowedSquares(pieceImg);
     }
 
-    game.movePiece(clickedPieceName, position, turnPlaying) && console.log('player') && botPlay();
+    game.movePiece(clickedPieceName, position, turnPlaying);
   }
 
   // squares.forEach( square => {
