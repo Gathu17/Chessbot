@@ -252,10 +252,10 @@ export default class Game {
 				}
 			}
 
-			return true;
+			return [prevPosition, position];
 		}
 		else{
-			return false;
+			return [];
 		}
 	}
 
@@ -413,8 +413,8 @@ export default class Game {
 		const piece = this.getPieceByName(pieceName)
 		
 		this.setClickedPiece(piece);
-		this.movePiece(piece.position,`${move[0]}${move[1]}`)
-		
+		const positionMoved = this.movePiece(piece.position,`${move[0]}${move[1]}`)
+		return positionMoved;
 		
 	}
 	getAllPiecesAllowedMoves(){
