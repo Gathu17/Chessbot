@@ -80,26 +80,31 @@ const ChessBoard = ({
           // award black points
         }
       }
+
+      if (blackCountdown <= 0) {
+        setGameStatus("white-won");
+        // award white points
+      }
     }, 1000);
 
     return () => clearInterval(whiteTimer);
   }, [turnPlaying]);
 
   React.useEffect(() => {
-    const blackTimer = setInterval(() => {
-      if (turnPlaying === "black") {
-        setBlackCountdown((prevCountdown) =>
-          prevCountdown > 0 ? prevCountdown - 1 : prevCountdown
-        );
+    // const blackTimer = setInterval(() => {
+    //   if (turnPlaying === "black") {
+    //     setBlackCountdown((prevCountdown) =>
+    //       prevCountdown > 0 ? prevCountdown - 1 : prevCountdown
+    //     );
 
-        if (blackCountdown <= 0) {
-          setGameStatus("white-won");
-          // award white points
-        }
-      }
-    }, 1000);
+    //     if (blackCountdown <= 0) {
+    //       setGameStatus("white-won");
+    //       // award white points
+    //     }
+    //   }
+    // }, 1000);
 
-    return () => clearInterval(blackTimer);
+    // return () => clearInterval(blackTimer);
   }, [turnPlaying]);
 
   function handleSquareClick(e) {
@@ -393,6 +398,7 @@ const ChessBoard = ({
       clearSquares();
       return setAllowedSquares(pieceImg);
     }
+
 
     const positionMoved = game.movePiece(clickedPieceName, position, turnPlaying);
     updateRep(turn, positionMoved);
