@@ -388,16 +388,25 @@ export default class Game {
 			Number.NEGATIVE_INFINITY,
 			Number.POSITIVE_INFINITY,
 			true,
-			this.bot.color == 'white' ? 'black' : 'white'
-		  );
+			this.bot.color == 'white' ? 'black' : 'white',
+    );
 
 		return bestMove;
 		
 		
 	}
-	makeBestMove(color){
+	makeBestMove(color, timeObject){
+    const prevTime = Date.now();
 		const [move,moveValue] = this.getBestMove(color)
-		
+
+    const currTime = Date.now();
+    const timeDiff = currTime - prevTime;
+    const factor = Math.ceil(timeDiff / 1000)
+
+    if (factor >= 1) {
+      timeObject.setBlackCountdown((prevCountdown) => prevCountdown > 0 ? prevCountdown - factor : prevCountdown)
+    }
+  
 		const pieceValue = pieceValues[move[3]][move[2]];
 		const isNumeric = !isNaN(Number(move[4]));
 		const pieceName = isNumeric ? pieceValue + move[4] : pieceValue;

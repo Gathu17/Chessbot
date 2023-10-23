@@ -36,7 +36,7 @@ export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, col
 
         capturedPieces.push(existingPiece)
         game.pieces.splice(game.pieces.indexOf(existingPiece), 1)
-      };
+      }
 
       const originalPosition = piece.position
       piece.changePosition(`${currMove[0]}${currMove[1]}`)
