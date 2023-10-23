@@ -26,6 +26,35 @@ const ChessBoard = ({
     .map(() => React.useRef(null));
   const [clickedPieceName, setClickedPieceName] = React.useState("");
   const [playBot, setPlayBot] = useState({state: true,color: 'black'})
+  const [repSize, setRepSize] = useState(0);
+  const [whiteRep, setWhiteRep] = useState({
+    first: {
+      go: [], 
+      back: []
+    }, 
+    second: {
+      go: [], 
+      back: []
+    }, 
+    third: {
+      go: [], 
+      back: []
+    }
+  });
+  const [blackRep, setBlackRep] = useState({
+    first: {
+      go: [], 
+      back: []
+    }, 
+    second: {
+      go: [], 
+      back: []
+    }, 
+    third: {
+      go: [], 
+      back: []
+    }
+  });
 
   
   const game = new Game(pieces, turnPlaying,playBot);
@@ -51,30 +80,184 @@ const ChessBoard = ({
           // award black points
         }
       }
+
+      if (blackCountdown <= 0) {
+        setGameStatus("white-won");
+        // award white points
+      }
     }, 1000);
 
     return () => clearInterval(whiteTimer);
   }, [turnPlaying]);
 
   React.useEffect(() => {
-    const blackTimer = setInterval(() => {
-      if (turnPlaying === "black") {
-        setBlackCountdown((prevCountdown) =>
-          prevCountdown > 0 ? prevCountdown - 1 : prevCountdown
-        );
+    // const blackTimer = setInterval(() => {
+    //   if (turnPlaying === "black") {
+    //     setBlackCountdown((prevCountdown) =>
+    //       prevCountdown > 0 ? prevCountdown - 1 : prevCountdown
+    //     );
 
-        if (blackCountdown <= 0) {
-          setGameStatus("white-won");
-          // award white points
-        }
-      }
-    }, 1000);
+    //     if (blackCountdown <= 0) {
+    //       setGameStatus("white-won");
+    //       // award white points
+    //     }
+    //   }
+    // }, 1000);
 
-    return () => clearInterval(blackTimer);
+    // return () => clearInterval(blackTimer);
   }, [turnPlaying]);
 
   function handleSquareClick(e) {
     movePiece(e.target);
+  }
+
+  function resetWhiteRep() {
+    setWhiteRep({
+      first: {...whiteRep.second}, 
+      second: {...whiteRep.third}, 
+      third: {go: [], back: []}
+    });
+    setRepSize((prevSize) => prevSize > 1 ? prevSize - 1 : 0);
+  }
+
+  function resetBlackRep() {
+    setBlackRep({
+      first: {...blackRep.second}, 
+      second: {...blackRep.third}, 
+      third: {go: [], back: []}
+    });
+    setRepSize((prevSize) => prevSize > 1 ? prevSize - 1 : 0);
+  }
+
+  function checkRep() {
+    const whiteVals = Object.values(whiteRep);
+    const blackVals = Object.values(blackRep);
+
+    for (let i = 0; i < whiteVals.length; i++) {
+      if (whiteVals[i].go.length && whiteVals[i].back.length && blackVals[i].back.length && blackVals[i].go.length) {
+        const whiteBack = whiteVals[i].back.join('')
+        const whiteGo = whiteVals[i].go.join('')
+        const whiteBackRev = whiteBack[2] + whiteBack[3] + whiteBack[0] + whiteBack[1]
+        
+        const blackBack = blackVals[i].back.join('')
+        const blackGo = blackVals[i].go.join('')
+        const blackBackRev = blackBack[2] + blackBack[3] + blackBack[0] + blackBack[1]
+
+        if (whiteGo === whiteBackRev && blackGo === blackBackRev) {
+          if (i === 0) continue;
+          else {
+            if (whiteGo === whiteVals[i - 1].go.join('') && 
+              whiteBack === whiteVals[i - 1].back.join('') && 
+              blackGo === blackVals[i - 1].go.join('') &&
+              blackBack === blackVals[i - 1].back.join('')) {
+                continue;
+            } else {
+              resetWhiteRep();
+              resetBlackRep();
+              return;
+            }
+          }
+        }
+        else {
+          resetWhiteRep();
+          resetBlackRep();
+          return;
+        }
+      } else {
+        return;
+      }
+    }
+
+    // Logic for implementing a draw here
+    console.log('Draw by 3 fold');
+  }
+
+  function checkPartialRep(go, back) {
+    const valBack = back.join('')
+    const valGo = go.join('')
+    const valBackRev = valBack[2] + valBack[3] + valBack[0] + valBack[1]
+
+    if (valGo === valBackRev) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  function updateRep(color, position) {
+    if (color === 'black') {
+      const blackVals = Object.values(blackRep);
+      for (let i = 0; i < blackVals.length; i++) {
+        const blackVal = blackVals[i];
+        const current = verifyRepPosition(i);
+        if (!blackVal.go.length) {
+          setBlackRep({...blackRep, [current]: {...blackRep[current], go: position}});
+          setRepSize((prevSize) => prevSize > 1 ? prevSize + 1 : 0);
+          return;
+        } else if (!blackVal.back.length) {
+          const currentPiece = game.getPieceByPos(position[1]);
+          const pieceGo = game.getPieceByPos(blackVal.go[1]) || game.getPieceByPos(blackVal.go[0]);
+          
+          if (currentPiece.name !== pieceGo.name) {
+            resetWhiteRep();
+            resetBlackRep();
+            return;
+          }
+          
+          const currentRepStatus = checkPartialRep(blackRep[current].go, position)
+          if (currentRepStatus) {
+            setBlackRep({...blackRep, [current]: {...blackRep[current], back: position}});
+            setRepSize((prevSize) => prevSize > 1 ? prevSize + 1 : 0);
+            if (i === 2) break;
+            else return;
+          }
+          setBlackRep({...blackRep, [current]: {go: [], back: []}});
+          setRepSize((prevSize) => prevSize > 1 ? prevSize - 1 : 0);
+          
+          return;
+        }
+        continue;
+      }
+  
+    } else if (color === 'white') {
+      const whiteVals = Object.values(whiteRep);
+      for (let i = 0; i < whiteVals.length; i++) {
+        const whiteVal = whiteVals[i];
+        const current = verifyRepPosition(i);
+        if (!whiteVal.go.length) {
+          setWhiteRep({...whiteRep, [current]: {...whiteRep[current], go: position}});
+          return;
+        } else if (!whiteVal.back.length) {
+          const currentPiece = game.getPieceByPos(position[1]);
+          const pieceGo = game.getPieceByPos(whiteVal.go[1]) || game.getPieceByPos(whiteVal.go[0]);
+          
+          if (currentPiece.name !== pieceGo.name) {
+            resetWhiteRep();
+            resetBlackRep();
+            return;
+          }
+
+          const currentRepStatus = checkPartialRep(whiteRep[current].go, position)
+          if (currentRepStatus) {
+            setWhiteRep({...whiteRep, [current]: {...whiteRep[current], back: position}});
+            if (i === 2) break;
+            else return;
+          }
+          setWhiteRep({...whiteRep, [current]: {go: [], back: []}});
+          return;
+        }
+        continue;
+      }
+    }
+
+    checkRep();
+  }
+
+  function verifyRepPosition(pos) {
+    if (pos === 2) return 'third';
+    else if (pos === 1) return 'second';
+    else return 'first';
   }
 
   const resetBoard = () => {
@@ -90,9 +273,14 @@ const ChessBoard = ({
     }
   };
   function botPlay() {
+    const positionMoved = [];
+    console.log(playBot,turnPlaying);
     if (playBot.state && turnPlaying == playBot.color) {
       console.log("bot play");
-      setTimeout(() => game.makeBestMove(playBot.color), 0);
+      setTimeout(() => {
+        positionMoved.push(...game.makeBestMove(playBot.color));
+        updateRep('white', positionMoved);
+      }, 100);
     }
   }
 
@@ -202,6 +390,7 @@ const ChessBoard = ({
   function movePiece(square) {
     const position = square.getAttribute("id");
     const existedPiece = game.getPieceByPos(position);
+    const turn = turnPlaying;
     if (existedPiece && existedPiece.color === turnPlaying) {
       const pieceImg = squares.find(
         (item) => item.current.id === existedPiece.position
@@ -210,7 +399,9 @@ const ChessBoard = ({
       return setAllowedSquares(pieceImg);
     }
 
-    game.movePiece(clickedPieceName, position, turnPlaying) && console.log('player') && botPlay();
+
+    const positionMoved = game.movePiece(clickedPieceName, position, turnPlaying);
+    updateRep(turn, positionMoved);
   }
 
   // squares.forEach( square => {

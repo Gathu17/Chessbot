@@ -275,10 +275,10 @@ export default class Game {
                  this.stalemate()
 			}
 
-			return true;
+			return [prevPosition, position];
 		}
 		else{
-			return false;
+			return [];
 		}
 	}
 
@@ -416,24 +416,30 @@ export default class Game {
 			true,
 			color
 		  );
-
 		return bestMove;
 		
 		
 	}
-	makeBestMove(color){
+	makeBestMove(color, timeObject){
+    const prevTime = Date.now();
 		const [move,moveValue] = this.getBestMove(color)
+
+    const currTime = Date.now();
+    const timeDiff = currTime - prevTime;
+    const factor = Math.ceil(timeDiff / 1000)
+
+    if (factor >= 1) {
+      timeObject.setBlackCountdown((prevCountdown) => prevCountdown > 0 ? prevCountdown - factor : prevCountdown)
+    }
+  
+		const pieceValue = pieceValues[move[3]][move[2]];
+		const isNumeric = !isNaN(Number(move[4]));
+		const pieceName = isNumeric ? pieceValue + move[4] : pieceValue;
+		const piece = this.getPieceByName(pieceName)
 		
-		
-		if(move){
-			const pieceValue = pieceValues[move[3]][move[2]];
-			const isNumeric = !isNaN(Number(move[4]));
-			const pieceName = isNumeric ? pieceValue + move[4] : pieceValue;
-			const piece = this.getPieceByName(pieceName)
-			
-			this.setClickedPiece(piece);
-			this.movePiece(piece.position,`${move[0]}${move[1]}`)
-		}
+		this.setClickedPiece(piece);
+		const positionMoved = this.movePiece(piece.position,`${move[0]}${move[1]}`)
+		return positionMoved;
 		
 	}
 	getAllPiecesAllowedMoves(){
