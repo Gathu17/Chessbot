@@ -6,6 +6,7 @@ export default class Pawn extends Piece {
 		super(position, 'pawn', name)
         this.icon = icon
         this.weight = 1
+        this.enPassant = true;
 	}
 
 	getAllowedMoves() {
