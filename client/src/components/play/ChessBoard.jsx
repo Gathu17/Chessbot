@@ -278,7 +278,7 @@ const ChessBoard = ({
     if (playBot.state && turnPlaying == playBot.color) {
       console.log("bot play");
       setTimeout(() => {
-        positionMoved.push(...game.makeBestMove(playBot.color));
+        positionMoved.push(...game.makeBestMove(playBot.color, setBlackCountdown));
         updateRep('white', positionMoved);
       }, 100);
     }
