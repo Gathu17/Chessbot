@@ -1,10 +1,12 @@
+import {testPieces} from '../components/play/ChessBoard'
 // Zobrist hash
+const zobristTable = new Array(8).fill(0).map(() =>
+new Array(8).fill(0).map(() => new Array(6).fill(0).map(() => new Array(2).fill(0).map(() => Math.floor(Math.random() * 1e12))))
+);
 export function generateGameHash(pieces){
     let zobristHash = 0;
 
-    const zobristTable = new Array(8).fill(0).map(() =>
-    new Array(8).fill(0).map(() => new Array(6).fill(0).map(() => new Array(2).fill(0).map(() => Math.floor(Math.random() * 1e12))))
-    );
+   
     for(let piece of pieces){
         const col = piece.position.charCodeAt(1) - 97;
         const row = Number(piece.position[0]) - 1;
