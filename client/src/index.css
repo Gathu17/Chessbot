@@ -26,3 +26,8 @@ td {
   color: black;
   font-weight: 600;
 }
+
+.allowed {
+  border: 1px dashed #ffff00;
+  background-color: #536b3a;
+}
