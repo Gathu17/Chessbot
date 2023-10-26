@@ -300,43 +300,8 @@ const ChessBoard = ({
   }
 
   React.useEffect(() => {
-    const whiteTimer = setInterval(() => {
-      if (turnPlaying === "white") {
-        setWhiteCountdown((prevCountdown) =>
-          prevCountdown > 0 ? prevCountdown - 1 : prevCountdown
-        );
-        // if white takes more than 15 seconds to make first move, abort game
-        // if countdown gets to 0, end game and show lost to white, award black points
-        if (whiteCountdown <= 0) {
-          setGameStatus("black-won");
-          // award black points
-        }
-      }
-    }, 1000);
-
-    return () => clearInterval(whiteTimer);
-  }, [turnPlaying]);
-
-  React.useEffect(() => {
-    const blackTimer = setInterval(() => {
-      if (turnPlaying === "black") {
-        setBlackCountdown((prevCountdown) =>
-          prevCountdown > 0 ? prevCountdown - 1 : prevCountdown
-        );
-
-        if (blackCountdown <= 0) {
-          setGameStatus("white-won");
-          // award white points
-        }
-      }
-    }, 1000);
-
-    return () => clearInterval(blackTimer);
-  }, [turnPlaying]);
-
-  React.useEffect(() => {
     resetBoard();
-    // botPlay()
+    botPlay()
     
   }, [turnPlaying]);
 
@@ -550,7 +515,7 @@ export const pieces = [
   new Rook("8h", "blackRook2", "♜"),
 ];
 
-const testPieces = [
+export const testPieces = [
     new King("1e", "whiteKing", "♔"),
     new Queen("8d", "blackQueen", "♛"),
     new King("8e", "blackKing", "♚"),

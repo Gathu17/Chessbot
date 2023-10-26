@@ -17,13 +17,13 @@ export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, col
       return [null,sum]
     }
     const gameHash = generateGameHash(game.pieces);
-    // console.log(gameHash);
+    console.log(gameHash);
     // debugger
 
     if (transpositionTable.has(gameHash)) {
       const entry = transpositionTable.get(gameHash);
-      console.log(entry);
       if (entry.type === 'exact' || (entry.type === 'lower' && entry.value >= beta) || (entry.type === 'upper' && entry.value <= alpha)) {
+         console.log(entry);
           return [entry.bestMove, entry.value];
       }
     }
@@ -46,7 +46,7 @@ export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, col
 
         capturedPieces.push(existingPiece)
         game.pieces.splice(game.pieces.indexOf(existingPiece), 1)
-      }
+      };
 
       const originalPosition = piece.position
       game.setClickedBotPiece(null);

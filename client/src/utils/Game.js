@@ -1,6 +1,7 @@
 import Queen from './Pieces/Queen'
 import minimax  from './bot'
 import { pieceValues } from './bot';
+import { generateGameHash } from './hash';
 
 export default class Game {
 	constructor(pieces, turnPlaying,bot) {
@@ -11,6 +12,7 @@ export default class Game {
 		this.checked = '';
 		this.bot = bot;
 		this.botPiece = null;
+		this.transpositionTable = new Map()
 		this._events = {
 			pieceMove: [],
 			kill: [],
@@ -274,7 +276,7 @@ export default class Game {
 			} else if(this.king_stalemate(this.turn)){
                  this.stalemate()
 			}
-
+            this.in_three_fold_repetition()
 			return [prevPosition, position];
 		}
 		else{
@@ -410,7 +412,7 @@ export default class Game {
 		let botMoveValues = []
         var bestMove = minimax(
 			this.bot,
-			2,
+			4,
 			Number.NEGATIVE_INFINITY,
 			Number.POSITIVE_INFINITY,
 			true,
@@ -428,9 +430,9 @@ export default class Game {
     const timeDiff = currTime - prevTime;
     const factor = Math.ceil(timeDiff / 1000)
 
-    if (factor >= 1) {
-      timeObject.setBlackCountdown((prevCountdown) => prevCountdown > 0 ? prevCountdown - factor : prevCountdown)
-    }
+    // if (factor >= 1) {
+    //   timeObject.setBlackCountdown((prevCountdown) => prevCountdown > 0 ? prevCountdown - factor : prevCountdown)
+    // }
   
 		const pieceValue = pieceValues[move[3]][move[2]];
 		const isNumeric = !isNaN(Number(move[4]));
@@ -483,5 +485,10 @@ export default class Game {
 	stalemate(){
 		this.triggerEvent('staleMate');
 		this.clearEvents();
+	}
+	in_three_fold_repetition(){
+		const gameHash = generateGameHash(this.pieces)
+		console.log(gameHash);
+	
 	}
 }
