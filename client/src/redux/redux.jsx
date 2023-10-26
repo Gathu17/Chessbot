@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import Header from "../components/navigation/header/Header";
+import React, { useState,useEffect } from 'react'
+import Header from '../components/navigation/header/Header'
+import JwtDecode from '../utils/JwtDecode'
 
 const Redux = ({ token }) => {
   const [jwToken, setJwToken] = useState(null);
@@ -8,7 +9,8 @@ const Redux = ({ token }) => {
   }, [token]);
   return (
     <div>
-      <Header token={jwToken} />
+        <Header token={jwToken}/>
+        <JwtDecode token={jwToken} />
     </div>
   );
 };

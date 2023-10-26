@@ -2,7 +2,9 @@ const express = require("express");
 const router = express.Router();
 const { Game, User, Score } = require("../models/index.js");
 const bcrypt = require("bcrypt");
+const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 router.get("/test", (req, res) => {
   res.json({ message: "Hello from api server home!" });
@@ -124,64 +126,79 @@ router.get("/users/:userId/scores", async (req, res) => {
 //   });
 // };
 
-//Auth
-router.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    // Find the user by email
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      return res.status(401).json({ error: "Invalid email or password." });
-    }
-    // Check if the password is correct
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    // const isPasswordValid = await user.validatePassword(password);
-
-    if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid email or password." });
-    }
-    // If the email and password are correct, you can generate a token here for authentication
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      "yoursecretkey",
-      {
-        expiresIn: "1h", // Token expiration time
-      }
-    );
-    res.status(200).json({ message: "Login successful", token });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error during login." });
-  }
-});
-
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, phoneNumber, password } = req.body;
-    // Check if the user with the given email already exists
-    const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
-      return res.status(400).json({ error: "Email already in use." });
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
     }
 
-    const existingPhoneNumberUser = await User.findOne({ phoneNumber });
-    if (existingPhoneNumberUser) {
-      return res
-        .status(400)
-        .json({ message: "Phone number already registered" });
+    const existingUserWithEmail = await User.findOne({ where: { email } });
+    if (existingUserWithEmail) {
+      return res.status(409).json({ error: "Email already in use." });
     }
 
-    // Create a new user
+    const existingUserWithPhoneNumber = await User.findOne({
+      where: { phoneNumber },
+    });
+    if (existingUserWithPhoneNumber) {
+      return res.status(409).json({ error: "Phone number already registered" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = await User.create({
       name,
       email,
       phoneNumber,
-      password,
+      password: hashedPassword,
     });
-    res.status(201).json(newUser);
+
+    res
+      .status(201)
+      .json({
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        phoneNumber: newUser.phoneNumber,
+      });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error creating user." });
+  }
+});
+
+//Auth
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(401).json({ error: "User not found." });
+    }
+
+    const isPasswordValid = bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Incorrect password." });
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "5s",
+      }
+    );
+
+
+    res.status(200).json({ message: "Login successful", token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error during login." });
   }
 });
 

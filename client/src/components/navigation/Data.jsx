@@ -21,7 +21,7 @@ export const header = [
   },
   {
     menu: "Account",
-    path: "#"
+    path: "/sign-in"
   }
 ];
 

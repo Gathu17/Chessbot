@@ -9,10 +9,13 @@ const Header = ({ token }) => {
   const [showSubmenu, setShowSubMenu] = useState(false);
   const [hoveredMenuItemIndex, setHoveredMenuItemIndex] = useState(null);
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState()
 
   useEffect(() => {
-    console.log({ token });
+    // console.log({ token });
+    setLoggedInUser(localStorage.getItem('decodedToken'));
   }, [token]);
+
 
   return (
     <>

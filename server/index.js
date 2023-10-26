@@ -3,11 +3,13 @@ const apiRoutes = require("./src/routes/api");
 const sequelize = require("./src/models/sequelize");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
+const app = express();
 
+const cors = require("cors");
+app.use(cors());
 
 const PORT = process.env.PORT || 8000;
 
-const app = express();
 
 const corsMiddleware = require("./src/cors/middleware");
 
