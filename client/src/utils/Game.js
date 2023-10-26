@@ -1,9 +1,10 @@
 import Queen from './Pieces/Queen'
 import minimax  from './bot'
 import { pieceValues } from './bot';
+import { generateGameHash } from './hash';
 
 export default class Game {
-	constructor(pieces, turnPlaying,bot) {
+	constructor(pieces, turnPlaying,bot,boardMoves) {
 		this.pieces  = pieces;
 		this.turn    = turnPlaying;
 		this.clickedPiece = null;
@@ -11,6 +12,8 @@ export default class Game {
 		this.checked = '';
 		this.bot = bot;
 		this.botPiece = null;
+		this.transpositionTable = new Map();
+		this.boardMoves = boardMoves;
 		this._events = {
 			pieceMove: [],
 			kill: [],
@@ -274,7 +277,10 @@ export default class Game {
 			} else if(this.king_stalemate(this.turn)){
                  this.stalemate()
 			}
-
+            // this.in_three_fold_repetition()
+			// console.log(this.boardMoves);
+			// this.boardMoves = this.boardMoves + 1;
+			console.log(this.boardMoves);
 			return [prevPosition, position];
 		}
 		else{
@@ -410,7 +416,7 @@ export default class Game {
 		let botMoveValues = []
         var bestMove = minimax(
 			this.bot,
-			2,
+			5,
 			Number.NEGATIVE_INFINITY,
 			Number.POSITIVE_INFINITY,
 			true,
@@ -483,5 +489,10 @@ export default class Game {
 	stalemate(){
 		this.triggerEvent('staleMate');
 		this.clearEvents();
+	}
+	in_three_fold_repetition(){
+		const gameHash = generateGameHash(this.pieces)
+		console.log(gameHash);
+	
 	}
 }

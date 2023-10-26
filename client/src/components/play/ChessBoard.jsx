@@ -27,6 +27,7 @@ const ChessBoard = ({
   const [clickedPieceName, setClickedPieceName] = React.useState("");
   const [playBot, setPlayBot] = useState({state: true,color: 'black'})
   const [repSize, setRepSize] = useState(0);
+  const [boardMoves, setBoardMoves] = useState(0)
   const [whiteRep, setWhiteRep] = useState({
     first: {
       go: [], 
@@ -57,7 +58,7 @@ const ChessBoard = ({
   });
 
   
-  const game = new Game(pieces, turnPlaying,playBot);
+  const game = new Game(pieces, turnPlaying,playBot,boardMoves);
 
   //   game status
   // status can be ongoing, white won, black won, draw, aborted
@@ -297,7 +298,7 @@ const ChessBoard = ({
 
   React.useEffect(() => {
     resetBoard();
-    // botPlay()
+    botPlay()
     
   }, [turnPlaying]);
 
@@ -406,6 +407,7 @@ const ChessBoard = ({
     ).current;
     square.textContent = piece.icon;
     clearSquares();
+    setBoardMoves(boardMoves + 1)
   });
 
   game.on("turnChange", (turn) => {
@@ -511,7 +513,7 @@ export const pieces = [
   new Rook("8h", "blackRook2", "♜"),
 ];
 
-const testPieces = [
+export const testPieces = [
     new King("1e", "whiteKing", "♔"),
     new Queen("8d", "blackQueen", "♛"),
     new King("8e", "blackKing", "♚"),
