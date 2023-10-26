@@ -16,8 +16,20 @@ export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, col
       let sum = evaluateBoard(game,capturedPieces,currentMove);
       return [null,sum]
     }
+
+    
     const gameHash = generateGameHash(game.pieces);
-    console.log(gameHash);
+
+    if (depth > 2 && !isMaximizingPlayer) {
+      let nullMoveValue = -minimax(bot, depth - 2, -beta, -beta + 1, !isMaximizingPlayer, color, capturedPieces, currMove)[1];
+    
+      // If the null move evaluation suggests the opponent's position is very favorable, cut off the search.
+      if (nullMoveValue >= beta) {
+        storeTranspositionEntry(gameHash, null, nullMoveValue, depth, 'lower');
+        return [null, nullMoveValue];
+      }
+    }
+    
     // debugger
 
     if (transpositionTable.has(gameHash)) {
@@ -32,6 +44,8 @@ export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, col
     let minValue = Number.POSITIVE_INFINITY;
     let bestMove = '';
     let bestMoveValue = 0;
+    const reductionDepth = 1; // Adjust this value based on your testing
+    const reductionThreshold = 2;
     for (var i = 0; i < newGameMoves.length; i++) {
       currMove = newGameMoves[i];
       const pieceValue = pieceValues[currMove[3]][currMove[2]];
@@ -52,18 +66,49 @@ export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, col
       game.setClickedBotPiece(null);
       piece.changePosition(`${currMove[0]}${currMove[1]}`)
 
-      // var newSum = evaluateBoard( game, color);
-      let [childBestMove,childValue] = minimax(
-        bot,
-        depth - 1,
-        alpha,
-        beta,
-        !isMaximizingPlayer,
-        color == 'white' ? 'black' : 'white',
-        capturedPieces,
-        currMove,
-      );
+      if (i >= reductionThreshold && depth > reductionDepth && !existingPiece) {
+        const reducedDepth = depth - reductionDepth;
+        let [_, lmrValue] = minimax(
+          bot,
+          reducedDepth - 1,
+          alpha,
+          beta,
+          !isMaximizingPlayer,
+          color == 'white' ? 'black' : 'white',
+          capturedPieces,
+          currMove
+        );
+  
+        // Full search if LMR gives a good result
+        if (lmrValue >= beta) {
+          var [childBestMove, childValue] = minimax(
+            bot,
+            reducedDepth,
+            alpha,
+            beta,
+            !isMaximizingPlayer,
+            color == 'white' ? 'black' : 'white',
+            capturedPieces,
+            currMove
+          );
+        }
+      } else{
+        var [childBestMove,childValue] = minimax(
+          bot,
+          depth - 1,
+          alpha,
+          beta,
+          !isMaximizingPlayer,
+          color == 'white' ? 'black' : 'white',
+          capturedPieces,
+          currMove,
+        );
+  
+      }
+       
 
+      // var newSum = evaluateBoard( game, color);
+      
       piece.changePosition(originalPosition);
       game.setClickedPiece(null)
       if(existingPiece) game.pieces.push(existingPiece);
@@ -119,7 +164,6 @@ export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, col
      
     if (game.king_checked(game.bot.color)) {
        // Our king's in check (bad for us)
-      //  console.log('king checked');
         prevSum -= 50;
       // Opponent is in check (good for us)
       }   
@@ -127,7 +171,7 @@ export default function minimax( bot,depth, alpha, beta, isMaximizingPlayer, col
         prevSum += 50;
       }
     
-  
+    
     // Change endgame behavior for kings
     // if (prevSum < -1500) {
     //   if (move.piece === 'k') {

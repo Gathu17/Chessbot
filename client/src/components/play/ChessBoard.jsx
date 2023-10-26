@@ -27,6 +27,7 @@ const ChessBoard = ({
   const [clickedPieceName, setClickedPieceName] = React.useState("");
   const [playBot, setPlayBot] = useState({state: true,color: 'black'})
   const [repSize, setRepSize] = useState(0);
+  const [boardMoves, setBoardMoves] = useState(0)
   const [whiteRep, setWhiteRep] = useState({
     first: {
       go: [], 
@@ -57,7 +58,7 @@ const ChessBoard = ({
   });
 
   
-  const game = new Game(pieces, turnPlaying,playBot);
+  const game = new Game(pieces, turnPlaying,playBot,boardMoves);
 
   // const whiteSematary = document.getElementById("whiteSematary");
   // const blackSematary = document.getElementById("blackSematary");
@@ -410,6 +411,7 @@ const ChessBoard = ({
     ).current;
     square.textContent = piece.icon;
     clearSquares();
+    setBoardMoves(boardMoves + 1)
   });
 
   game.on("turnChange", (turn) => {
