@@ -60,9 +60,6 @@ const ChessBoard = ({
   
   const game = new Game(pieces, turnPlaying,playBot,boardMoves);
 
-  // const whiteSematary = document.getElementById("whiteSematary");
-  // const blackSematary = document.getElementById("blackSematary");
-
   //   game status
   // status can be ongoing, white won, black won, draw, aborted
   const [gameStatus, setGameStatus] = useState("ongoing");
@@ -275,11 +272,10 @@ const ChessBoard = ({
   };
   function botPlay() {
     const positionMoved = [];
-    console.log(playBot,turnPlaying);
     if (playBot.state && turnPlaying == playBot.color) {
       console.log("bot play");
       setTimeout(() => {
-        positionMoved.push(...game.makeBestMove(playBot.color));
+        positionMoved.push(...game.makeBestMove(playBot.color, setBlackCountdown));
         updateRep('white', positionMoved);
       }, 100);
     }

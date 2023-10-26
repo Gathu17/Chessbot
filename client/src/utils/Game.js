@@ -426,7 +426,7 @@ export default class Game {
 		
 		
 	}
-	makeBestMove(color, timeObject){
+	makeBestMove(color, setBlackCountdown){
     const prevTime = Date.now();
 		const [move,moveValue] = this.getBestMove(color)
 
@@ -434,9 +434,9 @@ export default class Game {
     const timeDiff = currTime - prevTime;
     const factor = Math.ceil(timeDiff / 1000)
 
-    // if (factor >= 1) {
-    //   timeObject.setBlackCountdown((prevCountdown) => prevCountdown > 0 ? prevCountdown - factor : prevCountdown)
-    // }
+    if (factor >= 1) {
+      setBlackCountdown((prevCountdown) => prevCountdown > 0 ? prevCountdown - factor : prevCountdown)
+    }
   
 		const pieceValue = pieceValues[move[3]][move[2]];
 		const isNumeric = !isNaN(Number(move[4]));
