@@ -282,7 +282,7 @@ const ChessBoard = ({
       setTimeout(() => {
         positionMoved.push(...game.makeBestMove(playBot.color, setBlackCountdown));
         updatePlayedSquares(positionMoved);
-        updateRep('white', positionMoved);
+        // updateRep('white', positionMoved);
       }, randTime);
     }
   }
@@ -388,7 +388,7 @@ const ChessBoard = ({
     removePlayedSquares();
     const positionMoved = game.movePiece(clickedPieceName, position, turnPlaying);
     updatePlayedSquares(positionMoved);
-    updateRep(turn, positionMoved);
+    // updateRep(turn, positionMoved);
   }
 
   // squares.forEach( square => {

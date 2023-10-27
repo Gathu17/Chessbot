@@ -230,7 +230,7 @@ export default class Game {
 
 		const prevPosition = piece?.position;
 		if(this.king_checked(piece?.color) && this.saveKingMoves.indexOf(position) == -1 && piece.rank !== 'king') {
-			return false;
+			return [];
 		}
 		if (piece && this.getPieceAllowedMoves(piece?.position).indexOf(position) !== -1) {
 			
@@ -282,7 +282,7 @@ export default class Game {
 			// this.boardMoves = this.boardMoves + 1;
       if (piece.hasRank('rook')) {
         if (piece.ableToCastle) piece.ableToCastle = false;
-      }
+      } 
 			return [prevPosition, position];
 		}
 		else{
@@ -424,7 +424,7 @@ export default class Game {
 		// let botMoveValues = []
         var bestMove = minimax(
 			this.bot,
-			5,
+			2,
 			Number.NEGATIVE_INFINITY,
 			Number.POSITIVE_INFINITY,
 			true,
@@ -452,6 +452,7 @@ export default class Game {
 		
 		this.setClickedPiece(piece);
 		const positionMoved = this.movePiece(piece.position,`${move[0]}${move[1]}`)
+
 		return positionMoved;
 		
 	}
