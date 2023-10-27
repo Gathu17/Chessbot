@@ -344,7 +344,7 @@ export default class Game {
 
 	king_dead(color) {
 		const pieces = this.getPiecesByColor(color);
-		
+	
 		if(this.king_checked(color)){
 			let isKingDead = true;
             for (const piece of pieces) {
@@ -385,10 +385,16 @@ export default class Game {
 				const destRow = parseInt(king.position.charAt(0));
 				const saveKingMoves = [];
 				this.checked = color;
+
+				if(enemyPiece.hasRank('knight')){
+					this.saveKingMoves.push(enemyPos)
+					return 1;
+				}
 				
                 while (enemyPos !== king.position) {
 
 					saveKingMoves.push(enemyPos);
+
 
 					// Move to the next square
 					if(destCol < enemyCol) enemyCol--; 
@@ -418,7 +424,7 @@ export default class Game {
 		// let botMoveValues = []
         var bestMove = minimax(
 			this.bot,
-			level,
+			5,
 			Number.NEGATIVE_INFINITY,
 			Number.POSITIVE_INFINITY,
 			true,
