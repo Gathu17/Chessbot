@@ -19,6 +19,7 @@ const ChessBoard = ({
   blackCountdown,
   setBlackCountdown,
   setWhiteCountdown,
+  level
 }) => {
   const board = React.useRef(null);
   const squares = Array(64)
@@ -272,12 +273,16 @@ const ChessBoard = ({
   };
   function botPlay() {
     const positionMoved = [];
+    const prevTime = Date.now();
+    const times = [1000, 2000];
+    const randTime = times[Math.floor(Math.random() * 2)]
+    
     if (playBot.state && turnPlaying == playBot.color) {
       console.log("bot play");
       setTimeout(() => {
-        positionMoved.push(...game.makeBestMove(playBot.color, setBlackCountdown));
+        positionMoved.push(...game.makeBestMove(playBot.color, setBlackCountdown, prevTime, level));
         updateRep('white', positionMoved);
-      }, 100);
+      }, randTime);
     }
   }
 
