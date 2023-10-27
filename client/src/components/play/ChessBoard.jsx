@@ -278,9 +278,10 @@ const ChessBoard = ({
     const randTime = times[Math.floor(Math.random() * 2)]
     
     if (playBot.state && turnPlaying == playBot.color) {
-      console.log("bot play");
+      removePlayedSquares();
       setTimeout(() => {
-        positionMoved.push(...game.makeBestMove(playBot.color, setBlackCountdown, prevTime, level));
+        positionMoved.push(...game.makeBestMove(playBot.color, setBlackCountdown));
+        updatePlayedSquares(positionMoved);
         updateRep('white', positionMoved);
       }, randTime);
     }
@@ -343,6 +344,24 @@ const ChessBoard = ({
     );
   }
 
+  function removePlayedSquares() {
+    const playedSquares = squares.filter((item) =>
+      item.current.classList.value.includes("played")
+    );
+    playedSquares.forEach((allowedSquare) =>
+      allowedSquare.current.classList.remove("played")
+    );
+  }
+
+  function updatePlayedSquares(positionMoved) {
+    const played = squares.filter((item) =>
+      item.current.id === positionMoved[0] || item.current.id === positionMoved[1]
+    );
+    played.map(sq => 
+      sq.current.classList.add("played")
+    );
+  }
+
   const clearSquares = () => {
     removeHighlightedSquares();
 
@@ -366,8 +385,9 @@ const ChessBoard = ({
       return setAllowedSquares(pieceImg);
     }
 
-
+    removePlayedSquares();
     const positionMoved = game.movePiece(clickedPieceName, position, turnPlaying);
+    updatePlayedSquares(positionMoved);
     updateRep(turn, positionMoved);
   }
 

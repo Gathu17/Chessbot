@@ -31,3 +31,8 @@ td {
   border: 1px dashed #ffff00;
   background-color: #536b3a;
 }
+
+.played {
+  border: 1px dashed #536b3a;
+  background-color: #ffff72;
+}
