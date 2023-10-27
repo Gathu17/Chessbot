@@ -4,6 +4,7 @@ const { Game, User, Score } = require("../models/index.js");
 const bcrypt = require("bcrypt");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
+const { Op } = require("sequelize");
 require("dotenv").config();
 
 router.get("/test", (req, res) => {
@@ -33,6 +34,26 @@ router.get("/users", async (req, res) => {
     res.status(500).json({ error: "Error fetching users." });
   }
 });
+
+// fetch opponents
+router.get('/opponents/:opponentId', async (req, res) => {
+  try {
+    const { opponentId } = req.params;
+    const opponents = await User.findAll({
+      where: {
+        playerLevel: {
+          [Op.gte]: '4'
+        }
+      }
+    });
+    const n = opponents.length;
+    const currentOpponentId = opponentId % n;
+
+    res.status(200).json(opponents[currentOpponentId]);
+  } catch (error) {
+    res.status(500).json({ error: "Error getting opponent"})
+  }
+})
 
 // Create a new game
 router.post("/games", async (req, res) => {

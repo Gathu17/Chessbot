@@ -34,6 +34,7 @@ const Play = () => {
   const [selectedGame, setSelectedGame] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [peopleOnline, setPeopleOnline] = useState([]);
+  const [opponentPlaying, setOpponentPlaying] = useState({})
 
   const game = new Game(pieces);
   const [turnPlaying, setTurnPlaying] = useState("white");
@@ -78,9 +79,24 @@ const Play = () => {
     }
   }
 
+  async function getOpponent(num) {
+    try {
+      const serverURL = import.meta.env.VITE_SERVER_URL;
+      const resp = await axios.get(`${serverURL}/api/opponents/${num}`);
+      setOpponentPlaying(resp.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     randomUsers();
   }, [activeLink]);
+
+  useEffect(() => {
+    const randNum = Math.floor(Math.random() * 50);
+    getOpponent(randNum);
+  },[])
 
   const gameSideMenu = [
     {
@@ -140,7 +156,7 @@ const Play = () => {
                 alt=""
               />
             </div>
-            <span className="ml-3 text-lg font-semibold">Opponent</span>
+            <span className="ml-3 text-lg font-semibold">{opponentPlaying.name && opponentPlaying.name.split(' ')[0]}</span>
             <span
               id="turn"
               ref={turnLabel}
@@ -187,6 +203,7 @@ const Play = () => {
           blackCountdown={blackCountdown}
           setWhiteCountdown={setWhiteCountdown}
           setBlackCountdown={setBlackCountdown}
+          level={opponentPlaying.playerLevel}
         />
         <div className="flex lg:items-start justify-between px-4 py-2 mb-4 text-white rounded-lg lg:space-x-[3rem] lg:w-full w-full sm:w-3/4 gap-6 items-center mt-5">
           <div className="flex flex-col items-center lg:flex-row ">

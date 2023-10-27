@@ -20,6 +20,14 @@ const User = sequelize.define("User", {
     allowNull: false,
     unique: true,
   },
+  isVirtual: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+  },
+  playerLevel: {
+    type: DataTypes.ENUM('1', '2', '3', '4', '5'),
+    allowNull: false,
+  },
   phoneNumber: {
     type: DataTypes.STRING,
     allowNull: false,
