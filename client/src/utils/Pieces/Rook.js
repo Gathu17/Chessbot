@@ -10,7 +10,7 @@ export default class Rook extends Piece {
 
 	changePosition(position) {
 		this.position = position;
-		this.ableToCastle = false;
+		// this.ableToCastle = false;
 	}
 
 	getAllowedMoves() {

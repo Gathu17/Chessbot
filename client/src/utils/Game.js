@@ -280,7 +280,9 @@ export default class Game {
             // this.in_three_fold_repetition()
 			// console.log(this.boardMoves);
 			// this.boardMoves = this.boardMoves + 1;
-			console.log(this.boardMoves);
+      if (piece.hasRank('rook')) {
+        if (piece.ableToCastle) piece.ableToCastle = false;
+      }
 			return [prevPosition, position];
 		}
 		else{
