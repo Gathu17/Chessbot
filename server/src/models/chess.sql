@@ -24,6 +24,8 @@ CREATE TABLE Users (
   email VARCHAR(255) UNIQUE NOT NULL,
   name VARCHAR(255),
   username VARCHAR(255) UNIQUE NOT NULL,
+  isVirtual BOOLEAN,
+  playerLevel ENUM('1', '2', '3', '4', '5'),
   phoneNumber VARCHAR(255),
   password VARCHAR(255),
   timestamps TIMESTAMP DEFAULT CURRENT_TIMESTAMP

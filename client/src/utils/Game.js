@@ -414,23 +414,22 @@ export default class Game {
 		this.setClickedPiece(piece);
 		return 0;
 	}
-	getBestMove(color){
-		let botMoveValues = []
+	getBestMove(color, level){
+		// let botMoveValues = []
         var bestMove = minimax(
 			this.bot,
-			5,
+			level,
 			Number.NEGATIVE_INFINITY,
 			Number.POSITIVE_INFINITY,
 			true,
 			color
-		  );
+      );
 		return bestMove;
 		
 		
 	}
-	makeBestMove(color, setBlackCountdown){
-    const prevTime = Date.now();
-		const [move,moveValue] = this.getBestMove(color)
+	makeBestMove(color, setBlackCountdown, prevTime, level) {
+		const [move,moveValue] = this.getBestMove(color, level)
 
     const currTime = Date.now();
     const timeDiff = currTime - prevTime;

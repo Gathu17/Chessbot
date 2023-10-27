@@ -1,4 +1,4 @@
-import {testPieces} from '../components/play/ChessBoard'
+// import {testPieces} from '../components/play/ChessBoard'
 // Zobrist hash
 const zobristTable = new Array(8).fill(0).map(() =>
 new Array(8).fill(0).map(() => new Array(6).fill(0).map(() => new Array(2).fill(0).map(() => Math.floor(Math.random() * 1e12))))
