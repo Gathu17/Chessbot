@@ -326,7 +326,6 @@ export default class Game {
 
 		if (should_kill_other_piece) this.pieces.splice(this.pieces.indexOf(otherPiece), 1);
 		piece.changePosition(pos);
-
 		if (this.king_checked(piece.color)) {
            
 			piece.changePosition(originalPosition);
@@ -354,7 +353,7 @@ export default class Game {
                    if(this.saveKingMoves.indexOf(move) !== -1){
 					this.setClickedPiece(null);
 					isKingDead = false;
-				   } else if(piece.rank ==  'king'){
+				   } else if(piece.rank ==  'king' && move){
 					this.setClickedPiece(null);
 					isKingDead = false;
 				   }
@@ -421,10 +420,10 @@ export default class Game {
 		return 0;
 	}
 	getBestMove(color, level){
-		// let botMoveValues = []
+	
         var bestMove = minimax(
 			this.bot,
-			2,
+			3,
 			Number.NEGATIVE_INFINITY,
 			Number.POSITIVE_INFINITY,
 			true,

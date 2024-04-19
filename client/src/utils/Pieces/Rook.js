@@ -5,7 +5,7 @@ export default class Rook extends Piece {
 		super(position, 'rook', name);
 		this.ableToCastle = true;
         this.icon = icon
-		this.weight = 5
+		this.weight = 50
 	}
 
 	changePosition(position) {

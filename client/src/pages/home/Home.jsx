@@ -1,4 +1,5 @@
 import { BsDot } from "react-icons/bs";
+import LoginModal from "../../components/auth/loginModal"
 
 const Home = () => {
   const Dot = () => (
@@ -18,15 +19,6 @@ const Home = () => {
             </div>
           ))}
       </div>
-      <div className="absolute bottom-0 hidden grid-cols-12 gap-1 -left-2 lg:grid">
-        {Array(72)
-          .fill(null)
-          .map((_, index) => (
-            <div key={index} className="bg-[#c99c3e] rounded-full h-[1rem] w-[1rem]">
-              
-            </div>
-          ))}
-      </div>
       <div className="relative flex items-center justify-between w-full px-5 md:px-20">
         <div className="absolute inset-0 bg-[#000] blur z-[-1] opacity-[.7] motion-safe:animate-pulse"></div>
         <div className="w-full space-y-6">
@@ -37,7 +29,7 @@ const Home = () => {
             Connect with top-ranked chess players from around the world and
             learn the secrets to becoming a chess master
           </p>
-          <div className="flex justify-center lg:justify-start">
+          <div className="flex justify-center lg:justify-start" link>
             <button className="px-4 py-2 capitalize border shadow-2xl rounded-2xl shadow-[#888] animate-pulse">
               become a master
             </button>
@@ -51,6 +43,7 @@ const Home = () => {
           />
         </div>
       </div>
+
     </>
   );
 };

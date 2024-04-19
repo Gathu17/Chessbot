@@ -4,11 +4,12 @@ const sequelize = require("./src/models/sequelize");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const app = express();
+const db = require("./models")
 
 const cors = require("cors");
 app.use(cors());
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 3000;
 
 
 const corsMiddleware = require("./src/cors/middleware");

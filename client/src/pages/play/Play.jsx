@@ -38,7 +38,10 @@ const Play = () => {
 
   const game = new Game(pieces);
   const [turnPlaying, setTurnPlaying] = useState("white");
-
+   console.log(turnPlaying);
+    if(turnPlaying === 'white'){
+      
+    }
   const handleGameChange = (event) => {
     setSelectedGame(event.target.value);
     setSelectedTime("");
@@ -174,7 +177,6 @@ const Play = () => {
             </span>
           </div>
         </div>
-        {/* <ChessBoard game={game} /> */}
         <div id="sematary">
           <div id="whiteSematary" ref={whiteSematary}>
             <div className="pawn"></div>
@@ -192,7 +194,6 @@ const Play = () => {
           </div>
         </div>
         <ChessBoard
-          game={game}
           turnPlaying={turnPlaying}
           setTurnPlaying={setTurnPlaying}
           turnLabel={turnLabel}

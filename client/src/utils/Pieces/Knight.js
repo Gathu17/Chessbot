@@ -4,7 +4,7 @@ export default class Knight extends Piece {
 	constructor(position, name, icon) {
 		super(position, 'knight', name);
         this.icon = icon
-        this.weight = 3
+        this.weight = 30
 	}
 
 	getAllowedMoves() {

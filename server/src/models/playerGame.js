@@ -6,6 +6,10 @@ const PlayerGame = sequelize.define("playerGame", {
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
+    user_id: {
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
+      allowNull: false,
+    }
   });
   
 

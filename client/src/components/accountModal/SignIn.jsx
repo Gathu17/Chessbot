@@ -4,12 +4,15 @@ import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import Redux from "../../redux/redux";
+import Login from '../../api/auth/loginApi'
 
 // import { auth } from "../accountModal/Firebase";
 
 const SignIn = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [credentials, setCredentials] =  useState({
+    email: '',
+    password: ''
+  })
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [token, setToken] = useState(null);
@@ -28,38 +31,16 @@ const SignIn = () => {
   //     console.error("Google Sign-In failed:", error);
   //   }
   // };
+   const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log(credentials);
+    Login(credentials) 
+   }
+   const onChange = (event) => {
+     setCredentials({...credentials,[event.target.name]: event.target.value})
+   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await fetch("http://localhost:8000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        toast.success("Log-In Success");
-        setToken(data.token);
-        setTimeout(() => {
-          navigate("/");
-        }, 3000);
-        setTimeout(() => {
-          toast.success("Redirecting...");
-        }, 900);
-      } else {
-        const errorData = await response.json();
-        toast.error(errorData.error || "Login failed");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred while logging in");
-    }
-  };
+  
 
 
   return (
@@ -109,9 +90,9 @@ const SignIn = () => {
                   type="email"
                   id="email"
                   name="email"
-                  value={email}
+                  value={credentials.email}
                   placeholder="email@example.com"
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={onChange}
                   required
                   className="w-full px-3 py-2 leading-tight border rounded appearance-none focus:outline-none focus:shadow-outline text-[black]"
                 />
@@ -128,9 +109,9 @@ const SignIn = () => {
                     type={showPassword ? "text" : "password"}
                     id="password"
                     name="password"
-                    value={password}
+                    value={credentials.password}
                     placeholder="********"
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={onChange}
                     required
                     className="w-full px-3 py-2 leading-tight text-[#000] rounded appearance-none focus:outline-none focus:shadow-outline"
                   />

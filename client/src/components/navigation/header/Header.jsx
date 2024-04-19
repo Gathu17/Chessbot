@@ -54,7 +54,7 @@ const Header = ({ token }) => {
                     >
                      <div className="flex flex-col items-center">
                        {items.menu}
-                         {items.menu === "Account" && ( 
+                         {/* {items.menu === "Account" && ( 
                            <div className="mt-5 lg:hidden">
                            {subMenu.map((submenuItem, subIndex) => (
                             <React.Fragment key={subIndex}>
@@ -69,7 +69,7 @@ const Header = ({ token }) => {
                             </React.Fragment>
                           ))}
                         </div>
-                      )}
+                      )} */}
                     </div>
                       {hoveredMenuItemIndex === index && index !== 5 && (
                       <motion.div

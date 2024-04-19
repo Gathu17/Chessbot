@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
+const {loginSchema,registerSchema} = require('../utils/validator.js')
 require("dotenv").config();
 
 router.get("/test", (req, res) => {
@@ -12,9 +13,12 @@ router.get("/test", (req, res) => {
 });
 
 // Create a new user
-router.post("/users", async (req, res) => {
+router.post("/user", async (req, res) => {
   try {
+    const value = registerSchema.parse(req.body)
+    console.log(value);
     const { name, email, phoneNumber, password } = req.body;
+
     const newUser = await User.create({ name, email, phoneNumber, password });
     res.status(201).json(newUser);
   } catch (error) {
@@ -27,7 +31,6 @@ router.post("/users", async (req, res) => {
 router.get("/users", async (req, res) => {
   try {
     const users = await User.findAll();
-    console.log(users);
     res.json(users);
   } catch (error) {
     console.error(error);
@@ -56,7 +59,7 @@ router.get('/opponents/:opponentId', async (req, res) => {
 })
 
 // Create a new game
-router.post("/games", async (req, res) => {
+router.post("/game", async (req, res) => {
   try {
     const { status } = req.body;
     const newGame = await Game.create({ status });
@@ -196,9 +199,9 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
-
+   console.log(user);
     if (!user) {
-      return res.status(401).json({ error: "User not found." });
+      return res.status(400).json({ error: "User not found." });
     }
 
     const isPasswordValid = bcrypt.compare(password, user.password);

@@ -1,6 +1,6 @@
 {
   "username": "root",
-  "password": "Moringa12#",
+  "password": "password",
   "database": "chess",
   "host": "localhost",
   "dialect": "mysql"

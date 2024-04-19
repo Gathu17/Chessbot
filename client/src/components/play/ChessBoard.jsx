@@ -7,6 +7,7 @@ import Knight from "../../utils/Pieces/Knight";
 import King from "../../utils/Pieces/King";
 import Game from "../../utils/Game";
 import Square from "./Square";
+import worker from '../../utils/worker.js'
 
 const ChessBoard = ({
   turnPlaying,
@@ -19,7 +20,7 @@ const ChessBoard = ({
   blackCountdown,
   setBlackCountdown,
   setWhiteCountdown,
-  level
+ 
 }) => {
   const board = React.useRef(null);
   const squares = Array(64)
@@ -60,51 +61,42 @@ const ChessBoard = ({
 
   
   const game = new Game(pieces, turnPlaying,playBot,boardMoves);
-
+  const worker = new Worker()
   //   game status
   // status can be ongoing, white won, black won, draw, aborted
   const [gameStatus, setGameStatus] = useState("ongoing");
 
   React.useEffect(() => {
     const whiteTimer = setInterval(() => {
-      if (turnPlaying === "white") {
+      if (turnPlaying === "white" && gameStatus == "ongoing") {
         setWhiteCountdown((prevCountdown) =>
           prevCountdown > 0 ? prevCountdown - 1 : prevCountdown
         );
 
         // if white takes more than 15 seconds to make first move, abort game
         // if countdown gets to 0, end game and show lost to white, award black points
-        if (whiteCountdown <= 0) {
-          setGameStatus("black-won");
-          // award black points
-        }
+        
+      }else{
+        setBlackCountdown((prevCountdown) =>
+          prevCountdown > 0 ? prevCountdown - 1 : prevCountdown
+        );
       }
 
       if (blackCountdown <= 0) {
         setGameStatus("white-won");
         // award white points
+      } else if (whiteCountdown <= 0) {
+        setGameStatus("black-won");
+        // award black points
       }
     }, 1000);
 
     return () => clearInterval(whiteTimer);
   }, [turnPlaying]);
 
-  React.useEffect(() => {
-    // const blackTimer = setInterval(() => {
-    //   if (turnPlaying === "black") {
-    //     setBlackCountdown((prevCountdown) =>
-    //       prevCountdown > 0 ? prevCountdown - 1 : prevCountdown
-    //     );
-
-    //     if (blackCountdown <= 0) {
-    //       setGameStatus("white-won");
-    //       // award white points
-    //     }
-    //   }
-    // }, 1000);
-
-    // return () => clearInterval(blackTimer);
-  }, [turnPlaying]);
+  // React.useEffect(() => {
+  
+  // }, [turnPlaying]);
 
   function handleSquareClick(e) {
     movePiece(e.target);
@@ -271,7 +263,7 @@ const ChessBoard = ({
       if (square) square.textContent = piece.icon;
     }
   };
-  function botPlay() {
+  async function botPlay() {
     const positionMoved = [];
     const prevTime = Date.now();
     const times = [1000, 2000];
@@ -279,11 +271,10 @@ const ChessBoard = ({
     
     if (playBot.state && turnPlaying == playBot.color) {
       removePlayedSquares();
-      setTimeout(() => {
-        positionMoved.push(...game.makeBestMove(playBot.color, setBlackCountdown));
+        await positionMoved.push(...game.makeBestMove(playBot.color, setBlackCountdown));
         updatePlayedSquares(positionMoved);
         // updateRep('white', positionMoved);
-      }, randTime);
+     
     }
   }
 
@@ -308,9 +299,9 @@ const ChessBoard = ({
     
   }, [turnPlaying]);
 
-  React.useEffect(() => {
-    alwaysSetAllowedSquares();
-  }, [clickedPieceName]);
+  // React.useEffect(() => {
+  //   alwaysSetAllowedSquares();
+  // }, [clickedPieceName]);
 
   function setAllowedSquares(pieceImg) {
     setClickedPieceName(pieceImg.id);
@@ -411,19 +402,19 @@ const ChessBoard = ({
   //     });
   // });
 
-  document.querySelectorAll("img.piece").forEach((pieceImg) => {
-    pieceImg.addEventListener("dragstart", function (event) {
-      event.stopPropagation();
-      event.dataTransfer.setData("text", event.target.id);
-      clearSquares();
-      setAllowedSquares(event.target);
-    });
-    pieceImg.addEventListener("drop", function (event) {
-      event.stopPropagation();
-      clearSquares();
-      setAllowedSquares(event.target);
-    });
-  });
+  // document.querySelectorAll("img.piece").forEach((pieceImg) => {
+  //   pieceImg.addEventListener("dragstart", function (event) {
+  //     event.stopPropagation();
+  //     event.dataTransfer.setData("text", event.target.id);
+  //     clearSquares();
+  //     setAllowedSquares(event.target);
+  //   });
+  //   pieceImg.addEventListener("drop", function (event) {
+  //     event.stopPropagation();
+  //     clearSquares();
+  //     setAllowedSquares(event.target);
+  //   });
+  // });
 
 
   game.on("pieceMove", (piece) => {

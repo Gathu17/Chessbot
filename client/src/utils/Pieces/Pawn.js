@@ -5,7 +5,7 @@ export default class Pawn extends Piece {
 	constructor(position, name, icon) {
 		super(position, 'pawn', name)
         this.icon = icon
-        this.weight = 1
+        this.weight = 10
         this.enPassant = true;
 	}
 
